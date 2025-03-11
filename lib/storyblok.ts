@@ -7,6 +7,7 @@ import Hero from "../components/Hero";
 import AboutSection from "../components/AboutSection";
 import ProjectsSection from "../components/ProjectsSection";
 import ContactForm from "../components/ContactForm";
+import NavBar from "../components/NavBar";
 
 export const getStoryblokApi = storyblokInit({
   accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
@@ -18,5 +19,6 @@ export const getStoryblokApi = storyblokInit({
     about: AboutSection,
     projects: ProjectsSection,
     contact: ContactForm,
+    navigation: NavBar,
   },
 });

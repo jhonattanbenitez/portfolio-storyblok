@@ -44,7 +44,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
   };
 
   return (
-    <section {...storyblokEditable(blok)} className="bg-gray-900 py-16">
+    <section {...storyblokEditable(blok)} className="bg-gray-900 py-16" id="contact">
       <div className="max-w-2xl mx-auto px-4">
         <h2 className="text-4xl font-bold text-white text-center mb-8">
           {blok.title}
