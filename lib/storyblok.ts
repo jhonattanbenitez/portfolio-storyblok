@@ -4,6 +4,7 @@ import Page from "../components/Page";
 import Teaser from "../components/Teaser";
 import Post from "../components/Post";
 import Hero from "../components/Hero";
+import AboutSection from "../components/AboutSection";
 
 export const getStoryblokApi = storyblokInit({
   accessToken: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
@@ -12,5 +13,6 @@ export const getStoryblokApi = storyblokInit({
     teaser: Teaser,
     post: Post,
     hero: Hero,
+    about: AboutSection
   },
 });
