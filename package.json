@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",
+    "@next/third-parties": "^15.2.2",
     "@storyblok/react": "^4.4.2",
     "framer-motion": "^12.4.13",
     "heroicons": "^2.2.0",

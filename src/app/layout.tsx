@@ -2,6 +2,7 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import StoryblokProvider from "../../components/StoryblokProvider";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,6 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <StoryblokProvider>
         <body className={inter.className}>{children}</body>
+        <GoogleAnalytics gaId="GTM-MQF8CR8R" />
       </StoryblokProvider>
     </html>
   );
