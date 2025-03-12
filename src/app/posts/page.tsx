@@ -36,7 +36,7 @@ export default function PostsPage() {
     <section className="max-w-full">
       {/* Header Section */}
       <NavBar />
-      <div className="bg-gray-900 w-full flex justify-center  py-8 mb-8">
+      <div className="bg-gray-900 w-full flex justify-center  py-32 mb-8 sm:py-48 lg:py-16">
         <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
           <h1 className="text-7xl font-bold text-white uppercase text-center">
             Blog
