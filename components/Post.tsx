@@ -14,6 +14,7 @@ import Script from "next/script";
 import "highlight.js/styles/github-dark.css"; // Predefined theme
 
 import { useParams } from "next/navigation";
+import NavBar from "./NavBar";
 
 type ImageType = {
   filename: string;
@@ -104,12 +105,13 @@ const Post: React.FC<PostProps> = ({ blok }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
+      <NavBar />
       <article
         {...storyblokEditable(blok)}
         className="prose prose-lg max-w-full"
       >
         {/* Header Section */}
-        <header className="bg-gray-900 w-full flex justify-center py-8">
+        <header className="bg-gray-900 w-full flex justify-center pb-8 pt-42">
           <h1 className="text-7xl font-bold text-white uppercase text-center">
             {blok.title}
           </h1>

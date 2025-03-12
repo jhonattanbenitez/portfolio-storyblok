@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import StoryblokProvider from "../../components/StoryblokProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
+import CookieBanner from "../../components/CookieBanner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,6 +23,7 @@ export default function RootLayout({
       <StoryblokProvider>
         <body className={inter.className}>{children}</body>
         <GoogleAnalytics gaId="G-ZT1LVQ4YHC" />
+        <CookieBanner />
       </StoryblokProvider>
     </html>
   );
