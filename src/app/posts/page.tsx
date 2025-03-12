@@ -5,6 +5,7 @@ import { fetchStories } from "../../../utils/fetchStories";
 import Link from "next/link";
 import { Story } from "../../../utils/types";
 import Image from "next/image";
+import NavBar from "../../../components/NavBar";
 
 export default function PostsPage() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -34,6 +35,7 @@ export default function PostsPage() {
   return (
     <section className="max-w-full">
       {/* Header Section */}
+      <NavBar />
       <div className="bg-gray-900 w-full flex justify-center  py-8 mb-8">
         <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
           <h1 className="text-7xl font-bold text-white uppercase text-center">

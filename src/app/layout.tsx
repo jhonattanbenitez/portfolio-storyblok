@@ -2,7 +2,6 @@ import { Inter } from "next/font/google";
 import type { Metadata } from "next";
 import "./globals.css";
 import StoryblokProvider from "../../components/StoryblokProvider";
-import NavBar from "../../components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,7 +19,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <StoryblokProvider>
-        <NavBar />
         <body className={inter.className}>{children}</body>
       </StoryblokProvider>
     </html>
