@@ -11,7 +11,7 @@ type Params = {
   slug?: string[];
 };
 
-export default async function Page({ params }: Readonly<{ params: Params }>) {
+export default async function Page({ params }: { params: Params }) {
   const { slug } = params;
 
   // Determine if preview mode is enabled
