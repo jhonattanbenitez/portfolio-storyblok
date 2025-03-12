@@ -9,7 +9,11 @@ import rehypeRaw from "rehype-raw";
 import { useEffect, useState } from "react";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import Image from "next/image";
+import Head from "next/head";
+import Script from "next/script";
 import "highlight.js/styles/github-dark.css"; // Predefined theme
+
+import { useParams } from "next/navigation";
 
 type ImageType = {
   filename: string;
@@ -23,6 +27,7 @@ type Blok = {
   image?: ImageType[];
   component: string;
   _editable?: string;
+  first_published_at: string;
 };
 
 type PostProps = {
@@ -45,6 +50,9 @@ const processMarkdown = async (content: string) => {
 const Post: React.FC<PostProps> = ({ blok }) => {
   const [htmlContent, setHtmlContent] = useState("");
 
+  const params = useParams();
+  const slug = params?.slug?.[1];
+
   useEffect(() => {
     if (blok?.content) {
       processMarkdown(blok.content).then((html) => {
@@ -57,41 +65,82 @@ const Post: React.FC<PostProps> = ({ blok }) => {
     return <p>Loading...</p>;
   }
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: blok.title,
+    description: blok.intro,
+    image: blok.image?.length ? blok.image[0].filename : "",
+    datePublished: blok.first_published_at,
+    author: {
+      "@type": "Person",
+      name: "Jhonattan Benitez", // Replace with the author's name
+    },
+  };
+
   return (
-    <article {...storyblokEditable(blok)} className="prose prose-lg max-w-full">
-      {/* Header Section */}
-      <div className="bg-gray-900 w-full flex justify-center py-8">
-        <h1 className="text-7xl font-bold text-white uppercase text-center">
-          {blok.title}
-        </h1>
-      </div>
+    <>
+      <Head>
+        <title>{blok.title}</title>
+        <meta name="description" content={blok.intro} />
+        <meta
+          name="keywords"
+          content={`blog, post, ${blok.title}, ${blok.intro}`}
+        />
+        <meta property="og:title" content={blok.title} />
+        <meta property="og:description" content={blok.intro} />
+        <meta property="og:image" content={blok.image?.[0]?.filename} />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content={blok.title} />
+        <meta name="twitter:description" content={blok.intro} />
+        <meta name="twitter:image" content={blok.image?.[0]?.filename} />
+        <link
+          rel="canonical"
+          href={`https://www.jhonattan.dev/posts/${slug}`}
+        />
+      </Head>
+      <Script
+        id="structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <article
+        {...storyblokEditable(blok)}
+        className="prose prose-lg max-w-full"
+      >
+        {/* Header Section */}
+        <header className="bg-gray-900 w-full flex justify-center py-8">
+          <h1 className="text-7xl font-bold text-white uppercase text-center">
+            {blok.title}
+          </h1>
+        </header>
 
-      {/* Intro Section */}
-      <div className="bg-gray-900">
-        <div className="container mx-auto p-8">
-          <p className="text-xl text-white">{blok.intro}</p>
-        </div>
-      </div>
+        {/* Intro Section */}
+        <section className="bg-gray-900">
+          <div className="container mx-auto p-8">
+            <p className="text-xl text-white">{blok.intro}</p>
+          </div>
+        </section>
 
-      {/* Image Section */}
-      <div className="bg-gray-900 w-full flex justify-center py-8">
-        <div className="relative w-full max-w-6xl h-[60vh] md:h-[70vh] lg:h-[80vh]">
-          {blok.image?.length ? (
-            <Image
-              src={blok.image[0].filename}
-              alt={blok.title}
-              fill
-              sizes="100vw"
-              className="rounded-lg"
-            />
-          ) : null}
-        </div>
-      </div>
+        {/* Image Section */}
+        <section className="bg-gray-900 w-full flex justify-center py-8">
+          <div className="relative w-full max-w-6xl h-[60vh] md:h-[70vh] lg:h-[80vh]">
+            {blok.image?.length ? (
+              <Image
+                src={blok.image[0].filename}
+                alt={`Cover image for ${blok.title}`}
+                fill
+                sizes="100vw"
+                className="rounded-lg"
+              />
+            ) : null}
+          </div>
+        </section>
 
-      {/* Content Section */}
-      <div className="container mx-auto p-8 prose prose-invert">
-        <style>
-          {`
+        {/* Content Section */}
+        <section className="container mx-auto p-8 prose prose-invert">
+          <style>
+            {`
             .hljs {
               background: #1e1e1e; /* Dark background */
               color: #f8f8f2; 
@@ -163,13 +212,14 @@ const Post: React.FC<PostProps> = ({ blok }) => {
               margin: 0.875rem 0 0.4375rem;
             }
           `}
-        </style>
-        <div
-          className="p-4 rounded-lg overflow-x-auto"
-          dangerouslySetInnerHTML={{ __html: htmlContent }}
-        />
-      </div>
-    </article>
+          </style>
+          <div
+            className="p-4 rounded-lg overflow-x-auto"
+            dangerouslySetInnerHTML={{ __html: htmlContent }}
+          />
+        </section>
+      </article>
+    </>
   );
 };
 
