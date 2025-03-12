@@ -3,7 +3,7 @@ import { fetchStory } from "../../../../utils/fetchStory";
 
 type Params = Promise<{ slug?: string[] }>;
 
-export default async function Home({ params }: { params: Params }) {
+export default async function Home({ params }: Readonly<{ params: Params }>) {
   const slug = (await params).slug;
   const pageData = await fetchStory("draft", slug);
 
