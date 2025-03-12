@@ -85,27 +85,29 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
       <h2 className="text-center text-4xl font-bold text-white mb-8 md:mb-12 pt-16">
         My Projects
       </h2>
-      <div className="text-white flex flex-row justify-center items-center gap-2 pb-16">
-        <ProjectTag
-          onClick={handleTagClick}
-          name="all"
-          isSelected={selectedTag === "all"}
-        />
-        <ProjectTag
-          onClick={handleTagClick}
-          name="web"
-          isSelected={selectedTag === "web"}
-        />
-        <ProjectTag
-          onClick={handleTagClick}
-          name="accessibility"
-          isSelected={selectedTag === "accessibility"}
-        />
-        <ProjectTag
-          onClick={handleTagClick}
-          name="ecommerce"
-          isSelected={selectedTag === "ecommerce"}
-        />
+      <div className="text-white flex overflow-x-auto pb-16 px-4 md:justify-center md:flex-wrap md:gap-2">
+        <div className="flex gap-2">
+          <ProjectTag
+            onClick={handleTagClick}
+            name="all"
+            isSelected={selectedTag === "all"}
+          />
+          <ProjectTag
+            onClick={handleTagClick}
+            name="web"
+            isSelected={selectedTag === "web"}
+          />
+          <ProjectTag
+            onClick={handleTagClick}
+            name="accessibility"
+            isSelected={selectedTag === "accessibility"}
+          />
+          <ProjectTag
+            onClick={handleTagClick}
+            name="ecommerce"
+            isSelected={selectedTag === "ecommerce"}
+          />
+        </div>
       </div>
       <ul ref={ref} className="grid md:grid-cols-2 gap-8 md:gap-12 px-4">
         {filteredProjects.map((project, index) => (

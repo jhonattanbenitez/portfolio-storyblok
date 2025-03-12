@@ -37,8 +37,6 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
   const [tab, setTab] = useState<string>("skills");
   const [, startTransition] = useTransition();
 
-  console.log(blok.education[1])
-
   const educationData = blok.education.find((item) => item.id === "education");
   const certificationData = blok.education.find(
     (item) => item.id === "certifications"

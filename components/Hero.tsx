@@ -19,8 +19,6 @@ interface HeroProps {
 }
 
 const Hero: React.FunctionComponent<HeroProps> = ({ blok }) => {
-    const blokList = blok.list
-    blokList.forEach(item => console.log(item.item))
     return (
       <section
         {...storyblokEditable(blok)}
