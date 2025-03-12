@@ -213,7 +213,24 @@ const Post: React.FC<PostProps> = ({ blok }) => {
               font-size: clamp(14px, 2vw, 18px); /* Smallest size for h6 */
               margin: 0.875rem 0 0.4375rem;
             }
-          `}
+            ol {
+              list-style-type: decimal; /* Ensures numbering */
+              padding-left: 1.5rem;
+              margin: 1rem 0;
+              
+            }
+
+            li {
+              margin: 0.5rem 0;
+              padding-left: 0.5rem;
+              position: relative;
+              font-size: 1rem;
+            }
+
+            li::marker {
+                        font-weight: bold;
+            }
+           `}
           </style>
           <div
             className="p-4 rounded-lg overflow-x-auto"
