@@ -21,7 +21,7 @@ export default function RootLayout({
     <html lang="en">
       <StoryblokProvider>
         <body className={inter.className}>{children}</body>
-        <GoogleAnalytics gaId="GTM-MQF8CR8R" />
+        <GoogleAnalytics gaId="G-ZT1LVQ4YHC" />
       </StoryblokProvider>
     </html>
   );
