@@ -7,9 +7,11 @@ export async function generateStaticParams() {
   return [];
 }
 
-type Params = { slug?: string[] };
+type Params = {
+  slug?: string[];
+};
 
-export default async function Page({ params }: { params: Params }) {
+export default async function Page({ params }: Readonly<{ params: Params }>) {
   const { slug } = params;
 
   // Determine if preview mode is enabled
