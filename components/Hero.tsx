@@ -22,7 +22,7 @@ const Hero: React.FunctionComponent<HeroProps> = ({ blok }) => {
     return (
       <section
         {...storyblokEditable(blok)}
-        className="lg:py-16 flex justify-center bg-gray-900 pt-[128px]"
+        className="lg:pt-32 lg:pb-16 flex justify-center bg-gray-900 pt-[128px]"
       >
         <div className="grid grid-cols-1 sm:grid-cols-12">
           <div className="col-span-8 place-self-center text-center sm:text-left justify-self-start">
