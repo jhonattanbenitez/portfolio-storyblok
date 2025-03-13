@@ -230,6 +230,26 @@ const Post: React.FC<PostProps> = ({ blok }) => {
             li::marker {
                         font-weight: bold;
             }
+         
+            .container.prose a {
+              color: #0000EE; 
+              transition: color 0.3s ease, text-decoration 0.3s ease;
+            }
+
+            .container.prose a:hover {
+              color: #ff79c6; /* Pink on hover */
+              text-decoration: underline;
+            }
+
+            .container.prose a:focus {
+              outline: 2px solid #f1fa8c; /* Yellow outline for accessibility */
+              outline-offset: 2px;
+            }
+
+            .container.prose a:active {
+              color: #FF0000; 
+            }
+           
            `}
           </style>
           <div
