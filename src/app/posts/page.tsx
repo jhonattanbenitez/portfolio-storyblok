@@ -50,7 +50,7 @@ export default function PostsPage() {
           {stories.map((story) => (
             <div
               key={story.id}
-              className="border p-4 rounded-lg shadow-lg hover:shadow-xl transition-all duration-300 hover:bg-gray-900 group"
+              className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group"
             >
               <Link href={`/posts/${story.slug}`} className="block">
                 {/* Image */}
@@ -60,7 +60,7 @@ export default function PostsPage() {
                       src={story.content.image[0].filename}
                       alt={story.name}
                       fill
-                      className="object-cover rounded-lg"
+                      className="object-cover rounded-sm"
                     />
                   )}
                 </div>
