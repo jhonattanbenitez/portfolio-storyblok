@@ -18,7 +18,7 @@ const ProjectCard = ({
   previewUrl,
 }: ProjectCardProps) => {
   return (
-    <div className="mb-4">
+    <div className="mb-4 h-full flex flex-col">
       <div
         className="h-52 md:h-72 rounded-t-xl relative group"
         style={{ background: `url(${imgUrl})`, backgroundSize: "cover" }}
@@ -42,9 +42,9 @@ const ProjectCard = ({
           )}
         </div>
       </div>
-      <div className="text-white rounded-b-xl bg-[#181818] p-5">
+      <div className="text-white rounded-b-xl bg-[#181818] p-5 flex-grow flex flex-col">
         <h5 className="font-xl font-semibold mb-3">{title}</h5>
-        <p className="text-[#ADB7BE]">{description}</p>
+        <p className="text-[#ADB7BE] flex-grow">{description}</p>
       </div>
     </div>
   );
