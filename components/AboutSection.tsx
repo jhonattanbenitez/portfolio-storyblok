@@ -48,7 +48,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       title: "Skills",
       id: "skills",
       content: (
-        <ul className="list-disc pl-2">
+        <ul className="list-disc pl-6">
           {blok.skills.map((skill) =>
             skill.content.map((item) => <li key={item._uid}>{item.item}</li>)
           )}
@@ -59,7 +59,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       title: "Education",
       id: "education",
       content: (
-        <ul className="list-disc pl-2">
+        <ul className="list-disc pl-6">
           {educationData?.content.map((edu) => (
             <li key={edu._uid}>{edu.item}</li>
           ))}
@@ -70,7 +70,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       title: "Certifications",
       id: "certifications",
       content: (
-        <ul className="list-disc pl-2">
+        <ul className="list-disc pl-6">
           {certificationData?.content.map((cert) => (
             <li key={cert._uid}>{cert.item}</li>
           ))}
@@ -91,12 +91,15 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       className="text-white bg-gray-900 py-16"
     >
       <div className="md:grid md:grid-cols-2 gap-8 items-center py-8 px-4 xl:gap-16 sm:py-16 xl:px-16">
-        <Image
-          src={blok.image?.[0]?.filename ?? "/default-profile.jpg"}
-          width={500}
-          height={500}
-          alt="about us image"
-        />
+        <div className="md:flex md:justify-center">
+          <Image
+            src={blok.image?.[0]?.filename ?? "/default-profile.jpg"}
+            width={500}
+            height={500}
+            alt="about us image"
+            className="mx-auto"
+          />
+        </div>
         <div className="mt-4 md:mt-0 text-left flex flex-col h-[500px]">
           <h2 className="text-4xl font-bold mb-4">About Me</h2>
           <p className="text-base md:text-lg">{blok.about_me}</p>
