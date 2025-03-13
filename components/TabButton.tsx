@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 const variants = {
   default: { width: 0 },
-  active: { width: "calc(100% - 0.75rem)" },
+  active: { width: "100%" },
 };
 
 type TabButtonProps = {
@@ -13,18 +13,19 @@ type TabButtonProps = {
 };
 
 const TabButton = ({ active, selectTab, children }: TabButtonProps) => {
-  const buttonClasses = active ? "text-white" : "text-[#ADB7BE]";
-
   return (
-    <button onClick={selectTab}>
-      <p className={`mr-3 font-semibold hover:text-white ${buttonClasses}`}>
-        {children}
-      </p>
+    <button
+      onClick={selectTab}
+      className={`relative px-4 py-2 rounded-t-lg transition-colors duration-300 ${
+        active ? "text-white bg-[#2D3748]" : "text-[#ADB7BE] hover:text-white"
+      }`}
+    >
+      <span className="font-semibold">{children}</span>
       <motion.div
         animate={active ? "active" : "default"}
         variants={variants}
-        className="h-1 bg-primary-500 mt-2 mr-3"
-      ></motion.div>
+        className="absolute bottom-0 left-0 h-1 bg-primary-500"
+      />
     </button>
   );
 };
