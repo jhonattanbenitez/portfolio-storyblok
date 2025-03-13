@@ -112,15 +112,15 @@ const Post: React.FC<PostProps> = ({ blok }) => {
       >
         {/* Header Section */}
         <header className="bg-gray-900 w-full flex justify-center pb-8 pt-42">
-          <h1 className="text-7xl font-bold text-white uppercase text-center">
+          <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-white uppercase text-center px-4">
             {blok.title}
           </h1>
         </header>
 
         {/* Intro Section */}
         <section className="bg-gray-900">
-          <div className="container mx-auto p-8">
-            <p className="text-xl text-white">{blok.intro}</p>
+          <div className="container mx-auto p-4">
+            <p className="lg:text-xl text-white">{blok.intro}</p>
           </div>
         </section>
 
@@ -140,7 +140,7 @@ const Post: React.FC<PostProps> = ({ blok }) => {
         </section>
 
         {/* Content Section */}
-        <section className="container mx-auto p-8 prose prose-invert">
+        <section className="container mx-auto prose prose-invert">
           <style>
             {`
             .hljs {
