@@ -15,6 +15,7 @@ import "highlight.js/styles/github-dark.css"; // Predefined theme
 
 import { useParams } from "next/navigation";
 import NavBar from "./NavBar";
+import formatDate from "../utils/formatDate";
 
 type ImageType = {
   filename: string;
@@ -25,6 +26,7 @@ type Blok = {
   title: string;
   intro: string;
   content: string;
+  date: string;
   image?: ImageType[];
   component: string;
   _editable?: string;
@@ -123,6 +125,11 @@ const Post: React.FC<PostProps> = ({ blok }) => {
             <p className="lg:text-xl text-white">{blok.intro}</p>
           </div>
         </section>
+        <div className="bg-gray-900">
+          <div className="container mx-auto p-4 text-white">
+            <p>{formatDate(blok.date)}</p>
+          </div>
+        </div>
 
         {/* Image Section */}
         <section className="bg-gray-900 w-full flex justify-center py-8">

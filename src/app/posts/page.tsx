@@ -6,6 +6,7 @@ import Link from "next/link";
 import { Story } from "../../../utils/types";
 import Image from "next/image";
 import NavBar from "../../../components/NavBar";
+import formatDate from "../../../utils/formatDate";
 
 export default function PostsPage() {
   const [stories, setStories] = useState<Story[]>([]);
@@ -50,9 +51,12 @@ export default function PostsPage() {
           {stories.map((story) => (
             <div
               key={story.id}
-              className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group"
+              className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group flex flex-col h-full"
             >
-              <Link href={`/posts/${story.slug}`} className="block">
+              <Link
+                href={`/posts/${story.slug}`}
+                className="flex flex-col flex-grow"
+              >
                 {/* Image */}
                 <div className="relative h-48 w-full mb-4">
                   {story.content.image?.[0]?.filename && (
@@ -71,9 +75,19 @@ export default function PostsPage() {
                 </h2>
 
                 {/* Intro */}
-                <p className="text-gray-600 text-sm leading-5 group-hover:text-gray-200">
+                <p className="text-gray-600 text-sm mb-2 leading-5 group-hover:text-gray-200">
                   {story.content.intro}
                 </p>
+
+                {/* Spacer to push date to bottom */}
+                <div className="flex-grow"></div>
+
+                {/* Date (Aligned bottom-right using Flexbox) */}
+                <div className="flex justify-end">
+                  <p className="text-gray-500 text-xs group-hover:text-gray-300">
+                    {formatDate(story.content.date)}
+                  </p>
+                </div>
               </Link>
             </div>
           ))}
