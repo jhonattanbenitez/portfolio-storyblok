@@ -26,12 +26,14 @@ export default function PostsPage() {
   }, []);
 
   if (isLoading) {
-    return <p className="text-center text-gray-600">Loading...</p>;
+    return <p className="text-center text-gray-900">Loading...</p>;
   }
 
   if (!stories.length) {
     return <p className="text-red-500 text-center">No posts found</p>;
   }
+
+  
 
   return (
     <section className="max-w-full">
@@ -48,7 +50,7 @@ export default function PostsPage() {
       {/* Cards Grid */}
       <div className="container mx-auto p-4 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {stories.map((story) => (
+          {stories.map((story, index) => (
             <div
               key={story.id}
               className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group flex flex-col h-full"
@@ -61,9 +63,14 @@ export default function PostsPage() {
                 <div className="relative h-48 w-full mb-4">
                   {story.content.image?.[0]?.filename && (
                     <Image
-                      src={story.content.image[0].filename}
+                      src={
+                        story.content.image[0].filename +
+                        "/m/800x450/filters:format(webp):quality(80)/"
+                      }
                       alt={story.name}
-                      fill
+                      width={800}
+                      height={450}
+                      priority={index === 0}
                       className="object-cover rounded-sm"
                     />
                   )}
@@ -75,7 +82,7 @@ export default function PostsPage() {
                 </h2>
 
                 {/* Intro */}
-                <p className="text-gray-600 text-sm mb-2 leading-5 group-hover:text-gray-200">
+                <p className="text-gray-900 text-sm mb-2 leading-5 group-hover:text-gray-200">
                   {story.content.intro}
                 </p>
 
@@ -84,7 +91,7 @@ export default function PostsPage() {
 
                 {/* Date (Aligned bottom-right using Flexbox) */}
                 <div className="flex justify-end">
-                  <p className="text-gray-500 text-xs group-hover:text-gray-300">
+                  <p className="text-gray-900 text-xs group-hover:text-gray-300">
                     {formatDate(story.content.date)}
                   </p>
                 </div>
