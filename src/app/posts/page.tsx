@@ -60,7 +60,7 @@ export default function PostsPage() {
                 className="flex flex-col flex-grow"
               >
                 {/* Image */}
-                <div className="relative h-48 w-full mb-4">
+                <div className="relative w-full mb-4 flex-shrink-0">
                   {story.content.image?.[0]?.filename && (
                     <Image
                       src={
@@ -76,9 +76,9 @@ export default function PostsPage() {
                   )}
                 </div>
 
-                {/* Title */}
-                <h2 className="text-1xl font-semibold mb-2 uppercase group-hover:text-white">
-                  {story.name}
+                {/* Title (Now correctly below the image) */}
+                <h2 className="text-xl font-semibold mb-2 uppercase group-hover:text-white">
+                  {story.content.title}
                 </h2>
 
                 {/* Intro */}
