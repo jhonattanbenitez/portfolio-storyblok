@@ -20,11 +20,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <StoryblokProvider>
-        <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <StoryblokProvider>
+          {children}
+          <CookieBanner />
+        </StoryblokProvider>
         <GoogleAnalytics gaId="G-ZT1LVQ4YHC" />
-        <CookieBanner />
-      </StoryblokProvider>
+      </body>
     </html>
   );
 }
