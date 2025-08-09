@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
+import { useLanguage } from "../contexts/LanguageContext";
 
 const locales = ["en", "es-co"] as const;
 type Lang = (typeof locales)[number];
@@ -33,6 +34,7 @@ export default function LanguageSwitcher() {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
+  const { setLanguage } = useLanguage();
 
   // detecta lang actual desde la ruta
   const current = (() => {
@@ -42,6 +44,11 @@ export default function LanguageSwitcher() {
 
   const go = (next: Lang) => {
     if (next === current) return;
+    
+    // Update the context to match URL language
+    const contextLang = next === "es-co" ? "es" : "en";
+    setLanguage(contextLang);
+    
     const target = replaceLocaleInPath(pathname, next)
       + (search.size ? `?${search.toString()}` : "");
     router.push(target, { scroll: false });

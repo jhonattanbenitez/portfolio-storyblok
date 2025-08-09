@@ -3,6 +3,7 @@ import Image from "next/image";
 import React, { useState, useTransition } from "react";
 import TabButton from "./TabButton";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
+import { useTranslation } from "../hooks/useTranslation";
 
 interface ListItem {
   _uid: string;
@@ -34,6 +35,7 @@ interface AboutSectionProps {
 }
 
 const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<string>("skills");
   const [, startTransition] = useTransition();
 
@@ -45,7 +47,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
   // Dynamically generate TAB_DATA from the blok prop
   const TAB_DATA = [
     {
-      title: "Skills",
+      title: t("about.skills"),
       id: "skills",
       content: (
         <ul className="list-disc pl-6">
@@ -56,7 +58,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       ),
     },
     {
-      title: "Education",
+      title: t("about.education"),
       id: "education",
       content: (
         <ul className="list-disc pl-6">
@@ -67,7 +69,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       ),
     },
     {
-      title: "Certifications",
+      title: t("about.certifications"),
       id: "certifications",
       content: (
         <ul className="list-disc pl-6">
@@ -101,26 +103,26 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
           />
         </div>
         <div className="mt-4 md:mt-0 text-left flex flex-col h-[500px]">
-          <h2 className="text-4xl font-bold mb-4">About Me</h2>
+          <h2 className="text-4xl font-bold mb-4">{t("about.title")}</h2>
           <p className="text-base md:text-lg">{blok.about_me}</p>
           <div className="flex flex-row mt-8">
             <TabButton
               selectTab={() => handleTabChange("skills")}
               active={tab === "skills"}
             >
-              Skills
+              {t("about.skills")}
             </TabButton>
             <TabButton
               selectTab={() => handleTabChange("education")}
               active={tab === "education"}
             >
-              Education
+              {t("about.education")}
             </TabButton>
             <TabButton
               selectTab={() => handleTabChange("certifications")}
               active={tab === "certifications"}
             >
-              Certifications
+              {t("about.certifications")}
             </TabButton>
           </div>
           <div className="mt-8">

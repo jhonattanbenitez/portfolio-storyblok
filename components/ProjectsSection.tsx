@@ -4,6 +4,7 @@ import ProjectCard from "./ProjectCard";
 import ProjectTag from "./ProjectTag";
 import { motion, useInView } from "framer-motion";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
+import { useTranslation } from "../hooks/useTranslation";
 
 interface ImageType {
   id: string;
@@ -46,6 +47,7 @@ interface ProjectsSectionProps {
 }
 
 const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
+  const { t } = useTranslation();
   const [selectedTag, setSelectedTag] = useState("all");
   const handleTagClick = (tag: string) => {
     setSelectedTag(tag);
@@ -83,7 +85,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
       className="relative z-10 pb-16 bg-gray-900"
     >
       <h2 className="text-center text-4xl font-bold text-white mb-8 md:mb-12 pt-16">
-        My Projects
+          {t("projects.title")}
       </h2>
       <div className="text-white flex overflow-x-auto pb-16 px-4 md:justify-center md:flex-wrap md:gap-2">
         <div className="flex gap-2">

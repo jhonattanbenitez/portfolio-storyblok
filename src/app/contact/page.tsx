@@ -1,14 +1,18 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 const ContactForm = () => {
+  const { t, language } = useTranslation(); 
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<null | "sending" | "success" | "error">(
+    null
+  );
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -18,55 +22,88 @@ const ContactForm = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setStatus("Sending...");
+    setStatus("sending");
 
+    // opcional: enviar el idioma actual al API
     const res = await fetch("/api/contact", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData),
+      headers: { "Content-Type": "application/json", "Accept-languageuage": language },
+      body: JSON.stringify({ ...formData, language }),
     });
 
     if (res.ok) {
-      setStatus("Message sent successfully!");
+      setStatus("success");
       setFormData({ name: "", email: "", message: "" });
     } else {
-      setStatus("Failed to send message.");
+      setStatus("error");
     }
   };
 
   return (
     <div className="space-y-6">
-        <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="name"
-          placeholder="Your Name"
-          onChange={handleChange}
-          required
-          className="border p-2 w-full"
-        />
-        <input
-          type="email"
-          name="email"
-          placeholder="Your Email"
-          onChange={handleChange}
-          required
-          className="border p-2 w-full"
-        />
-        <textarea
-          name="message"
-          placeholder="Your Message"
-          onChange={handleChange}
-          required
-          className="border p-2 w-full"
-        ></textarea>
+      <h2 className="text-xl font-semibold">{t("contact.title")}</h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+        <label className="block">
+          <span className="sr-only">{t("contact.name")}</span>
+          <input
+            type="text"
+            name="name"
+            value={formData.name}
+            placeholder={t("contact.name")}
+            onChange={handleChange}
+            required
+            aria-required="true"
+            className="border p-2 w-full"
+          />
+        </label>
+
+        <label className="block">
+          <span className="sr-only">{t("contact.email")}</span>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            placeholder={t("contact.email")}
+            onChange={handleChange}
+            required
+            aria-required="true"
+            className="border p-2 w-full"
+          />
+        </label>
+
+        <label className="block">
+          <span className="sr-only">{t("contact.message")}</span>
+          <textarea
+            name="message"
+            value={formData.message}
+            placeholder={t("contact.message")}
+            onChange={handleChange}
+            required
+            aria-required="true"
+            rows={5}
+            className="border p-2 w-full"
+          />
+        </label>
+
         <button type="submit" className="bg-blue-600 text-white p-2 rounded">
-          Send
+          {status === "sending" ? t("contact.sending") : t("contact.send")}
         </button>
-        {status && <p>{status}</p>}
+
+        {status &&
+          status !== "sending" &&
+          (status === "error" ? (
+            <p role="alert" className="text-red-600">
+              {t("contact.error")}
+            </p>
+          ) : (
+            <p className="text-green-600" aria-live="polite">
+              {t("contact.success")}
+            </p>
+          ))}
       </form>
 
-      {/* Social Links */}
+      {/* Social Links si quieres añadirlos aquí */}
     </div>
   );
 };

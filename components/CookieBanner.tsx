@@ -2,8 +2,10 @@
 
 import { useState, useEffect } from "react";
 import CookieConsent from "react-cookie-consent";
+import { useTranslation } from "../hooks/useTranslation";
 
 export default function CookieBanner() {
+  const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [hasConsent, setHasConsent] = useState<boolean | null>(null);
 
@@ -18,8 +20,8 @@ export default function CookieBanner() {
   return (
     <CookieConsent
       location="bottom"
-      buttonText="Accept"
-      declineButtonText="Decline"
+      buttonText={t("cookieBanner.accept")}
+      declineButtonText={t("cookieBanner.decline")}
       enableDeclineButton
       onAccept={() => {
         localStorage.setItem("cookieConsent", "true");
@@ -41,7 +43,7 @@ export default function CookieBanner() {
         fontSize: "14px",
       }}
     >
-      This website uses cookies to enhance user experience.
+      {t("cookieBanner.description")}
     </CookieConsent>
   );
 }

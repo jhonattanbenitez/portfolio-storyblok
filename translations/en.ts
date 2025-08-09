@@ -15,6 +15,9 @@ export const en = {
   },
   about: {
     title: "About Me",
+    skills: "Skills",
+    education: "Education",
+    certifications: "Certifications",
     description: "I am a passionate front-end developer with experience in creating beautiful and functional web applications.",
   },
   projects: {
@@ -34,5 +37,16 @@ export const en = {
   },
   footer: {
     rights: "All rights reserved.",
+  },
+  cookieBanner: {
+    accept: "Accept",
+    decline: "Decline",
+    description: "This website uses cookies to enhance user experience.",
+  },
+  tags: {
+    all: "All",
+    web: "Web",
+    accessibility: "Accessibility",
+    ecommerce: "Ecommerce",
   },
 } as const;

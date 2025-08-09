@@ -17,17 +17,38 @@ interface LanguageProviderProps {
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<Language>("en");
 
-  // Load language from localStorage on component mount
+  // Load language from URL on component mount
   useEffect(() => {
-    const savedLanguage = localStorage.getItem("preferred-language") as Language;
-    if (savedLanguage && (savedLanguage === "en" || savedLanguage === "es")) {
-      setLanguage(savedLanguage);
-    } else {
-      // Detect browser language as fallback
-      const browserLanguage = navigator.language.toLowerCase();
-      if (browserLanguage.startsWith("es")) {
+    if (typeof window !== "undefined") {
+      const pathname = window.location.pathname;
+      const pathParts = pathname.split("/").filter(Boolean);
+      const urlLanguage = pathParts[0];
+      
+      if (urlLanguage === "es-co" || urlLanguage === "es") {
         setLanguage("es");
+      } else {
+        setLanguage("en");
       }
+    }
+  }, []);
+
+  // Listen for URL changes to sync language
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handlePopState = () => {
+        const pathname = window.location.pathname;
+        const pathParts = pathname.split("/").filter(Boolean);
+        const urlLanguage = pathParts[0];
+        
+        if (urlLanguage === "es-co" || urlLanguage === "es") {
+          setLanguage("es");
+        } else {
+          setLanguage("en");
+        }
+      };
+
+      window.addEventListener("popstate", handlePopState);
+      return () => window.removeEventListener("popstate", handlePopState);
     }
   }, []);
 
