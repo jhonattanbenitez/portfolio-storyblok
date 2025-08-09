@@ -1,33 +1,69 @@
 "use client";
 import React from "react";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useRouter, usePathname, useSearchParams } from "next/navigation";
 
-const LanguageSwitcher: React.FC = () => {
-  const { language, setLanguage } = useLanguage();
+const locales = ["en", "es-co"] as const;
+type Lang = (typeof locales)[number];
 
-  const handleLanguageChange = (newLanguage: "es" | "en") => {
-    setLanguage(newLanguage);
+function replaceLocaleInPath(pathname: string, next: Lang) {
+  const parts = pathname.split("/").filter(Boolean);
+  
+  // Check if first part is a language
+  const mightBeLang = parts[0];
+  const isLang = locales.includes(mightBeLang as Lang);
+  
+  if (next === "en") {
+    // For English, remove language prefix entirely
+    if (isLang) {
+      parts.shift(); // Remove language part
+    }
+    return parts.length === 0 ? "/" : "/" + parts.join("/");
+  } else {
+    // For non-English, add/replace language prefix
+    if (isLang) {
+      parts[0] = next;
+    } else {
+      parts.unshift(next);
+    }
+    return "/" + parts.join("/");
+  }
+}
+
+export default function LanguageSwitcher() {
+  const router = useRouter();
+  const pathname = usePathname();
+  const search = useSearchParams();
+
+  // detecta lang actual desde la ruta
+  const current = (() => {
+    const first = pathname.split("/").filter(Boolean)[0];
+    return (locales.includes(first as Lang) ? (first as Lang) : "en");
+  })();
+
+  const go = (next: Lang) => {
+    if (next === current) return;
+    const target = replaceLocaleInPath(pathname, next)
+      + (search.size ? `?${search.toString()}` : "");
+    router.push(target, { scroll: false });
   };
 
   return (
     <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1">
       <button
-        onClick={() => handleLanguageChange("en")}
+        onClick={() => go("en")}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
-          language === "en"
-            ? "bg-blue-600 text-white shadow-md"
-            : "text-gray-300 hover:text-white hover:bg-gray-700"
+          current === "en" ? "bg-blue-600 text-white shadow-md"
+                           : "text-gray-300 hover:text-white hover:bg-gray-700"
         }`}
         aria-label="Switch to English"
       >
         EN
       </button>
       <button
-        onClick={() => handleLanguageChange("es")}
+        onClick={() => go("es-co")}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
-          language === "es"
-            ? "bg-blue-600 text-white shadow-md"
-            : "text-gray-300 hover:text-white hover:bg-gray-700"
+          current === "es-co" ? "bg-blue-600 text-white shadow-md"
+                              : "text-gray-300 hover:text-white hover:bg-gray-700"
         }`}
         aria-label="Switch to Spanish"
       >
@@ -35,6 +71,4 @@ const LanguageSwitcher: React.FC = () => {
       </button>
     </div>
   );
-};
-
-export default LanguageSwitcher;
+}

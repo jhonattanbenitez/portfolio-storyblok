@@ -7,15 +7,21 @@ import { Story } from "../../../utils/types";
 import Image from "next/image";
 import NavBar from "../../../components/NavBar";
 import formatDate from "../../../utils/formatDate";
+import { useTranslation } from "../../../hooks/useTranslation";
 
 export default function PostsPage() {
   const [stories, setStories] = useState<Story[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { t, language } = useTranslation();
 
   useEffect(() => {
     async function getStories() {
       setIsLoading(true);
-      const storiesData = await fetchStories("published");
+      const storyblokLang = language === "es" ? "es-co" : "en";
+      const storiesData = await fetchStories({ 
+        version: "published", 
+        language: storyblokLang as "en" | "es"
+      });
       if (storiesData) {
         setStories(storiesData.stories);
       }
@@ -23,7 +29,7 @@ export default function PostsPage() {
     }
 
     getStories();
-  }, []);
+  }, [language]);
 
   if (isLoading) {
     return <p className="text-center text-gray-900">Loading...</p>;
@@ -42,7 +48,7 @@ export default function PostsPage() {
       <div className="bg-gray-900 w-full flex justify-center  py-32 mb-8 sm:py-48 lg:py-16">
         <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
           <h1 className="text-7xl font-bold text-white uppercase text-center">
-            Blog
+            {t("nav.blog")}
           </h1>
         </div>
       </div>
