@@ -6,7 +6,7 @@ export const fetchStories = async (
   const token = process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
 
   if (!token) {
-    console.error("❌ Storyblok API Token is missing");
+    console.error("Storyblok API Token is missing");
     return null;
   }
 
@@ -26,7 +26,7 @@ export const fetchStories = async (
     const data = await response.json();
     return data as StoriesResponse;
   } catch (error) {
-    console.error("❌ Error fetching stories:", error);
+    console.error("Error fetching stories:", error);
     return null;
   }
 };

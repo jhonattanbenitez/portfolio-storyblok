@@ -4,33 +4,36 @@ import React, { useState, FC } from "react";
 import NavLink from "./NavLink";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "./MenuOverlay";
+import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslation } from "../hooks/useTranslation";
 
 export interface NavLink {
   title: string;
   href: string;
 }
 
-const navLinks: NavLink[] = [
-  {
-    title: "About",
-    href: "/#About",
-  },
-  {
-    title: "Projects",
-    href: "/#projects",
-  },
-  {
-    title: "Blog",
-    href: "/posts",
-  },
-  {
-    title: "Contact",
-    href: "/#contact",
-  },
-];
-
 const NavBar: FC = () => {
   const [navbarOpen, setNavbarOpen] = useState<boolean>(false);
+  const { t } = useTranslation();
+
+  const navLinks: NavLink[] = [
+    {
+      title: t("nav.about"),
+      href: "/#About",
+    },
+    {
+      title: t("nav.projects"),
+      href: "/#projects",
+    },
+    {
+      title: t("nav.blog"),
+      href: "/posts",
+    },
+    {
+      title: t("nav.contact"),
+      href: "/#contact",
+    },
+  ];
 
   const toggleNavbar = () => {
     setNavbarOpen(!navbarOpen);
@@ -68,11 +71,14 @@ const NavBar: FC = () => {
         </div>
         <div className="menu hidden md:block md:w-auto" id="navbar">
           <ul className="flex p-4 md:p-0 md:flex-row md:space-x-8 mt-0">
-            {navLinks.map((link, index) => (
-              <li key={index}>
+            {navLinks.map((link) => (
+              <li key={link.href}>
                 <NavLink href={link.href} title={link.title} />
               </li>
             ))}
+            <li className="flex items-center">
+              <LanguageSwitcher />
+            </li>
           </ul>
         </div>
       </div>

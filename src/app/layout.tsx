@@ -4,6 +4,7 @@ import "./globals.css";
 import StoryblokProvider from "../../components/StoryblokProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import CookieBanner from "../../components/CookieBanner";
+import { LanguageProvider } from "../../contexts/LanguageContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -21,10 +22,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <StoryblokProvider>
-          {children}
-          <CookieBanner />
-        </StoryblokProvider>
+        <LanguageProvider>
+          <StoryblokProvider>
+            {children}
+            <CookieBanner />
+          </StoryblokProvider>
+        </LanguageProvider>
         <GoogleAnalytics gaId="G-ZT1LVQ4YHC" />
       </body>
     </html>
