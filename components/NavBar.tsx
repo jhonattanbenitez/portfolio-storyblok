@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState, FC } from "react";
+import React, { useState, FC, Suspense } from "react";
 import NavLink from "./NavLink";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "./MenuOverlay";
@@ -77,7 +77,9 @@ const NavBar: FC = () => {
               </li>
             ))}
             <li className="flex items-center">
+              <Suspense fallback={null}>
               <LanguageSwitcher />
+              </Suspense>
             </li>
           </ul>
         </div>
