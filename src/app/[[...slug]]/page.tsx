@@ -11,5 +11,9 @@ export default async function Home({ params }: { params: Params }) {
   const slug = (await params).slug;
   const pageData = await fetchStory("published", slug);
 
-  return <StoryblokStory story={pageData?.story} />;
+  if (!pageData?.story) {
+    return <div>404 - Page not found</div>;
+  }
+
+  return <StoryblokStory story={pageData.story} />;
 }
