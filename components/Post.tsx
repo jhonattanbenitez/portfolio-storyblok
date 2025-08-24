@@ -4,11 +4,13 @@ import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
 import "highlight.js/styles/github-dark.css";
+import "./post-styles.css";
 
 import { useParams } from "next/navigation";
 import NavBar from "./NavBar";
 import formatDate from "../utils/formatDate";
-import { useMarkdown } from "../hooks/useMarkdown"; 
+import { useMarkdown } from "../hooks/useMarkdown";
+
 type ImageType = {
   filename: string;
 };
@@ -34,15 +36,23 @@ const Post: React.FC<PostProps> = ({ blok }) => {
   const slug = params?.slug?.[1];
 
   // Use the custom hook to process both content and intro
-  const { html: contentHtml, isLoading: contentLoading, error: contentError } = useMarkdown(blok?.content);
-  const { html: introHtml, isLoading: introLoading, error: introError } = useMarkdown(blok?.intro);
+  const {
+    html: contentHtml,
+    isLoading: contentLoading,
+    error: contentError,
+  } = useMarkdown(blok?.content);
+  const {
+    html: introHtml,
+    isLoading: introLoading,
+    error: introError,
+  } = useMarkdown(blok?.intro);
 
   const isLoading = contentLoading || introLoading;
   const error = contentError || introError;
 
   if (!blok) {
     return <p>Loading...</p>;
-  } 
+  }
 
   if (isLoading) {
     return <p>Loading content...</p>;
@@ -134,119 +144,8 @@ const Post: React.FC<PostProps> = ({ blok }) => {
 
         {/* Content Section */}
         <section className="container mx-auto prose prose-invert">
-          <style>
-            {`
-            .hljs {
-              background: #1e1e1e; /* Dark background */
-              color: #f8f8f2; 
-              padding: 1rem;
-              border-radius: 0.5rem;
-              margin: 1rem 0;
-            }
-            .hljs-keyword {
-              color: #ff79c6; /* Pink for keywords */
-            }
-            .hljs-string {
-              color: #f1fa8c; /* Yellow for strings */
-            }
-            .hljs-comment {
-              color: #6272a4; /* Gray for comments */
-            }
-            .hljs-title {
-              color: #50fa7b; /* Green for titles */
-            }
-            .hljs-number {
-              color: #bd93f9; /* Purple for numbers */
-            }
-            hr {
-              border: 1px solid #4a5568; /* Gray border */
-              margin: 2rem 0;
-            }
-            p {
-              margin: 1rem 0;
-            }
-            table {
-              width: 100%;
-              border-collapse: separate;
-              margin: 1rem 0;
-            }
-            th, td {
-              padding: 1rem; /* Add padding to cells */
-              border: 1px solid #fafafa; /* Gray border */
-              border-radius: 0.5rem; /* Rounded corners */
-            }
-            th {
-              background-color: #2d3748; /* Dark gray background for headers */
-              color: #fff; /* White text for headers */
-              font-weight: bold;
-            }
-            td {
-              background-color: #fafafa; /* Darker gray background for cells */
-              color: #000; /* Light gray text for cells */
-            }
-
-            /* Heading Styles */
-            h2 {
-              font-size: clamp(22px, 3.4vw, 28px); /* Custom size for h2 */
-              margin: 1.75rem 0 0.875rem;
-            }
-            h3 {
-              font-size: clamp(20px, 3vw, 24px); /* Slightly smaller than h2 */
-              margin: 1.5rem 0 0.75rem;
-            }
-            h4 {
-              font-size: clamp(18px, 2.6vw, 22px); /* Smaller than h3 */
-              margin: 1.25rem 0 0.625rem;
-            }
-            h5 {
-              font-size: clamp(16px, 2.2vw, 20px); /* Smaller than h4 */
-              margin: 1rem 0 0.5rem;
-            }
-            h6 {
-              font-size: clamp(14px, 2vw, 18px); /* Smallest size for h6 */
-              margin: 0.875rem 0 0.4375rem;
-            }
-            ol {
-              list-style-type: decimal; /* Ensures numbering */
-              padding-left: 1.5rem;
-              margin: 1rem 0;
-              
-            }
-
-            li {
-              margin: 0.5rem 0;
-              padding-left: 0.5rem;
-              position: relative;
-              font-size: 1rem;
-            }
-
-            li::marker {
-                        font-weight: bold;
-            }
-         
-            .container.prose a {
-              color: #0000EE; 
-              transition: color 0.3s ease, text-decoration 0.3s ease;
-            }
-
-            .container.prose a:hover {
-              color: #ff79c6; /* Pink on hover */
-              text-decoration: underline;
-            }
-
-            .container.prose a:focus {
-              outline: 2px solid #f1fa8c; /* Yellow outline for accessibility */
-              outline-offset: 2px;
-            }
-
-            .container.prose a:active {
-              color: #FF0000; 
-            }
-           
-           `}
-          </style>
           <div
-            className="p-4 rounded-lg overflow-x-auto"
+            className="p-4 rounded-lg overflow-x-auto content"
             dangerouslySetInnerHTML={{ __html: contentHtml || "" }}
           />
         </section>
