@@ -7,14 +7,21 @@ import { useMarkdown } from "../hooks/useMarkdown";
 interface StoryCardProps {
   story: Story;
   index: number;
+  urlPrefix?: string; 
 }
 
-const StoryCard: React.FC<StoryCardProps> = ({ story, index }) => {
+const StoryCard: React.FC<StoryCardProps> = ({
+  story,
+  index,
+  urlPrefix,
+}) => {
   const { html: introHtml } = useMarkdown(story.content.intro);
-
   return (
     <div className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group flex flex-col h-full">
-      <Link href={`/posts/${story.slug}`} className="flex flex-col flex-grow">
+      <Link
+        href={`${urlPrefix}/posts/${story.slug}`}
+        className="flex flex-col flex-grow"
+      >
         {/* Image */}
         <div className="relative w-full mb-4 flex-shrink-0">
           {story.content.image?.[0]?.filename && (
@@ -41,7 +48,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index }) => {
         <div
           className="text-gray-900 text-sm mb-2 leading-5 group-hover:text-gray-200"
           dangerouslySetInnerHTML={{
-            __html: introHtml
+            __html: introHtml || story.content.intro,
           }}
         />
 

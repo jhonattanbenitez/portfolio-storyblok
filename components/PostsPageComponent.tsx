@@ -20,6 +20,8 @@ export default function PostsPageComponent() {
     if (first === "es-co" || first === "es") return "es-co";
     return "en";
   })();
+  
+  const urlPrefix = urlLang === "es-co" ? "/es-co" : "";
 
   useEffect(() => {
     async function getStories() {
@@ -82,7 +84,7 @@ export default function PostsPageComponent() {
         <div className="container mx-auto p-4 bg-white">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {stories.map((story, index) => (
-              <StoryCard key={story.id} story={story} index={index} />
+              <StoryCard key={story.id} story={story} index={index} urlPrefix={urlPrefix}/>
             ))}
           </div>
         </div>

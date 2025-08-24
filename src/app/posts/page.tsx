@@ -1,5 +1,5 @@
 import PostsPageComponent from "../../../components/PostsPageComponent";
 
-export default function PostsPageES() {
+export default function PostsPage() {
   return <PostsPageComponent />;
 }
