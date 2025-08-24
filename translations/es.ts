@@ -8,7 +8,8 @@ export const es = {
   hero: {
     title: "Hola, soy",
     subtitle: "Desarrollador Front-End",
-    description: "Me especializo en crear sitios web y aplicaciones web usando tecnologías modernas con un enfoque de accesibilidad primero.",
+    description:
+      "Me especializo en crear sitios web y aplicaciones web usando tecnologías modernas con un enfoque de accesibilidad primero.",
     contactButton: "Contáctame",
     downloadCV: "Descargar CV",
     imageAlt: "Foto de perfil de Jhonattan Benitez",
@@ -18,7 +19,8 @@ export const es = {
     skills: "Habilidades",
     education: "Educación",
     certifications: "Certificaciones",
-    description: "Soy un desarrollador front-end apasionado con experiencia en crear aplicaciones web hermosas y funcionales.",
+    description:
+      "Soy un desarrollador front-end apasionado con experiencia en crear aplicaciones web hermosas y funcionales.",
   },
   projects: {
     title: "Mis Proyectos",
@@ -41,12 +43,22 @@ export const es = {
   cookieBanner: {
     accept: "Aceptar",
     decline: "Rechazar",
-    description: "Este sitio web utiliza cookies para mejorar la experiencia del usuario.",
+    description:
+      "Este sitio web utiliza cookies para mejorar la experiencia del usuario.",
   },
   tags: {
     all: "Todos",
     web: "Web",
     accessibility: "Accesibilidad",
     ecommerce: "Ecommerce",
+  },
+  postHeader: {
+    blog: "Blog",
+  },
+  common: {
+    loading: "Cargando...",
+  },
+  posts: {
+    noPosts: "No hay publicaciones",
   },
 } as const;

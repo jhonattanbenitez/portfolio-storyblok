@@ -1,22 +1,14 @@
 "use client";
-import { unified } from "unified";
-import remarkParse from "remark-parse";
-import remarkGfm from "remark-gfm";
-import remarkRehype from "remark-rehype";
-import rehypeStringify from "rehype-stringify";
-import rehypeHighlight from "rehype-highlight";
-import rehypeRaw from "rehype-raw";
-import { useEffect, useState } from "react";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import Image from "next/image";
 import Head from "next/head";
 import Script from "next/script";
-import "highlight.js/styles/github-dark.css"; // Predefined theme
+import "highlight.js/styles/github-dark.css";
 
 import { useParams } from "next/navigation";
 import NavBar from "./NavBar";
 import formatDate from "../utils/formatDate";
-
+import { useMarkdown } from "../hooks/useMarkdown"; 
 type ImageType = {
   filename: string;
 };
@@ -37,35 +29,26 @@ type PostProps = {
   blok?: Blok;
 };
 
-const processMarkdown = async (content: string) => {
-  const result = await unified()
-    .use(remarkParse)
-    .use(remarkGfm)
-    .use(remarkRehype, { allowDangerousHtml: true })
-    .use(rehypeRaw)
-    .use(rehypeHighlight) // Syntax highlighting
-    .use(rehypeStringify)
-    .process(content);
-
-  return result.toString();
-};
-
 const Post: React.FC<PostProps> = ({ blok }) => {
-  const [htmlContent, setHtmlContent] = useState("");
-
   const params = useParams();
   const slug = params?.slug?.[1];
 
-  useEffect(() => {
-    if (blok?.content) {
-      processMarkdown(blok.content).then((html) => {
-        setHtmlContent(html);
-      });
-    }
-  }, [blok]);
+  // Use the custom hook to process both content and intro
+  const { html: contentHtml, isLoading: contentLoading, error: contentError } = useMarkdown(blok?.content);
+  const { html: introHtml, isLoading: introLoading, error: introError } = useMarkdown(blok?.intro);
+
+  const isLoading = contentLoading || introLoading;
+  const error = contentError || introError;
 
   if (!blok) {
     return <p>Loading...</p>;
+  } 
+
+  if (isLoading) {
+    return <p>Loading content...</p>;
+  }
+  if (error) {
+    return <p className="text-red-500">Error loading content: {error}</p>;
   }
 
   const structuredData = {
@@ -77,7 +60,7 @@ const Post: React.FC<PostProps> = ({ blok }) => {
     datePublished: blok.first_published_at,
     author: {
       "@type": "Person",
-      name: "Jhonattan Benitez", // Replace with the author's name
+      name: "Jhonattan Benitez",
     },
   };
 
@@ -122,7 +105,10 @@ const Post: React.FC<PostProps> = ({ blok }) => {
         {/* Intro Section */}
         <section className="bg-gray-900">
           <div className="container mx-auto p-4">
-            <p className="lg:text-xl text-white">{blok.intro}</p>
+            <div
+              className="lg:text-xl text-white"
+              dangerouslySetInnerHTML={{ __html: introHtml || "" }}
+            />
           </div>
         </section>
         <div className="bg-gray-900">
@@ -261,7 +247,7 @@ const Post: React.FC<PostProps> = ({ blok }) => {
           </style>
           <div
             className="p-4 rounded-lg overflow-x-auto"
-            dangerouslySetInnerHTML={{ __html: htmlContent }}
+            dangerouslySetInnerHTML={{ __html: contentHtml || "" }}
           />
         </section>
       </article>

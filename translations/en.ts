@@ -8,7 +8,8 @@ export const en = {
   hero: {
     title: "Hello, I'm ",
     subtitle: "Front-End Developer",
-    description: "I specialize in building websites and web applications using modern technologies with an accessibility-first approach.",
+    description:
+      "I specialize in building websites and web applications using modern technologies with an accessibility-first approach.",
     contactButton: "Get In Touch",
     downloadCV: "Download CV",
     imageAlt: "Jhonattan Benitez profile picture",
@@ -18,7 +19,8 @@ export const en = {
     skills: "Skills",
     education: "Education",
     certifications: "Certifications",
-    description: "I am a passionate front-end developer with experience in creating beautiful and functional web applications.",
+    description:
+      "I am a passionate front-end developer with experience in creating beautiful and functional web applications.",
   },
   projects: {
     title: "My Projects",
@@ -49,4 +51,14 @@ export const en = {
     accessibility: "Accessibility",
     ecommerce: "Ecommerce",
   },
+  postHeader: {
+    blog: "Blog",
+  },
+  common: {
+    loading: "Loading...",
+  },
+  posts: {
+    noPosts: "No posts found", 
+  }
+
 } as const;
