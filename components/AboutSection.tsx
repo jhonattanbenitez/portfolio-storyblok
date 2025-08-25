@@ -101,65 +101,95 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       className="bg-background text-foreground py-16"
       aria-label={t("about.sectionLabel") ?? "About"}
     >
-      <div className="md:grid md:grid-cols-2 gap-8 items-center py-8 px-4 xl:gap-16 sm:py-16 xl:px-16">
-        <div className="md:flex md:justify-center">
-          <Image
-            src={blok.image?.[0]?.filename ?? "/default-profile.jpg"}
-            width={500}
-            height={500}
-            alt="about us image"
-            className="mx-auto rounded-lg shadow-lg"
-          />
-        </div>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="md:grid md:grid-cols-2 gap-8 items-start py-8 xl:gap-16">
+          {/* Image Section */}
+          <div className="md:flex md:justify-center">
+            <div className="relative w-full max-w-md mx-auto">
+              <Image
+                src={blok.image?.[0]?.filename ?? "/default-profile.jpg"}
+                width={500}
+                height={500}
+                alt="about us image"
+                className="w-full h-auto rounded-lg shadow-lg"
+              />
+            </div>
+          </div>
 
-        <div className="mt-4 md:mt-0 text-left flex flex-col h-[500px]">
-          <h2 className="text-4xl font-bold mb-4">{t("about.title")}</h2>
-          <p className="text-base md:text-lg mb-8 text-foreground/80">
-            {blok.about_me}
-          </p>
-
-          {/* Tab Container */}
-          <div className="flex-1 flex flex-col">
-            {/* Tab Navigation */}
-            <div className="flex flex-row border-b border-border">
-              <TabButton
-                selectTab={() => handleTabChange("skills")}
-                active={tab === "skills"}
-                role="tab"
-                aria-controls="tabpanel-skills"
-                id="tab-skills"
-              >
-                {t("about.skills")}
-              </TabButton>
-              <TabButton
-                selectTab={() => handleTabChange("education")}
-                active={tab === "education"}
-                role="tab"
-                aria-controls="tabpanel-education"
-                id="tab-education"
-              >
-                {t("about.education")}
-              </TabButton>
-              <TabButton
-                selectTab={() => handleTabChange("certifications")}
-                active={tab === "certifications"}
-                role="tab"
-                aria-controls="tabpanel-certifications"
-                id="tab-certifications"
-              >
-                {t("about.certifications")}
-              </TabButton>
+          {/* Content Section */}
+          <div className="mt-8 md:mt-0 flex flex-col min-h-[500px]">
+            <div className="mb-8">
+              <h2 className="text-3xl md:text-4xl font-bold mb-4">
+                {t("about.title")}
+              </h2>
+              <p className="text-base md:text-lg text-foreground/80 leading-relaxed">
+                {blok.about_me}
+              </p>
             </div>
 
-            {/* Tab Content */}
-            <div
-              className="flex-1 bg-background border-l border-r border-b border-border rounded-b-lg p-6 shadow-sm"
-              role="tabpanel"
-              id={`tabpanel-${tab}`}
-              aria-labelledby={`tab-${tab}`}
-            >
-              <div className="h-full overflow-y-auto">
-                {TAB_DATA.find((t) => t.id === tab)?.content}
+            {/* Tab Container */}
+            <div className="flex-1 flex flex-col">
+              {/* Tab Navigation */}
+              <div className="relative">
+                <div
+                  className="
+                    flex w-full overflow-x-auto 
+                    border-b border-border
+                    scrollbar-hide
+                    [&::-webkit-scrollbar]:hidden
+                    [-ms-overflow-style:none]
+                    [scrollbar-width:none]
+                  "
+                  role="tablist"
+                  aria-label={t("about.tabsLabel") ?? "About tabs"}
+                >
+                  <TabButton
+                    selectTab={() => handleTabChange("skills")}
+                    active={tab === "skills"}
+                    role="tab"
+                    aria-controls="tabpanel-skills"
+                    id="tab-skills"
+                  >
+                    {t("about.skills")}
+                  </TabButton>
+                  <TabButton
+                    selectTab={() => handleTabChange("education")}
+                    active={tab === "education"}
+                    role="tab"
+                    aria-controls="tabpanel-education"
+                    id="tab-education"
+                  >
+                    {t("about.education")}
+                  </TabButton>
+                  <TabButton
+                    selectTab={() => handleTabChange("certifications")}
+                    active={tab === "certifications"}
+                    role="tab"
+                    aria-controls="tabpanel-certifications"
+                    id="tab-certifications"
+                  >
+                    {t("about.certifications")}
+                  </TabButton>
+                </div>
+              </div>
+
+              {/* Tab Content */}
+              <div
+                className="
+                  flex-1 bg-background 
+                  border-l border-r border-b border-border 
+                  rounded-b-lg p-6 shadow-sm
+                  min-h-[300px]
+                "
+                role="tabpanel"
+                id={`tabpanel-${tab}`}
+                aria-labelledby={`tab-${tab}`}
+              >
+                <div className="h-full">
+                  <div className="max-h-[400px] overflow-y-auto pr-2">
+                    {TAB_DATA.find((t) => t.id === tab)?.content}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
