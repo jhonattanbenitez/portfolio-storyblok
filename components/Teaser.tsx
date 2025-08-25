@@ -19,12 +19,12 @@ const Teaser: React.FunctionComponent<TeaserProps> = ({ blok }) => {
       <div className="relative isolate px-6 pt-14 lg:px-8">
         <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
           <div className="text-center">
-            <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-7xl">
+            <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-7xl text-gray-900 dark:text-white">
               {blok.headline}
             </h1>
-            <h2 className="fixed right-4 bottom-2 text-2xl sm:text-4xl">
+            <h2 className="fixed right-4 bottom-2 text-2xl sm:text-4xl text-gray-700 dark:text-gray-300">
               <span className="text-xl sm:text-2xl">by </span>
-              <Link href="https://focusreactive.com" className="underline">
+              <Link href="https://focusreactive.com" className="underline hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 FocusReactive
               </Link>
             </h2>

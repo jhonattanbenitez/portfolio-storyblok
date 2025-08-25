@@ -1,3 +1,4 @@
+"use client";
 import Link from "next/link";
 import Image from "next/image";
 import { Story } from "../utils/types";
@@ -7,23 +8,30 @@ import { useMarkdown } from "../hooks/useMarkdown";
 interface StoryCardProps {
   story: Story;
   index: number;
-  urlPrefix?: string; 
+  urlPrefix?: string;
 }
 
-const StoryCard: React.FC<StoryCardProps> = ({
-  story,
-  index,
-  urlPrefix,
-}) => {
+const StoryCard: React.FC<StoryCardProps> = ({ story, index, urlPrefix }) => {
   const { html: introHtml } = useMarkdown(story.content.intro);
+
+  // normaliza prefijo para evitar // en la URL
+  const prefix = (urlPrefix ?? "").replace(/\/$/, "");
+
   return (
-    <div className="p-4 rounded-sm shadow-lg hover:shadow-xl transition-all duration-300 bg-gray-100 hover:bg-gray-900 group flex flex-col h-full">
+    <div
+      className="
+        group flex h-full flex-col rounded-sm border border-border
+        bg-card text-card-foreground
+        shadow-sm transition-all duration-300
+        hover:shadow-lg hover:ring-1 hover:ring-ring
+      "
+    >
       <Link
-        href={`${urlPrefix}/posts/${story.slug}`}
+        href={`${prefix}/posts/${story.slug}`}
         className="flex flex-col flex-grow"
+        aria-label={story.content.title}
       >
-        {/* Image */}
-        <div className="relative w-full mb-4 flex-shrink-0">
+        <div className="relative w-full mb-4 flex-shrink-0 h-auto">
           {story.content.image?.[0]?.filename && (
             <Image
               src={
@@ -35,29 +43,44 @@ const StoryCard: React.FC<StoryCardProps> = ({
               height={450}
               priority={index === 0}
               className="object-cover rounded-sm"
+              sizes="(min-width: 768px) 50vw, 100vw"
             />
           )}
         </div>
-
-        {/* Title */}
-        <h2 className="text-xl font-semibold mb-2 uppercase group-hover:text-white">
+        {/* Title */}          
+        <h2
+          className="
+            !m-4 !text-lg font-semibold uppercase
+            transition-colors
+            group-hover:text-foreground
+          "
+        >
           {story.content.title}
         </h2>
 
         {/* Intro */}
         <div
-          className="text-gray-900 text-sm mb-2 leading-5 group-hover:text-gray-200"
+          className="
+            m-4 text-sm leading-5
+            text-muted-foreground transition-colors
+            group-hover:text-foreground
+          "
           dangerouslySetInnerHTML={{
             __html: introHtml || story.content.intro,
           }}
         />
 
-        {/* Spacer to push date to bottom */}
-        <div className="flex-grow"></div>
+        {/* Spacer */}
+        <div className="flex-grow" />
 
-        {/* Date */}
         <div className="flex justify-end">
-          <p className="text-gray-900 text-xs group-hover:text-gray-300">
+          <p
+            className="
+              text-xs text-muted-foreground
+              transition-colors group-hover:text-foreground
+              !m-4
+            "
+          >
             {formatDate(story.content.date)}
           </p>
         </div>

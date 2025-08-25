@@ -1,6 +1,8 @@
+"use client";
 import React from "react";
 import { CodeBracketIcon, EyeIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import Image from "next/image";
 
 type ProjectCardProps = {
   imgUrl: string;
@@ -17,34 +19,81 @@ const ProjectCard = ({
   gitUrl,
   previewUrl,
 }: ProjectCardProps) => {
+
   return (
     <div className="mb-4 h-full flex flex-col">
-      <div
-        className="h-52 md:h-72 rounded-t-xl relative group"
-        style={{ background: `url(${imgUrl})`, backgroundSize: "cover" }}
-      >
-        <div className="overlay items-center justify-center absolute top-0 left-0 w-full h-full bg-[#1818188d] hidden group-hover:flex group-hover:bg-opacity-50 transition-all duration-300">
+      {/* Image + overlay */}
+      <div className="relative h-52 md:h-72 rounded-t-xl overflow-hidden group">
+        <Image
+          src={imgUrl || "/default-project.png"}
+          alt={title}
+          fill
+          className="object-cover"
+          sizes="(min-width: 768px) 50vw, 100vw"
+        />
+
+        <div
+          className="
+      absolute inset-0 flex items-center justify-center
+      opacity-0 group-hover:opacity-100 transition-opacity duration-300
+      [background:var(--overlay,rgba(0,0,0,0.60))]
+      text-foreground
+    "
+          aria-hidden="true"
+        >
           {gitUrl && (
             <Link
               href={gitUrl}
-              className="h-14 w-14 border-2 relative mr-2 rounded-full border-[#ADB7BE] hover:border-white group/link"
+              className="
+          grid place-items-center h-14 w-14 mr-2 rounded-full
+          border border-foreground/60 hover:border-foreground
+          text-inherit hover:text-foreground
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+          transition
+        "
+              aria-label="View source code"
+              target={/^https?:\/\//i.test(gitUrl) ? "_blank" : undefined}
+              rel={
+                /^https?:\/\//i.test(gitUrl) ? "noopener noreferrer" : undefined
+              }
             >
-              <CodeBracketIcon className="h-10 w-10 text-[#ADB7BE] group-hover/link:text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
+              <CodeBracketIcon className="h-8 w-8" />
             </Link>
           )}
+
           {previewUrl && (
             <Link
               href={previewUrl}
-              className="h-14 w-14 border-2 relative rounded-full border-[#ADB7BE] hover:border-white group/link"
+              className="
+          grid place-items-center h-14 w-14 rounded-full
+          border border-foreground/60 hover:border-foreground
+          text-inherit hover:text-foreground
+          focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+          transition
+        "
+              aria-label="Open live preview"
+              target={/^https?:\/\//i.test(previewUrl) ? "_blank" : undefined}
+              rel={
+                /^https?:\/\//i.test(previewUrl)
+                  ? "noopener noreferrer"
+                  : undefined
+              }
             >
-              <EyeIcon className="h-10 w-10 text-[#ADB7BE] group-hover/link:text-white absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 cursor-pointer" />
+              <EyeIcon className="h-8 w-8" />
             </Link>
           )}
         </div>
       </div>
-      <div className="text-white rounded-b-xl bg-[#181818] p-5 flex-grow flex flex-col">
-        <h5 className="font-xl font-semibold mb-3">{title}</h5>
-        <p className="text-[#ADB7BE] flex-grow">{description}</p>
+
+      {/* Body */}
+      <div
+        className="
+          flex-grow flex flex-col p-5
+          rounded-b-xl border bg-card text-card-foreground border-border
+        "
+      >
+        <h5 className="font-semibold text-xl mb-3">{title}</h5>
+        <p className="text-muted-foreground flex-grow">{description}</p>
       </div>
     </div>
   );

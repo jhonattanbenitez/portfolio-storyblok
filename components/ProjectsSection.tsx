@@ -49,29 +49,24 @@ interface ProjectsSectionProps {
 const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
   const { t } = useTranslation();
   const [selectedTag, setSelectedTag] = useState("all");
-  const handleTagClick = (tag: string) => {
-    setSelectedTag(tag);
-  };
+  const handleTagClick = (tag: string) => setSelectedTag(tag);
+
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
-  // Dynamically generate projectsData from the blok prop
   const projectsData = blok.project.map((project) => ({
     id: project._uid,
     title: project.title,
     description: project.description,
-    image: project.image[0]?.filename || "/default-project.png",
-    tag: project.tag,
-    gitUrl: project.gitUrl.url,
-    previewUrl: project.previewUrl.url,
+    image: project.image?.[0]?.filename || "/default-project.png",
+    tag: project.tag || [],
+    gitUrl: project.gitUrl?.url || "",
+    previewUrl: project.previewUrl?.url || "",
   }));
 
-  const filteredProjects = projectsData.filter((project) => {
-    if (selectedTag === "all") {
-      return true;
-    }
-    return project.tag.includes(selectedTag);
-  });
+  const filteredProjects = projectsData.filter((p) =>
+    selectedTag === "all" ? true : p.tag.includes(selectedTag)
+  );
 
   const cardVariants = {
     initial: { y: 50, opacity: 0 },
@@ -82,55 +77,59 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
     <section
       {...storyblokEditable(blok)}
       id="projects"
-      className="relative z-10 pb-16 bg-gray-900"
+      className="relative z-10 bg-background pb-16"
+      aria-label={t("projects.sectionLabel") ?? "Projects"}
     >
-      <h2 className="text-center text-4xl font-bold text-white mb-8 md:mb-12 pt-16">
+      <div className="max-w-6xl mx-auto px-4">
+        <h2 className="pt-16 mb-8 md:mb-12 text-center text-4xl font-bold text-foreground">
           {t("projects.title")}
-      </h2>
-      <div className="text-white flex overflow-x-auto pb-16 px-4 md:justify-center md:flex-wrap md:gap-2">
-        <div className="flex gap-2">
-          <ProjectTag
-            onClick={handleTagClick}
-            name="all"
-            isSelected={selectedTag === "all"}
-          />
-          <ProjectTag
-            onClick={handleTagClick}
-            name="web"
-            isSelected={selectedTag === "web"}
-          />
-          <ProjectTag
-            onClick={handleTagClick}
-            name="accessibility"
-            isSelected={selectedTag === "accessibility"}
-          />
-          <ProjectTag
-            onClick={handleTagClick}
-            name="ecommerce"
-            isSelected={selectedTag === "ecommerce"}
-          />
-        </div>
-      </div>
-      <ul ref={ref} className="grid md:grid-cols-2 gap-8 md:gap-12 px-4">
-        {filteredProjects.map((project, index) => (
-          <motion.li
-            key={project.id}
-            variants={cardVariants}
-            initial="initial"
-            animate={isInView ? "animate" : "initial"}
-            transition={{ duration: 0.3, delay: index * 0.4 }}
-          >
-            <ProjectCard
-              key={project.id}
-              title={project.title}
-              description={project.description}
-              imgUrl={project.image}
-              gitUrl={project.gitUrl}
-              previewUrl={project.previewUrl}
+        </h2>
+        <div className="flex overflow-x-auto py-8 md:pb-12 md:justify-center md:flex-wrap md:gap-2">
+          <div className="flex gap-2">
+            <ProjectTag
+              onClick={handleTagClick}
+              name="all"
+              isSelected={selectedTag === "all"}
             />
-          </motion.li>
-        ))}
-      </ul>
+            <ProjectTag
+              onClick={handleTagClick}
+              name="web"
+              isSelected={selectedTag === "web"}
+            />
+            <ProjectTag
+              onClick={handleTagClick}
+              name="accessibility"
+              isSelected={selectedTag === "accessibility"}
+            />
+            <ProjectTag
+              onClick={handleTagClick}
+              name="ecommerce"
+              isSelected={selectedTag === "ecommerce"}
+            />
+          </div>
+        </div>
+
+        {/* Cards */}
+        <ul ref={ref} className="grid md:grid-cols-2 gap-8 md:gap-12">
+          {filteredProjects.map((project, index) => (
+            <motion.li
+              key={project.id}
+              variants={cardVariants}
+              initial="initial"
+              animate={isInView ? "animate" : "initial"}
+              transition={{ duration: 0.3, delay: index * 0.1 }}
+            >
+              <ProjectCard
+                title={project.title}
+                description={project.description}
+                imgUrl={project.image}
+                gitUrl={project.gitUrl}
+                previewUrl={project.previewUrl}
+              />
+            </motion.li>
+          ))}
+        </ul>
+      </div>
     </section>
   );
 };

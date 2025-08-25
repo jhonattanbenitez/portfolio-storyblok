@@ -9,7 +9,7 @@ const SocialLinks = () => {
         href="https://www.linkedin.com/in/jhonattan-benitez-752b3650/"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-blue-400 transition-colors"
+        className="text-gray-900 dark:text-white hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
       >
         <TbBrandLinkedin size={32} />
       </Link>
@@ -17,7 +17,7 @@ const SocialLinks = () => {
         href="https://github.com/jhonattanbenitez/"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-gray-400 transition-colors"
+        className="text-gray-900 dark:text-white hover:text-gray-600 dark:hover:text-gray-400 transition-colors"
       >
         <TbBrandGithub size={32} />
       </Link>
@@ -25,7 +25,7 @@ const SocialLinks = () => {
         href="https://www.fiverr.com/jhonattanb07"
         target="_blank"
         rel="noopener noreferrer"
-        className="text-white hover:text-green-400 transition-colors"
+        className="text-gray-900 dark:text-white hover:text-green-600 dark:hover:text-green-400 transition-colors"
       >
         <TbBrandFiverr size={32} />
       </Link>

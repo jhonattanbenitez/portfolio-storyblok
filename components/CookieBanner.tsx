@@ -31,16 +31,26 @@ export default function CookieBanner() {
         localStorage.setItem("cookieConsent", "false");
         setHasConsent(false);
       }}
-      style={{ background: "#222", color: "#fff" }}
+      style={{ 
+        background: "hsl(var(--background))", 
+        color: "hsl(var(--foreground))",
+        borderTop: "1px solid hsl(var(--border))"
+      }}
       buttonStyle={{
-        background: "#0F316D",
-        color: "#fff",
+        background: "hsl(var(--primary))",
+        color: "hsl(var(--primary-foreground))",
         fontSize: "14px",
+        border: "none",
+        borderRadius: "6px",
+        padding: "8px 16px",
       }}
       declineButtonStyle={{
-        background: "#bbb",
-        color: "#222",
+        background: "hsl(var(--secondary))",
+        color: "hsl(var(--secondary-foreground))",
         fontSize: "14px",
+        border: "1px solid hsl(var(--border))",
+        borderRadius: "6px",
+        padding: "8px 16px",
       }}
     >
       {t("cookieBanner.description")}

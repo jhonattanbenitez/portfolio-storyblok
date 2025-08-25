@@ -20,7 +20,7 @@ export default function PostsPageComponent() {
     if (first === "es-co" || first === "es") return "es-co";
     return "en";
   })();
-  
+
   const urlPrefix = urlLang === "es-co" ? "/es-co" : "";
 
   useEffect(() => {
@@ -31,9 +31,7 @@ export default function PostsPageComponent() {
           version: "published",
           language: urlLang,
         });
-        if (storiesData) {
-          setStories(storiesData.stories);
-        }
+        setStories(storiesData ? storiesData.stories : []);
       } catch (error) {
         console.error("Error fetching stories:", error);
         setStories([]);
@@ -41,50 +39,48 @@ export default function PostsPageComponent() {
         setIsLoading(false);
       }
     }
-
     getStories();
   }, [urlLang]);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-center text-gray-900">{t("common.loading")}</p>
-      </div>
-    );
-  }
+  const LoadingScreen = (
+    <div className="min-h-screen flex items-center justify-center bg-background">
+      <p className="text-center text-foreground">{t("common.loading")}</p>
+    </div>
+  );
+
+  if (isLoading) return LoadingScreen;
 
   if (!stories.length) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p className="text-red-500 text-center">{t("posts.noPosts")}</p>
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <p className="text-destructive text-center">{t("posts.noPosts")}</p>
       </div>
     );
   }
 
   return (
-    <Suspense
-      fallback={
-        <div className="min-h-screen flex items-center justify-center">
-          <p className="text-center text-gray-900">{t("common.loading")}</p>
-        </div>
-      }
-    >
-      <section className="max-w-full">
-        {/* Header Section */}
+    <Suspense fallback={LoadingScreen}>
+      <section className="max-w-full bg-background text-foreground">
+        {/* Header */}
         <NavBar />
-        <div className="bg-gray-900 w-full flex justify-center py-32 mb-8 sm:py-48 lg:py-16">
+        <div className="w-full flex justify-center py-32 mb-8 sm:py-48 lg:py-16 bg-muted">
           <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
-            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase text-center px-4">
+            <h1 className="px-4 text-center uppercase font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
               {t("postHeader.blog")}
             </h1>
           </div>
         </div>
 
         {/* Cards Grid */}
-        <div className="container mx-auto p-4 bg-white">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="container mx-auto p-4">
+          <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {stories.map((story, index) => (
-              <StoryCard key={story.id} story={story} index={index} urlPrefix={urlPrefix}/>
+              <StoryCard
+                key={story.id}
+                story={story}
+                index={index}
+                urlPrefix={urlPrefix}
+              />
             ))}
           </div>
         </div>

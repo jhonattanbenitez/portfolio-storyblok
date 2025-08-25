@@ -55,12 +55,12 @@ export default function LanguageSwitcher() {
   };
 
   return (
-    <div className="flex items-center space-x-2 bg-gray-800 rounded-lg p-1">
+    <div className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1 border border-gray-200 dark:border-gray-700">
       <button
         onClick={() => go("en")}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
           current === "en" ? "bg-blue-600 text-white shadow-md"
-                           : "text-gray-300 hover:text-white hover:bg-gray-700"
+                           : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
         aria-label="Switch to English"
       >
@@ -70,7 +70,7 @@ export default function LanguageSwitcher() {
         onClick={() => go("es-co")}
         className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
           current === "es-co" ? "bg-blue-600 text-white shadow-md"
-                              : "text-gray-300 hover:text-white hover:bg-gray-700"
+                              : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
         }`}
         aria-label="Switch to Spanish"
       >

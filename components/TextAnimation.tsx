@@ -15,6 +15,7 @@ const TextAnimation: FC<TextAnimationProps> = ({ list }) => {
       wrapper="span"
       speed={20}
       repeat={Infinity}
+      className="text-blue-600 dark:text-blue-400"
     />
   );
 };

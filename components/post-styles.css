@@ -1,143 +1,143 @@
-/* Syntax highlighting styles */
+/* ===========================
+   POST STYLES (TAILWIND PROSE OVERRIDES)
+   =========================== */
+.prose {
+  --tw-prose-body: var(--foreground);
+  --tw-prose-headings: var(--foreground);
+  --tw-prose-lead: var(--foreground);
+  --tw-prose-links: var(--primary);
+  --tw-prose-bold: var(--emphasis-strong);
+  --tw-prose-counters: var(--muted-foreground);
+  --tw-prose-bullets: var(--muted-foreground);
+  --tw-prose-hr: var(--hr-border);
+  --tw-prose-quotes: var(--foreground);
+  --tw-prose-quote-borders: var(--border);
+  --tw-prose-captions: var(--muted-foreground);
+  --tw-prose-code: var(--foreground);
+  --tw-prose-pre-code: var(--foreground);
+  --tw-prose-pre-bg: var(--muted);
+  --tw-prose-th-borders: var(--table-border);
+  --tw-prose-td-borders: var(--table-border);
+}
+
+.prose a {
+  color: var(--primary);
+  transition: color .2s ease, background .2s ease, text-decoration .2s ease;
+}
+.prose a:hover {
+  color: var(--primary-foreground);
+  background: color-mix(in oklab, var(--primary) 20%, transparent);
+  text-decoration: none;
+  border-radius: .25rem;
+}
+.prose a:focus {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+/* ===========================
+   HIGHLIGHT.JS
+   =========================== */
 .hljs {
-  background: #1e1e1e; /* Dark background */
-  color: #f8f8f2; 
+  background: var(--hljs-bg);
+  color: var(--hljs-fg);
   padding: 1rem;
   border-radius: 0.5rem;
   margin: 1rem 0;
 }
-
-.hljs-keyword {
-  color: #ff79c6; /* Pink for keywords */
-}
-
-.hljs-string {
-  color: #f1fa8c; /* Yellow for strings */
-}
-
-.hljs-comment {
-  color: #6272a4; /* Gray for comments */
-}
-
-.hljs-title {
-  color: #50fa7b; /* Green for titles */
-}
-
-.hljs-number {
-  color: #bd93f9; /* Purple for numbers */
-}
-
+.hljs-keyword { color: var(--hljs-keyword); }
+.hljs-string { color: var(--hljs-string); }
+.hljs-comment { color: var(--hljs-comment); }
+.hljs-title { color: var(--hljs-title); }
+.hljs-number { color: var(--hljs-number); }
 .hljs strong,
-.hljs b {
-  color: #61dafb; 
-  font-weight: bold; 
-}
+.hljs b { color: var(--hljs-strong); font-weight: 700; }
 
-/* General text styling */
+/* ===========================
+   STRONG / B
+   =========================== */
 strong, b {
-  color: #ffb238; 
-  font-weight: bold;
+  color: var(--emphasis-strong);
+  font-weight: 700;
 }
 
+/* ===========================
+   HR + P
+   =========================== */
 hr {
-  border: 1px solid #4a5568; /* Gray border */
+  border: 1px solid var(--hr-border);
   margin: 2rem 0;
 }
+p { margin: 1rem 0; }
 
-p {
-  margin: 1rem 0;
-}
-
-/* Table styles */
-table {
+/* ===========================
+   TABLES
+   =========================== */
+.prose table {
   width: 100%;
   border-collapse: separate;
+  border-spacing: 0; /* mejor para radius en celdas */
   margin: 1rem 0;
 }
-
-th, td {
-  padding: 1rem; /* Add padding to cells */
-  border: 1px solid #fafafa; /* Gray border */
-  border-radius: 0.5rem; /* Rounded corners */
+.prose th, .prose td {
+  padding: 1rem;
+  border: 1px solid var(--table-border);
+  background-clip: padding-box; /* evita que el radius se vea raro con border */
 }
-
-th {
-  background-color: #2d3748; /* Dark gray background for headers */
-  color: #fff; /* White text for headers */
-  font-weight: bold;
+.prose th {
+  background-color: var(--table-th-bg);
+  color: var(--table-th-fg);
+  font-weight: 700;
 }
-
-td {
-  background-color: #fafafa; /* Darker gray background for cells */
-  color: #000; /* Light gray text for cells */
+.prose td {
+  background-color: var(--table-td-bg);
+  color: var(--table-td-fg);
 }
+.prose thead th:first-child { border-top-left-radius: .5rem; }
+.prose thead th:last-child  { border-top-right-radius: .5rem; }
+.prose tbody td:first-child { border-bottom-left-radius: .5rem; }
+.prose tbody td:last-child  { border-bottom-right-radius: .5rem; }
 
-/* Heading Styles */
-h2 {
-  font-size: clamp(22px, 3.4vw, 28px); /* Custom size for h2 */
-  margin: 1.75rem 0 0.875rem;
-}
+/* ===========================
+   HEADINGS 
+   =========================== */
+.prose h2 { font-size: clamp(22px, 3.4vw, 28px); margin: 1.75rem 0 .875rem; }
+.prose h3 { font-size: clamp(20px, 3vw, 24px);   margin: 1.5rem 0 .75rem; }
+.prose h4 { font-size: clamp(18px, 2.6vw, 22px); margin: 1.25rem 0 .625rem; }
+.prose h5 { font-size: clamp(16px, 2.2vw, 20px); margin: 1rem 0 .5rem; }
+.prose h6 { font-size: clamp(14px, 2vw, 18px);   margin: .875rem 0 .4375rem; }
 
-h3 {
-  font-size: clamp(20px, 3vw, 24px); /* Slightly smaller than h2 */
-  margin: 1.5rem 0 0.75rem;
-}
-
-h4 {
-  font-size: clamp(18px, 2.6vw, 22px); /* Smaller than h3 */
-  margin: 1.25rem 0 0.625rem;
-}
-
-h5 {
-  font-size: clamp(16px, 2.2vw, 20px); /* Smaller than h4 */
-  margin: 1rem 0 0.5rem;
-}
-
-h6 {
-  font-size: clamp(14px, 2vw, 18px); /* Smallest size for h6 */
-  margin: 0.875rem 0 0.4375rem;
-}
-
-/* List styles */
-ol {
-  list-style-type: decimal; /* Ensures numbering */
+/* ===========================
+   LISTS
+   =========================== */
+.prose ol {
+  list-style-type: decimal;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
-
-li {
-  margin: 0.5rem 0;
-  padding-left: 0.5rem;
+.prose li {
+  margin: .5rem 0;
+  padding-left: .5rem;
   position: relative;
   font-size: 1rem;
 }
+.prose li::marker { font-weight: 700; }
 
-li::marker {
-  font-weight: bold;
-}
-
-/* Link styles */
+/* ===========================
+   LINKS 
+   =========================== */
 .container.prose a {
-  color: #0000EE; 
-  transition: color 0.3s ease, text-decoration 0.3s ease;
+  color: var(--primary);
+  transition: color .2s ease, text-decoration .2s ease;
 }
-
 .container.prose a:hover {
-  color: #ff79c6; /* Pink on hover */
+  color: var(--primary-foreground);
   text-decoration: underline;
 }
-
 .container.prose a:focus {
-  outline: 2px solid #f1fa8c; /* Yellow outline for accessibility */
+  outline: 2px solid var(--ring);
   outline-offset: 2px;
 }
-
 .container.prose a:active {
-  color: #FF0000; 
-}
-
-/* Content specific styles */
-.content .strong b {
-  color: #911d38;
-  font-weight: bold;
+  color: var(--primary);
 }
