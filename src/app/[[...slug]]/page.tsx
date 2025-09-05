@@ -1,5 +1,6 @@
 import { StoryblokStory } from "@storyblok/react/rsc";
 import { fetchStory } from "../../../utils/fetchStory";
+import { notFound } from "next/navigation";
 
 export async function generateStaticParams() {
   return [];
@@ -12,7 +13,7 @@ export default async function Home({ params }: { params: Params }) {
   const pageData = await fetchStory("published", slug);
 
   if (!pageData?.story) {
-    return <div>404 - Page not found</div>;
+    notFound();
   }
 
   return <StoryblokStory story={pageData.story} />;

@@ -6,6 +6,7 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import CookieBanner from "../../components/CookieBanner";
 import { LanguageProvider } from "../../contexts/LanguageContext";
 import { ThemeProvider } from "../../contexts/ThemeContext";
+import NavBar from "../../components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -46,6 +47,7 @@ export default function RootLayout({
         <ThemeProvider>
           <LanguageProvider>
             <StoryblokProvider>
+              <NavBar />
               {children}
               <CookieBanner />
             </StoryblokProvider>

@@ -3,7 +3,6 @@
 import { useEffect, useState, Suspense } from "react";
 import { fetchStories } from "../utils/fetchStories";
 import { Story } from "../utils/types";
-import NavBar from "../components/NavBar";
 import { useTranslation } from "../hooks/useTranslation";
 import { usePathname } from "next/navigation";
 import StoryCard from "../components/StoryCard";
@@ -62,7 +61,6 @@ export default function PostsPageComponent() {
     <Suspense fallback={LoadingScreen}>
       <section className="max-w-full bg-background text-foreground">
         {/* Header */}
-        <NavBar />
         <div className="w-full flex justify-center py-32 mb-8 sm:py-48 lg:py-16 bg-muted">
           <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
             <h1 className="px-4 text-center uppercase font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">

@@ -7,7 +7,6 @@ import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
 import { useParams } from "next/navigation";
-import NavBar from "./NavBar";
 import formatDate from "../utils/formatDate";
 import { useMarkdown } from "../hooks/useMarkdown";
 
@@ -87,8 +86,6 @@ const Post: React.FC<PostProps> = ({ blok }) => {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
       />
-
-      <NavBar />
 
       <article
         {...storyblokEditable(blok)}
