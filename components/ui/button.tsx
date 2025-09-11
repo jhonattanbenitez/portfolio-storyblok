@@ -31,20 +31,33 @@ const Button: React.FC<ButtonProps> = ({
     lg: 'h-11 px-8 text-lg'
   };
 
-  const Component = asChild ? 'div' : 'button';
+  if (asChild) {
+    return (
+      <div
+        className={clsx(
+          baseClasses,
+          variantClasses[variant],
+          sizeClasses[size],
+          className
+        )}
+      >
+        {children}
+      </div>
+    );
+  }
   
   return (
-    <Component
+    <button
       className={clsx(
         baseClasses,
         variantClasses[variant],
         sizeClasses[size],
         className
       )}
-      {...(asChild ? {} : props)}
+      {...props}
     >
       {children}
-    </Component>
+    </button>
   );
 };
 

@@ -7,7 +7,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   
   try {
     // Fetch all published stories
-    const storiesResponse = await fetchStories('published');
+    const storiesResponse = await fetchStories({ version: 'published' });
     const stories = storiesResponse?.stories || [];
     
     // Generate sitemap data

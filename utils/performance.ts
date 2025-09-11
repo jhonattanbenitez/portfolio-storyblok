@@ -1,3 +1,13 @@
+import React from 'react';
+
+declare global {
+  interface Window {
+    gtag: (...args: unknown[]) => void;
+  }
+}
+export {};
+
+
 // Performance monitoring utilities
 export class PerformanceMonitor {
   private static instance: PerformanceMonitor;
@@ -46,14 +56,15 @@ export class PerformanceMonitor {
 }
 
 // Web Vitals monitoring
-export function reportWebVitals(metric: any) {
+export function reportWebVitals(metric: { name: string; value: number; id: string }) {
   if (process.env.NODE_ENV === 'development') {
     console.log('Web Vital:', metric);
   }
   
   // Send to analytics service
   if (typeof window !== 'undefined' && 'gtag' in window) {
-    (window as any).gtag('event', metric.name, {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
+    (window as Window & { gtag: Function }).gtag('event', metric.name, {
       event_category: 'Web Vitals',
       value: Math.round(metric.value),
       event_label: metric.id,
@@ -82,7 +93,7 @@ export function logBundleSize() {
 // Memory usage monitoring (development only)
 export function logMemoryUsage() {
   if (process.env.NODE_ENV === 'development' && typeof window !== 'undefined' && 'memory' in performance) {
-    const memory = (performance as any).memory;
+    const memory = (performance as Performance & { memory: { usedJSHeapSize: number; totalJSHeapSize: number; jsHeapSizeLimit: number } }).memory;
     console.log('Memory usage:', {
       used: `${(memory.usedJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
       total: `${(memory.totalJSHeapSize / 1024 / 1024).toFixed(2)}MB`,
@@ -92,9 +103,8 @@ export function logMemoryUsage() {
 }
 
 // Lazy loading helper
-export function createLazyComponent<T extends React.ComponentType<any>>(
-  importFunc: () => Promise<{ default: T }>,
-  fallback?: React.ComponentType
+export function createLazyComponent<T extends React.ComponentType<unknown>>(
+  importFunc: () => Promise<{ default: T }>
 ) {
   return React.lazy(importFunc);
 }
