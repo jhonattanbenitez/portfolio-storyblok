@@ -3,7 +3,7 @@ import { storyblokInit } from "@storyblok/react/rsc";
 import Page from "../components/Page";
 import Teaser from "../components/Teaser";
 import Post from "../components/Post";
-import Hero from "../components/Hero";
+import Hero from "../components/Hero/Hero";
 import AboutSection from "../components/AboutSection";
 import ProjectsSection from "../components/ProjectsSection";
 import ContactForm from "../components/ContactForm";
