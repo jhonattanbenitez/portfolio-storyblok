@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect } from 'react';
+import Link from 'next/link';
 import { Button } from '../../components/ui/button';
 
 interface ErrorProps {
@@ -21,7 +22,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
           <h1 className="text-6xl font-bold text-destructive mb-4">500</h1>
           <h2 className="text-2xl font-semibold mb-4">Something went wrong</h2>
           <p className="text-muted-foreground mb-8">
-            We're sorry, but something unexpected happened. Please try again.
+            We&apos;re sorry, but something unexpected happened. Please try again.
           </p>
         </div>
         
@@ -42,7 +43,7 @@ export default function ErrorPage({ error, reset }: ErrorProps) {
             Try Again
           </Button>
           <Button asChild variant="outline" className="w-full">
-            <a href="/">Go Home</a>
+            <Link href="/">Go Home</Link>
           </Button>
         </div>
         
