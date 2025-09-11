@@ -1,3 +1,4 @@
+// Base types for Storyblok content
 export type ImageType = {
   id: number;
   alt: string;
@@ -58,4 +59,106 @@ export type StoriesResponse = {
   cv: number;
   rels: unknown[];
   links: unknown[];
+};
+
+// Enhanced API response types
+export type StoryblokApiResponse<T = Story> = {
+  story: T;
+  cv: number;
+  rels: unknown[];
+  links: unknown[];
+};
+
+export type StoryblokStoriesResponse = {
+  stories: Story[];
+  cv: number;
+  rels: unknown[];
+  links: unknown[];
+};
+
+// Error handling types
+export type ApiError = {
+  message: string;
+  status?: number;
+  code?: string;
+};
+
+export type FetchStoryResult = {
+  data: StoryblokApiResponse | null;
+  error: ApiError | null;
+  loading: boolean;
+};
+
+// Language and routing types
+export type SupportedLanguage = 'en' | 'es-co' | 'es';
+
+export type LanguageConfig = {
+  code: SupportedLanguage;
+  name: string;
+  nativeName: string;
+  flag: string;
+};
+
+export type RouteParams = {
+  slug?: string[];
+};
+
+// Component prop types
+export type BaseComponentProps = {
+  className?: string;
+  children?: React.ReactNode;
+};
+
+export type LoadingStateProps = {
+  size?: 'sm' | 'md' | 'lg';
+  text?: string;
+  className?: string;
+};
+
+// SEO and metadata types
+export type SeoMetadata = {
+  title: string;
+  description: string;
+  keywords?: string[];
+  ogTitle?: string;
+  ogDescription?: string;
+  ogImage?: string;
+  twitterTitle?: string;
+  twitterDescription?: string;
+  twitterImage?: string;
+  canonical?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
+};
+
+// Configuration types
+export type AppConfig = {
+  siteName: string;
+  siteUrl: string;
+  defaultLanguage: SupportedLanguage;
+  supportedLanguages: LanguageConfig[];
+  storyblok: {
+    token: string;
+    previewToken?: string;
+    apiUrl: string;
+  };
+  analytics: {
+    googleAnalyticsId: string;
+  };
+};
+
+// Cache and performance types
+export type CacheConfig = {
+  revalidate: number;
+  tags: string[];
+};
+
+export type FetchOptions = {
+  version: 'draft' | 'published';
+  language: SupportedLanguage;
+  cache?: RequestCache;
+  next?: {
+    revalidate?: number;
+    tags?: string[];
+  };
 };

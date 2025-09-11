@@ -46,12 +46,14 @@ export default function LanguageSwitcher() {
     if (next === current) return;
     
     // Update the context to match URL language
-    const contextLang = next === "es-co" ? "es" : "en";
+    const contextLang = next === "es-co" ? "es-co" : "en";
     setLanguage(contextLang);
     
     const target = replaceLocaleInPath(pathname, next)
       + (search.size ? `?${search.toString()}` : "");
-    router.push(target, { scroll: false });
+    
+    // Use router.replace to avoid adding to history stack
+    router.replace(target, { scroll: false });
   };
 
   return (

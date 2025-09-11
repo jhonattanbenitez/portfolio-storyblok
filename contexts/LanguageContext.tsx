@@ -1,11 +1,10 @@
 "use client";
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
-
-export type Language = "en" | "es";
+import { SupportedLanguage } from "../utils/types";
 
 interface LanguageContextType {
-  language: Language;
-  setLanguage: (language: Language) => void;
+  language: SupportedLanguage;
+  setLanguage: (language: SupportedLanguage) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -15,7 +14,7 @@ interface LanguageProviderProps {
 }
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  const [language, setLanguage] = useState<Language>("en");
+  const [language, setLanguage] = useState<SupportedLanguage>("en");
 
   // Load language from URL on component mount
   useEffect(() => {
@@ -24,7 +23,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
       const pathParts = pathname.split("/").filter(Boolean);
       const urlLanguage = pathParts[0];
       
-      if (urlLanguage === "es-co" || urlLanguage === "es") {
+      if (urlLanguage === "es-co") {
+        setLanguage("es-co");
+      } else if (urlLanguage === "es") {
         setLanguage("es");
       } else {
         setLanguage("en");
@@ -40,7 +41,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
         const pathParts = pathname.split("/").filter(Boolean);
         const urlLanguage = pathParts[0];
         
-        if (urlLanguage === "es-co" || urlLanguage === "es") {
+        if (urlLanguage === "es-co") {
+          setLanguage("es-co");
+        } else if (urlLanguage === "es") {
           setLanguage("es");
         } else {
           setLanguage("en");
@@ -52,9 +55,11 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
     }
   }, []);
 
-  // Save language to localStorage whenever it changes
+  // Save language to localStorage and cookie whenever it changes
   useEffect(() => {
     localStorage.setItem("preferred-language", language);
+    // Also set as cookie for server-side access
+    document.cookie = `preferred-language=${language}; path=/; max-age=31536000; SameSite=Lax`;
   }, [language]);
 
   const value: LanguageContextType = useMemo(() => ({
