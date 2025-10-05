@@ -41,8 +41,6 @@ export const useMarkdown = (
       return;
     }
 
-    console.log(html)
-
     setIsLoading(true);
     setError(null);
 
