@@ -53,6 +53,7 @@ export const en = {
   },
   postHeader: {
     blog: "Blog",
+    categories: "Categories",
   },
   common: {
     loading: "Loading...",

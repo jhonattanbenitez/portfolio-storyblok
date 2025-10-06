@@ -9,13 +9,55 @@ interface StoryCardProps {
   story: Story;
   index: number;
   urlPrefix?: string;
+  language?: "en" | "es-co" | "es";
 }
 
-const StoryCard: React.FC<StoryCardProps> = ({ story, index, urlPrefix }) => {
+const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) => {
   const { html: introHtml } = useMarkdown(story.content.intro);
 
-  // normaliza prefijo para evitar // en la URL
-  const prefix = (urlPrefix ?? "").replace(/\/$/, "");
+  // prefix no longer used after switching to full_slug/translated paths
+
+  // Prefer translated_slugs (normalize language codes to lowercase)
+  const normalizedLang = (language || "en").toLowerCase();
+  const isPreferredLang = (lang?: string) => {
+    const l = (lang || "").toLowerCase();
+    if (normalizedLang === "es-co") return l === "es-co" || l === "es";
+    return l === normalizedLang;
+  };
+  interface TranslatedSlug {
+    lang?: string;
+    path?: string;
+    slug?: string;
+  }
+  
+  const translated = Array.isArray(story.translated_slugs)
+    ? story.translated_slugs.find((t: TranslatedSlug) => isPreferredLang(t?.lang))
+    : undefined;
+
+  // Normalize translated path: remove leading en/ for default language
+  const translatedPath = (() => {
+    const p = translated?.path;
+    if (!p) return undefined;
+    if (normalizedLang === "en" && (p.startsWith("en/") || p.startsWith("/en/"))) {
+      return p.replace(/^\/?en\//, "");
+    }
+    return p;
+  })();
+
+  const basePosts = normalizedLang === "en" ? "posts" : normalizedLang + "/posts";
+
+  // If we only have the translated slug (no path), construct it
+  const translatedSlugPath = translated?.slug
+    ? `${basePosts}/${translated.slug}`
+    : undefined;
+
+  const storyLangNormalized = (story.lang || "").toLowerCase();
+  const localizedPath = translatedPath
+    || translatedSlugPath
+    || (isPreferredLang(storyLangNormalized) ? story.full_slug : undefined)
+    || `${basePosts}/${story.slug}`;
+
+  const href = localizedPath.startsWith("/") ? localizedPath : `/${localizedPath}`;
 
   return (
     <div
@@ -27,7 +69,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, urlPrefix }) => {
       "
     >
       <Link
-        href={`${prefix}/posts/${story.slug}`}
+        href={href}
         className="flex flex-col flex-grow"
         aria-label={story.content.title}
       >

@@ -26,11 +26,20 @@ export default function PostsPageComponent() {
     async function getStories() {
       setIsLoading(true);
       try {
+  
         const storiesData = await fetchStories({
           version: "published",
-          language: urlLang,
+          language: "en", // Default language for API call
         });
-        setStories(storiesData ? storiesData.stories : []);
+        const raw = storiesData ? storiesData.stories : [];
+        
+        const isSpanish = urlLang === "es-co";
+        const filtered = raw.filter(story => {
+          const isSpanishSlug = /[áéíóúñü]/i.test(story.slug);
+          return isSpanish ? isSpanishSlug : !isSpanishSlug;
+        });
+        
+        setStories(filtered);
       } catch (error) {
         console.error("Error fetching stories:", error);
         setStories([]);
@@ -78,6 +87,7 @@ export default function PostsPageComponent() {
                 story={story}
                 index={index}
                 urlPrefix={urlPrefix}
+                language={urlLang}
               />
             ))}
           </div>

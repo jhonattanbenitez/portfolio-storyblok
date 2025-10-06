@@ -54,6 +54,7 @@ export const es = {
   },
   postHeader: {
     blog: "Blog",
+    categories: "Categorías",
   },
   common: {
     loading: "Cargando...",

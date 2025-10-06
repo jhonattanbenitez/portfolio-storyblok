@@ -51,7 +51,12 @@ export type Story = {
   path: null | string;
   alternates: unknown[];
   default_full_slug: null | string;
-  translated_slugs: null | unknown[];
+  translated_slugs: null | {
+    lang: string;
+    name?: string;
+    path?: string; 
+    slug?: string; 
+  }[];
 };
 
 export type StoriesResponse = {

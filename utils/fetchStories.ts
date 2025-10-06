@@ -5,8 +5,9 @@ type Language = "en" | "es" | "es-co";
 interface FetchStoriesOpts {
   version: "draft" | "published";
   language?: Language;
-  startsWith?: string; // opcional, por si cambias la carpeta
-  perPage?: number; // opcional, paginación
+  startsWith?: string; 
+  perPage?: number; 
+  categorySlug?: string; 
 }
 
 export const fetchStories = async ({
@@ -14,6 +15,7 @@ export const fetchStories = async ({
   language = "en",
   startsWith = "posts/",
   perPage = 25,
+  categorySlug,
 }: FetchStoriesOpts): Promise<StoriesResponse | null> => {
   const token = process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
   if (!token) {
@@ -29,6 +31,15 @@ export const fetchStories = async ({
     per_page: String(perPage),
     fallback_lang: "false",
   });
+
+  if (categorySlug) {
+
+    const categoryCachedUrl = `categories/${categorySlug}`;
+    params.append(
+      "filter_query[category_ref.cached_url][in]",
+      categoryCachedUrl
+    );
+  }
 
   try {
     const response = await fetch(
