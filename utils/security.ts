@@ -169,6 +169,7 @@ export function validateAPIKey(apiKey: string): boolean {
 // Request logging for security monitoring
 export function logSecurityEvent(
   event: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   details: Record<string, any>,
   severity: 'low' | 'medium' | 'high' = 'low'
 ) {

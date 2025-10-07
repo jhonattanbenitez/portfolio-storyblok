@@ -58,7 +58,7 @@ export default async function Home({ params }: { params: Promise<RouteParams> })
       notFound();
     }
 
-    return <StoryblokStory story={pageData.story} />;
+    return <StoryblokStory story={pageData.story} alternates={pageData.story.alternates}/>;
   } catch (error) {
     console.error("Error in page component:", error);
     notFound();

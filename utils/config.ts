@@ -57,9 +57,9 @@ export function validateConfig(): void {
       throw new Error('Invalid site URL format');
     }
     
-    console.log('✅ Configuration validated successfully');
+    console.log('Configuration validated successfully');
   } catch (error) {
-    console.error('❌ Configuration validation failed:', error);
+    console.error('Configuration validation failed:', error);
     throw error;
   }
 }

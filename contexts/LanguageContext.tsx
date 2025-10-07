@@ -2,9 +2,13 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from "react";
 import { SupportedLanguage } from "../utils/types";
 
+type SlugMap = { [lang in SupportedLanguage]?: string };
+
 interface LanguageContextType {
   language: SupportedLanguage;
   setLanguage: (language: SupportedLanguage) => void;
+  slugMap?: SlugMap;
+  setSlugMap: (map: SlugMap | undefined) => void;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -15,6 +19,7 @@ interface LanguageProviderProps {
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
   const [language, setLanguage] = useState<SupportedLanguage>("en");
+  const [slugMap, setSlugMap] = useState<SlugMap | undefined>(undefined);
 
   // Load language from URL on component mount
   useEffect(() => {
@@ -65,7 +70,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   const value: LanguageContextType = useMemo(() => ({
     language,
     setLanguage,
-  }), [language]);
+    slugMap,
+    setSlugMap,
+  }), [language, slugMap]);
 
   return (
     <LanguageContext.Provider value={value}>

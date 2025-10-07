@@ -26,6 +26,7 @@ export type StoryContent = {
   title: string;
   content: string;
   component: string;
+  language?: string;
 };
 
 export type Story = {
@@ -66,12 +67,21 @@ export type StoriesResponse = {
   links: unknown[];
 };
 
+export type AlternateURLs = {
+  id: number;
+  name: string;
+  slug: string;
+  full_slug: string;
+  lang: string;
+};
+
 // Enhanced API response types
 export type StoryblokApiResponse<T = Story> = {
   story: T;
   cv: number;
   rels: unknown[];
   links: unknown[];
+  alternates?: AlternateURLs[];
 };
 
 export type StoryblokStoriesResponse = {

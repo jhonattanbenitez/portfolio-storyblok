@@ -6,11 +6,24 @@ import Script from "next/script";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
+import React, { useEffect } from "react";
 import { useParams } from "next/navigation";
+
 import formatDate from "../utils/formatDate";
 import { useMarkdown } from "../hooks/useMarkdown";
+import { useLanguage } from "../contexts/LanguageContext";
 
 type ImageType = { filename: string };
+
+type Alternate = {
+  id: number;
+  name: string;
+  slug: string;
+  published: true;
+  full_slug: string;
+  is_folder: boolean;
+  parent_id: number;
+};
 
 type Blok = {
   _uid: string;
@@ -22,13 +35,27 @@ type Blok = {
   component: string;
   _editable?: string;
   first_published_at: string;
+  language: string;
+  alternates?: Alternate[];
+  slug?: string;
+  full_slug?: string;
 };
 
-type PostProps = { blok?: Blok };
+type PostProps = {
+  blok?: Blok;
+  storySlug?: string;
+  alternates?: Alternate[];
+};
 
-const Post: React.FC<PostProps> = ({ blok }) => {
+const Post: React.FC<PostProps> = ({
+  blok,
+  storySlug,
+  alternates: storyAlternates,
+}) => {
   const params = useParams();
-  const slug = params?.slug?.[1];
+  const paramsSlug = Array.isArray(params?.slug)
+    ? params.slug[params.slug.length - 1]
+    : params?.slug;
 
   const {
     html: contentHtml,
@@ -41,8 +68,42 @@ const Post: React.FC<PostProps> = ({ blok }) => {
     error: introError,
   } = useMarkdown(blok?.intro);
 
+  const { setSlugMap } = useLanguage();
+
+  const extractSlug = (full: string | undefined) => {
+    if (!full) return "";
+    const parts = full.split("/");
+    return parts[parts.length - 1];
+  };
+
+  const slugMap = React.useMemo(() => {
+    if (!blok) return undefined;
+
+    const currentLang = blok.language === "spanish" ? "es-co" : "en";
+
+    const currentSlug =
+      storySlug || blok.slug || extractSlug(blok.full_slug) || paramsSlug || "";
+
+    const alternates = storyAlternates || blok.alternates || [];
+
+    // Buscar el alternate que no coincida con el idioma actual
+    const alt = alternates.find((a) => a.slug && a.slug !== currentSlug);
+    const altSlug = extractSlug(alt?.full_slug);
+
+    const map = {
+      [currentLang]: currentSlug,
+      [currentLang === "en" ? "es-co" : "en"]: altSlug,
+    };
+    return map;
+  }, [blok, storySlug, storyAlternates, paramsSlug]);
+
   const isLoading = contentLoading || introLoading;
   const error = contentError || introError;
+  
+  useEffect(() => {
+    if (slugMap) setSlugMap(slugMap);
+    return () => setSlugMap(undefined);
+  }, [slugMap, setSlugMap]);
 
   if (!blok) return <p>Loading...</p>;
   if (isLoading) return <p>Loading content...</p>;
@@ -77,7 +138,9 @@ const Post: React.FC<PostProps> = ({ blok }) => {
         <meta name="twitter:image" content={blok.image?.[0]?.filename} />
         <link
           rel="canonical"
-          href={`https://www.jhonattan.dev/posts/${slug}`}
+          href={`https://www.jhonattan.dev/posts/${
+            storySlug || blok.slug || extractSlug(blok.full_slug) || paramsSlug
+          }`}
         />
       </Head>
 
@@ -110,7 +173,7 @@ const Post: React.FC<PostProps> = ({ blok }) => {
 
         {/* Fecha */}
         <div className="bg-muted">
-          <div className="container max-w-4xl  mx-auto p-4">
+          <div className="container max-w-4xl mx-auto p-4">
             <p className="text-muted-foreground">{formatDate(blok.date)}</p>
           </div>
         </div>

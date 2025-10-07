@@ -26,19 +26,18 @@ export default function PostsPageComponent() {
     async function getStories() {
       setIsLoading(true);
       try {
-  
+        // Fetch all stories without language filter, then filter on our side
         const storiesData = await fetchStories({
           version: "published",
           language: "en", // Default language for API call
         });
         const raw = storiesData ? storiesData.stories : [];
-        
-        const isSpanish = urlLang === "es-co";
-        const filtered = raw.filter(story => {
-          const isSpanishSlug = /[áéíóúñü]/i.test(story.slug);
-          return isSpanish ? isSpanishSlug : !isSpanishSlug;
-        });
-        
+
+        const targetLanguage = urlLang === "es-co" ? "spanish" : "english";
+        const filtered = raw.filter(
+          (story) => story.content.language === targetLanguage
+        );
+
         setStories(filtered);
       } catch (error) {
         console.error("Error fetching stories:", error);

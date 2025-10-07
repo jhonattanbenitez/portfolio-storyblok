@@ -15,9 +15,6 @@ interface StoryCardProps {
 const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) => {
   const { html: introHtml } = useMarkdown(story.content.intro);
 
-  // prefix no longer used after switching to full_slug/translated paths
-
-  // Prefer translated_slugs (normalize language codes to lowercase)
   const normalizedLang = (language || "en").toLowerCase();
   const isPreferredLang = (lang?: string) => {
     const l = (lang || "").toLowerCase();
