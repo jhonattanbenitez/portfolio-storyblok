@@ -4,6 +4,8 @@ export const es = {
     projects: "Proyectos",
     blog: "Blog",
     contact: "Contacto",
+    posts: "Publicaciones",
+    categories: "Categorías",
   },
   hero: {
     title: "Hola, soy",

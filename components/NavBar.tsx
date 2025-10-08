@@ -7,21 +7,43 @@ import MenuOverlay from "./MenuOverlay";
 import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { useTranslation } from "../hooks/useTranslation";
+import { usePathname } from "next/navigation";
 
-export interface NavLink {
+export interface NavLinkType {
   title: string;
   href: string;
+  subLinks?: { title: string; href: string }[];
 }
 
 const NavBar: FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { t } = useTranslation();
+  const pathname = usePathname();
 
-  const navLinks: NavLink[] = [
-    { title: t("nav.about"), href: "/#about" },
-    { title: t("nav.projects"), href: "/#projects" },
-    { title: t("nav.blog"), href: "/posts" },
-    { title: t("nav.contact"), href: "/#contact" },
+  // 🔹 Detectar idioma según la URL actual
+  const urlLang = (() => {
+    const first = pathname.split("/").filter(Boolean)[0];
+    if (first === "es-co" || first === "es") return "es-co";
+    return "en";
+  })();
+
+  // 🔹 Prefijo para rutas
+  const prefix = urlLang === "es-co" ? "/es-co" : "";
+
+  // 🔹 Navegación traducida y con rutas correctas según idioma
+  const navLinks: NavLinkType[] = [
+    { title: t("nav.about"), href: `${prefix}/#about` },
+    { title: t("nav.projects"), href: `${prefix}/#projects` },
+    {
+      title: t("nav.blog"),
+      href: `${prefix}/posts`,
+      subLinks: [
+        { title: t("nav.posts"), href: `${prefix}/posts` },
+        { title: t("nav.categories"), href: `${prefix}/categories` },
+      ],
+    },
+    { title: t("nav.contact"), href: `${prefix}/#contact` },
   ];
 
   const toggleNavbar = () => setNavbarOpen((v) => !v);
@@ -36,15 +58,16 @@ const NavBar: FC = () => {
       aria-label="Primary"
     >
       <div className="mx-auto flex flex-wrap items-center justify-between px-8 py-4">
+        {/* === LOGO === */}
         <Link
-          href="/"
+          href={prefix || "/"}
           className="font-semibold text-2xl md:text-5xl text-foreground"
           aria-label="Home"
         >
           [JB]
         </Link>
 
-        {/* Mobile toggle */}
+        {/* === TOGGLE MOBILE === */}
         <div className="block md:hidden">
           <button
             type="button"
@@ -69,18 +92,55 @@ const NavBar: FC = () => {
           </button>
         </div>
 
-        {/* Desktop menu */}
+        {/* === DESKTOP MENU === */}
         <div className="menu hidden md:block md:w-auto" id="navbar">
           <ul
             className="
-                        mt-0 flex p-4 md:p-0 md:flex-row md:space-x-8
-                        text-muted       
-                      ">
-            {navLinks.map((link) => (
-              <li key={link.href}>
+              mt-0 flex p-4 md:p-0 md:flex-row md:space-x-8
+              text-muted-foreground relative
+            "
+          >
+            {navLinks.map((link, index) => (
+              <li
+                key={link.href}
+                className="relative group"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
+                {/* === LINK PRINCIPAL === */}
                 <NavLink href={link.href} title={link.title} />
+
+                {/* === SUBMENÚ === */}
+                {link.subLinks && hoveredIndex === index && (
+                  <ul
+                    className="
+                      absolute left-0 w-48
+                      bg-white border border-border rounded-lg shadow-lg
+                      flex flex-col
+                      animate-in fade-in slide-in-from-top-2
+                    "
+                  >
+                    {link.subLinks.map((sub) => (
+                      <li key={sub.href}>
+                        <Link
+                          href={sub.href}
+                          className="
+                            block px-4 py-2 text-sm
+                            hover:bg-gray-300 hover:text-foreground
+                            rounded-md
+                            transition-colors
+                          "
+                        >
+                          {sub.title}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                )}
               </li>
             ))}
+
+            {/* === TOGGLES === */}
             <li className="flex items-center">
               <Suspense fallback={null}>
                 <ThemeToggle />
@@ -95,7 +155,7 @@ const NavBar: FC = () => {
         </div>
       </div>
 
-      {/* Mobile menu overlay */}
+      {/* === MOBILE OVERLAY === */}
       {navbarOpen && <MenuOverlay links={navLinks} />}
     </nav>
   );

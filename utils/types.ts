@@ -17,6 +17,15 @@ export type ImageType = {
   };
 };
 
+export type CategoryRef = {
+  id: string;
+  url: string;
+  linktype: string;
+  fieldtype: string;
+  cached_url: string;
+  prep: boolean;
+};
+
 export type StoryContent = {
   _uid: string;
   date: string;
@@ -27,6 +36,7 @@ export type StoryContent = {
   content: string;
   component: string;
   language?: string;
+  category_ref?: CategoryRef;
 };
 
 export type Story = {

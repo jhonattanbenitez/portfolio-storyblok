@@ -39,6 +39,8 @@ export const fetchStories = async ({
       "filter_query[category_ref.cached_url][in]",
       categoryCachedUrl
     );
+
+    console.log("Filtering by category cached_url:", categoryCachedUrl);
   }
 
   try {
