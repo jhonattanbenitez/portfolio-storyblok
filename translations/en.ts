@@ -38,6 +38,7 @@ export const en = {
     send: "Send Message",
     success: "Message sent successfully!",
     error: "Error sending message. Please try again.",
+    sending: "Sending...",
   },
   footer: {
     rights: "All rights reserved.",
@@ -63,5 +64,4 @@ export const en = {
   posts: {
     noPosts: "No posts found", 
   }
-
 } as const;

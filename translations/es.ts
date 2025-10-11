@@ -38,6 +38,7 @@ export const es = {
     send: "Enviar Mensaje",
     success: "¡Mensaje enviado exitosamente!",
     error: "Error al enviar el mensaje. Por favor intenta de nuevo.",
+    sending: "Enviando...",
   },
   footer: {
     rights: "Todos los derechos reservados.",
