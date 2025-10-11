@@ -12,20 +12,20 @@ export async function POST(req: Request) {
   }
 
   const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com", // Change this for Outlook, Yahoo, etc.
+    host: "smtp.gmail.com", 
     port: 465,
     secure: true, // Use `true` for port 465, `false` for 587
     auth: {
-      user: process.env.SMTP_USER, // Your email address
-      pass: process.env.SMTP_PASS, // Your email password or app-specific password
+      user: process.env.SMTP_USER, 
+      pass: process.env.SMTP_PASS, 
     },
   });
 
   try {
     await transporter.sendMail({
       from: `"${name}" <${email}>`,
-      to: process.env.SMTP_USER, // Your email to receive messages
-      subject: `New Contact Form Submission from ${name}`,
+      to: process.env.SMTP_USER, 
+      subject: `Portfolio Form Submission from ${name}`,
       text: message,
       html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p>`,
     });
