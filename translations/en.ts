@@ -39,6 +39,7 @@ export const en = {
     success: "Message sent successfully!",
     error: "Error sending message. Please try again.",
     sending: "Sending...",
+    recaptcha: "This site is protected by reCAPTCHA and the Google",
   },
   footer: {
     rights: "All rights reserved.",
@@ -62,6 +63,6 @@ export const en = {
     loading: "Loading...",
   },
   posts: {
-    noPosts: "No posts found", 
-  }
+    noPosts: "No posts found",
+  },
 } as const;

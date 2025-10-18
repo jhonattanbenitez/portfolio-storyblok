@@ -1,36 +1,36 @@
-import type { NextConfig } from 'next';
+import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   // Enable experimental features for better performance
   experimental: {
-    optimizePackageImports: ['@storyblok/react', 'framer-motion'],
+    optimizePackageImports: ["@storyblok/react", "framer-motion"],
   },
 
   // Enhanced image optimization configuration
   images: {
     domains: ["a-us.storyblok.com", "img2.storyblok.com"],
     minimumCacheTTL: 60 * 60 * 24, // 24 hours
-    formats: ['image/webp', 'image/avif'],
+    formats: ["image/webp", "image/avif"],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     dangerouslyAllowSVG: true,
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     // Enhanced optimization settings
     unoptimized: false,
-    loader: 'default',
+    loader: "default",
     // Custom loader for Storyblok images
     remotePatterns: [
       {
-        protocol: 'https',
-        hostname: 'a-us.storyblok.com',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "a-us.storyblok.com",
+        port: "",
+        pathname: "/**",
       },
       {
-        protocol: 'https',
-        hostname: 'img2.storyblok.com',
-        port: '',
-        pathname: '/**',
+        protocol: "https",
+        hostname: "img2.storyblok.com",
+        port: "",
+        pathname: "/**",
       },
     ],
   },
@@ -38,42 +38,47 @@ const nextConfig: NextConfig = {
   // Compression and optimization
   compress: true,
   poweredByHeader: false,
-  
+
   // Headers for better caching and security
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: "/(.*)",
         headers: [
           {
-            key: 'X-Frame-Options',
-            value: 'DENY',
+            key: "Content-Security-Policy",
+            value:
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com",
           },
           {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
+            key: "X-Frame-Options",
+            value: "DENY",
           },
           {
-            key: 'Referrer-Policy',
-            value: 'origin-when-cross-origin',
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "Referrer-Policy",
+            value: "origin-when-cross-origin",
           },
         ],
       },
       {
-        source: '/api/(.*)',
+        source: "/api/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=0, s-maxage=86400',
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=86400",
           },
         ],
       },
       {
-        source: '/_next/static/(.*)',
+        source: "/_next/static/(.*)",
         headers: [
           {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
+            key: "Cache-Control",
+            value: "public, max-age=31536000, immutable",
           },
         ],
       },
@@ -85,17 +90,17 @@ const nextConfig: NextConfig = {
     // Optimize bundle size
     if (!dev && !isServer) {
       config.optimization.splitChunks = {
-        chunks: 'all',
+        chunks: "all",
         cacheGroups: {
           vendor: {
             test: /[\\/]node_modules[\\/]/,
-            name: 'vendors',
-            chunks: 'all',
+            name: "vendors",
+            chunks: "all",
           },
           storyblok: {
             test: /[\\/]node_modules[\\/]@storyblok[\\/]/,
-            name: 'storyblok',
-            chunks: 'all',
+            name: "storyblok",
+            chunks: "all",
             priority: 10,
           },
         },
@@ -108,8 +113,8 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [
       {
-        source: '/home',
-        destination: '/',
+        source: "/home",
+        destination: "/",
         permanent: true,
       },
     ];

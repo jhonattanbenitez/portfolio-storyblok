@@ -39,6 +39,7 @@ export const es = {
     success: "¡Mensaje enviado exitosamente!",
     error: "Error al enviar el mensaje. Por favor intenta de nuevo.",
     sending: "Enviando...",
+    recaptcha: "Este sitio está protegido por reCAPTCHA y Google",
   },
   footer: {
     rights: "Todos los derechos reservados.",

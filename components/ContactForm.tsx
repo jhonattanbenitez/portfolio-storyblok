@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
 import { useTranslation } from "../hooks/useTranslation";
 
@@ -12,14 +12,45 @@ interface ContactFormProps {
 
 type Status = "idle" | "sending" | "success" | "error";
 
+declare global {
+  interface Window {
+    grecaptcha: {
+      ready: (callback: () => void) => void;
+      execute: (
+        siteKey: string,
+        options: { action: string }
+      ) => Promise<string>;
+    };
+  }
+}
+
 const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
-   const { t } = useTranslation();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     message: "",
   });
   const [status, setStatus] = useState<Status>("idle");
+  const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
+  // Load reCAPTCHA script
+  useEffect(() => {
+    if (!recaptchaSiteKey) {
+      console.warn("reCAPTCHA site key is not configured");
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
+    script.async = true;
+    script.defer = true;
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, [recaptchaSiteKey]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -28,12 +59,26 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStatus("sending");
+
     try {
+      // Execute reCAPTCHA
+      let recaptchaToken = "";
+      if (window.grecaptcha && recaptchaSiteKey) {
+        recaptchaToken = await window.grecaptcha.execute(recaptchaSiteKey, {
+          action: "submit",
+        });
+      }
+
+      // Send form with token
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          ...formData,
+          recaptchaToken,
+        }),
       });
+
       setStatus(res.ok ? "success" : "error");
       if (res.ok) setFormData({ name: "", email: "", message: "" });
     } catch {
@@ -108,7 +153,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
             {status === "sending" ? t("contact.sending") : t("contact.send")}
           </button>
 
-          {/* Announce status (no role expression) */}
+          {/* Announce status */}
           {status !== "idle" &&
             status !== "sending" &&
             (status === "error" ? (
@@ -121,6 +166,26 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
               </p>
             ))}
         </form>
+
+        {/* reCAPTCHA Badge Notice */}
+        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-6">
+          {t("contact.recaptcha") ||
+            "This site is protected by reCAPTCHA and the Google"}{" "}
+          <a
+            href="https://policies.google.com/privacy"
+            className="underline hover:no-underline"
+          >
+            Privacy Policy
+          </a>{" "}
+          and{" "}
+          <a
+            href="https://policies.google.com/terms"
+            className="underline hover:no-underline"
+          >
+            Terms of Service
+          </a>{" "}
+          apply.
+        </p>
       </div>
     </section>
   );
