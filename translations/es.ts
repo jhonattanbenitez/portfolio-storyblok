@@ -6,6 +6,7 @@ export const es = {
     contact: "Contacto",
     posts: "Publicaciones",
     categories: "Categorías",
+    caseStudies: "Casos de Estudio",
   },
   hero: {
     title: "Hola, soy",
@@ -62,6 +63,7 @@ export const es = {
   },
   common: {
     loading: "Cargando...",
+    backToHome: "Volver al Inicio",
   },
   posts: {
     noPosts: "No hay publicaciones",

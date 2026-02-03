@@ -14,17 +14,28 @@ function normalizeSlug(slug?: string) {
 
 function replaceLocaleAndSlug(pathname: string, next: Lang, slugMap?: SlugMap) {
   const parts = pathname.split("/").filter(Boolean);
-  const postsIdx = parts.findIndex((p) => p === "posts");
 
-  const normalizedSlug = normalizeSlug(slugMap?.[next]);
+  // Check if we are in a detail view that needs slug replacement
+  // This checks: if there is a slug map for the next language AND (we are in 'posts' OR 'case-studies')
+  const isPost = parts.includes("posts");
+  const isCaseStudy = parts.includes("case-studies");
 
-  if (postsIdx !== -1) {
-    if (normalizedSlug) {
-      if (parts.length <= postsIdx + 1) {
-        parts.push(normalizedSlug);
-      } else {
-        parts[postsIdx + 1] = normalizedSlug;
-      }
+  const needsSlugReplacement = (isPost || isCaseStudy) && slugMap?.[next];
+
+  if (needsSlugReplacement) {
+    const normalizedSlug = normalizeSlug(slugMap![next]);
+
+    // Find the index of the segment that precedes the slug
+    const segmentIndex = isPost
+      ? parts.indexOf("posts")
+      : parts.indexOf("case-studies");
+
+    if (segmentIndex !== -1 && segmentIndex + 1 < parts.length) {
+      // Replace the current slug with the new one
+      parts[segmentIndex + 1] = normalizedSlug;
+    } else if (segmentIndex !== -1) {
+      // Append if it was somehow missing (though unlikely for a detail page)
+      parts.push(normalizedSlug);
     }
   }
 

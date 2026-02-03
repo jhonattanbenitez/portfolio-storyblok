@@ -35,6 +35,7 @@ const NavBar: FC = () => {
   const navLinks: NavLinkType[] = [
     { title: t("nav.about"), href: `${prefix}/#about` },
     { title: t("nav.projects"), href: `${prefix}/#projects` },
+    { title: t("nav.caseStudies"), href: `${prefix}/case-studies` },
     {
       title: t("nav.blog"),
       href: `${prefix}/posts`,

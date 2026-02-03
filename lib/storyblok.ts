@@ -9,6 +9,9 @@ import ProjectsSection from "../components/ProjectsSection";
 import ContactForm from "../components/ContactForm";
 import NavBar from "../components/NavBar";
 
+import CaseStudy from "../components/CaseStudy";
+import CaseStudiesSection from "../components/CaseStudiesSection";
+
 export const getStoryblokApi = (preview = false) => {
   return storyblokInit({
     accessToken: preview
@@ -23,6 +26,8 @@ export const getStoryblokApi = (preview = false) => {
       projects: ProjectsSection,
       contact: ContactForm,
       navigation: NavBar,
+      case_study: CaseStudy,
+      case_studies_section: CaseStudiesSection,
     },
   });
 };

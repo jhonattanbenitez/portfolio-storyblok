@@ -3,14 +3,18 @@ import { StoryblokApiResponse, SupportedLanguage, ApiError } from "./types";
 
 export const fetchStory = async (
   version: "draft" | "published",
-  slug?: string[]
+  slug?: string[],
+  resolveRelations?: string,
 ): Promise<StoryblokApiResponse | null> => {
   try {
-    getStoryblokApi();
+    getStoryblokApi(version === "draft");
 
     const { language, storySlug } = parseSlugAndLanguage(slug);
     const correctSlug = `/${storySlug}`;
-    const token = process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
+    const token =
+      version === "draft"
+        ? process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+        : process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
 
     if (!token) {
       const error: ApiError = {
@@ -21,22 +25,27 @@ export const fetchStory = async (
       throw error;
     }
 
-    const params = new URLSearchParams({
+    const searchParams: Record<string, string> = {
       version,
       token,
       language,
-    });
+    };
 
-    const response = await fetch(
-      `https://api-us.storyblok.com/v2/cdn/stories${correctSlug}?${params.toString()}`,
-      {
-        next: {
-          tags: ["cms", `cms:${language}`, `story:${storySlug}`],
-          revalidate: version === "published" ? 3600 : 0,
-        },
-        cache: version === "published" ? "default" : "no-store",
-      }
-    );
+    if (resolveRelations) {
+      searchParams.resolve_relations = resolveRelations;
+    }
+
+    const params = new URLSearchParams(searchParams);
+
+    const fetchUrl = `https://api-us.storyblok.com/v2/cdn/stories${correctSlug}?${params.toString()}`;
+
+    const response = await fetch(fetchUrl, {
+      next: {
+        tags: ["cms", `cms:${language}`, `story:${storySlug}`],
+        revalidate: version === "published" ? 3600 : 0,
+      },
+      cache: version === "published" ? "default" : "no-store",
+    });
 
     if (!response.ok) {
       const error: ApiError = {
@@ -92,3 +101,41 @@ function parseSlugAndLanguage(slug?: string[]): {
 
   return { language, storySlug };
 }
+
+export const fetchStoriesByUuids = async (
+  version: "draft" | "published",
+  uuids: string[],
+  language: SupportedLanguage = "en",
+): Promise<any[]> => {
+  try {
+    if (uuids.length === 0) return [];
+
+    const token =
+      version === "draft"
+        ? process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+        : process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
+
+    if (!token) throw new Error("Missing Token");
+
+    const searchParams = new URLSearchParams({
+      version,
+      token,
+      language,
+      by_uuids: uuids.join(","),
+    });
+
+    const response = await fetch(
+      `https://api-us.storyblok.com/v2/cdn/stories?${searchParams.toString()}`,
+      {
+        next: { tags: ["cms", `cms:stories`] },
+        cache: version === "published" ? "default" : "no-store",
+      },
+    );
+
+    const data = await response.json();
+    return data.stories || [];
+  } catch (error) {
+    console.error("Error fetching stories by UUIDs:", error);
+    return [];
+  }
+};

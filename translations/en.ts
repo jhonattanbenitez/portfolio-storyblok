@@ -6,6 +6,7 @@ export const en = {
     contact: "Contact",
     posts: "Posts",
     categories: "Categories",
+    caseStudies: "Case Studies",
   },
   hero: {
     title: "Hello, I'm ",
@@ -61,6 +62,7 @@ export const en = {
   },
   common: {
     loading: "Loading...",
+    backToHome: "Back to Home",
   },
   posts: {
     noPosts: "No posts found",

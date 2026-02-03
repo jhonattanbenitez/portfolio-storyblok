@@ -37,6 +37,7 @@ export type StoryContent = {
   component: string;
   language?: string;
   category_ref?: CategoryRef;
+  body?: any[]; // Storyblok blocks
 };
 
 export type Story = {
@@ -62,12 +63,14 @@ export type Story = {
   path: null | string;
   alternates: unknown[];
   default_full_slug: null | string;
-  translated_slugs: null | {
-    lang: string;
-    name?: string;
-    path?: string; 
-    slug?: string; 
-  }[];
+  translated_slugs:
+    | null
+    | {
+        lang: string;
+        name?: string;
+        path?: string;
+        slug?: string;
+      }[];
 };
 
 export type StoriesResponse = {
@@ -115,7 +118,7 @@ export type FetchStoryResult = {
 };
 
 // Language and routing types
-export type SupportedLanguage = 'en' | 'es-co' | 'es';
+export type SupportedLanguage = "en" | "es-co" | "es";
 
 export type LanguageConfig = {
   code: SupportedLanguage;
@@ -135,7 +138,7 @@ export type BaseComponentProps = {
 };
 
 export type LoadingStateProps = {
-  size?: 'sm' | 'md' | 'lg';
+  size?: "sm" | "md" | "lg";
   text?: string;
   className?: string;
 };
@@ -179,7 +182,7 @@ export type CacheConfig = {
 };
 
 export type FetchOptions = {
-  version: 'draft' | 'published';
+  version: "draft" | "published";
   language: SupportedLanguage;
   cache?: RequestCache;
   next?: {
