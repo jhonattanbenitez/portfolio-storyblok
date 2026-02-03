@@ -44,14 +44,13 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                 <button
                   onClick={() => toggleSubmenu(index)}
                   className={`
-                    w-full h-12 flex items-center justify-between
-                    text-left rounded-md
+                    w-full h-12 flex items-center justify-center gap-2
+                    rounded-md
                     px-3 transition-colors
                     hover:bg-secondary/60 hover:text-foreground
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
                     ${openIndex === index ? "bg-secondary/40" : ""}
                   `}
-            
                 >
                   <span>{link.title}</span>
                   <span
@@ -73,8 +72,8 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                 >
                   <ul
                     className="
-                      flex flex-col border-l border-border ml-4 pl-4 py-1
-                      bg-background/80 backdrop-blur-sm rounded-md
+                      flex flex-col items-center py-1
+                      rounded-md
                     "
                     role="menu"
                     aria-label={`${link.title} submenu`}

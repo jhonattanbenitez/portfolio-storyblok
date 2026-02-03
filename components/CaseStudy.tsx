@@ -95,7 +95,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
   return (
     <article
       {...storyblokEditable(blok)}
-      className="min-h-screen bg-background text-foreground pb-20"
+      className="min-h-screen bg-background text-foreground pb-20 pt-20"
     >
       {/* Hero Header */}
       <div className="relative w-full h-[60vh] md:h-[70vh] bg-muted">

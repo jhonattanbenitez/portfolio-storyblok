@@ -8,6 +8,7 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { useTranslation } from "../hooks/useTranslation";
 import { usePathname } from "next/navigation";
+import { useTheme } from "../contexts/ThemeContext";
 
 export interface NavLinkType {
   title: string;
@@ -19,6 +20,7 @@ const NavBar: FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
   const pathname = usePathname();
 
   // 🔹 Detectar idioma según la URL actual
@@ -51,11 +53,11 @@ const NavBar: FC = () => {
 
   return (
     <nav
-      className="
+      className={`
         fixed inset-x-0 top-0 z-50
-        border border-border
-        bg-[var(--surface-95)] backdrop-blur-sm
-      "
+        border-b border-border
+        ${resolvedTheme === "dark" ? "bg-[#0f172a]" : "bg-[#ffffff]"}
+      `}
       aria-label="Primary"
     >
       <div className="mx-auto flex flex-wrap items-center justify-between px-8 py-4">
