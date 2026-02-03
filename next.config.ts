@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["@storyblok/react", "framer-motion"],
   },
+  turbopack: {},
 
   // Enhanced image optimization configuration
   images: {
