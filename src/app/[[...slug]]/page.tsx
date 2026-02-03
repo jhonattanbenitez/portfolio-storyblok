@@ -24,18 +24,14 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({
   params,
-  searchParams,
 }: {
   params: Promise<RouteParams>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }): Promise<Metadata> {
   try {
     const { slug } = await params;
     const { isEnabled } = await draftMode();
-    const query = await searchParams;
     const isDev = process.env.NODE_ENV === "development";
-    const version =
-      isEnabled || query?._storyblok || isDev ? "draft" : "published";
+    const version = isEnabled || isDev ? "draft" : "published";
 
     // Determine language from slug
     let language: SupportedLanguage = "en";
@@ -69,18 +65,14 @@ export async function generateMetadata({
 
 export default async function Home({
   params,
-  searchParams,
 }: {
   params: Promise<RouteParams>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   try {
     const { slug } = await params;
     const { isEnabled } = await draftMode();
-    const query = await searchParams;
     const isDev = process.env.NODE_ENV === "development";
-    const version =
-      isEnabled || query?._storyblok || isDev ? "draft" : "published";
+    const version = isEnabled || isDev ? "draft" : "published";
 
     // Map folder root to 'home' story
     let fetchSlug = slug;
