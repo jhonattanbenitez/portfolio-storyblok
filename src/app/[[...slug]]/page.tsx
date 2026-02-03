@@ -1,5 +1,9 @@
 import { StoryblokStory } from "@storyblok/react/rsc";
-import { fetchStory, fetchStoriesByUuids } from "../../../utils/fetchStory";
+import {
+  fetchStory,
+  fetchStoriesByUuids,
+  fetchAllStorySlugs,
+} from "../../../utils/fetchStory";
 import { generateMetadataFromStory } from "../../../utils/seo";
 import { notFound } from "next/navigation";
 import {
@@ -11,15 +15,8 @@ import { Metadata } from "next";
 import { draftMode } from "next/headers";
 
 export async function generateStaticParams() {
-  // Generate static params for known routes
-  return [
-    { slug: [] },
-    { slug: ["posts"] },
-    { slug: ["contact"] },
-    { slug: ["es-co"] },
-    { slug: ["es-co", "posts"] },
-    { slug: ["es-co", "contact"] },
-  ];
+  const paths = await fetchAllStorySlugs();
+  return paths;
 }
 
 export async function generateMetadata({

@@ -144,3 +144,58 @@ export const fetchStoriesByUuids = async (
     return [];
   }
 };
+
+export const fetchAllStorySlugs = async (
+  version: "draft" | "published" = "published",
+): Promise<{ slug: string[] }[]> => {
+  try {
+    const token =
+      version === "draft"
+        ? process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+        : process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
+
+    if (!token) throw new Error("Missing Token");
+
+    const searchParams = new URLSearchParams({
+      version,
+      token,
+      per_page: "100", // Start with 100, might need pagination for larger sites
+    });
+
+    const response = await fetch(
+      `https://api-us.storyblok.com/v2/cdn/links?${searchParams.toString()}`,
+      {
+        next: { tags: ["cms", "cms:links"] },
+        cache: version === "published" ? "default" : "no-store",
+      },
+    );
+
+    const data = await response.json();
+    const links = data.links;
+
+    const paths: { slug: string[] }[] = [];
+
+    Object.keys(links).forEach((key) => {
+      const link = links[key];
+      // Filter out folders or non-page items if necessary, though 'is_folder' check might be needed.
+      // For now we include everything that's not a folder, or handle folders if they have content.
+      // Usually folders are just containers.
+      if (link.is_folder && link.slug !== "/") return;
+
+      const slug = link.slug;
+      if (slug === "home") {
+        paths.push({ slug: [] });
+      } else {
+        const parts = slug.split("/").filter((p: string) => p);
+        if (parts.length > 0) {
+          paths.push({ slug: parts });
+        }
+      }
+    });
+
+    return paths;
+  } catch (error) {
+    console.error("Error fetching all story slugs:", error);
+    return [];
+  }
+};
