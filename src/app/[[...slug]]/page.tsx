@@ -2,7 +2,11 @@ import { StoryblokStory } from "@storyblok/react/rsc";
 import { fetchStory, fetchStoriesByUuids } from "../../../utils/fetchStory";
 import { generateMetadataFromStory } from "../../../utils/seo";
 import { notFound } from "next/navigation";
-import { RouteParams, SupportedLanguage } from "../../../utils/types";
+import {
+  RouteParams,
+  SupportedLanguage,
+  StoryblokBlock,
+} from "../../../utils/types";
 import { Metadata } from "next";
 import { draftMode } from "next/headers";
 
@@ -93,7 +97,7 @@ export default async function Home({
 
     if (pageData?.story?.content?.body) {
       const section = pageData.story.content.body.find(
-        (b: any) => b.component === "case_studies_section",
+        (b: StoryblokBlock) => b.component === "case_studies_section",
       );
 
       if (

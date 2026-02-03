@@ -1,5 +1,10 @@
 import { getStoryblokApi } from "../lib/storyblok";
-import { StoryblokApiResponse, SupportedLanguage, ApiError } from "./types";
+import {
+  StoryblokApiResponse,
+  SupportedLanguage,
+  ApiError,
+  Story,
+} from "./types";
 
 export const fetchStory = async (
   version: "draft" | "published",
@@ -106,7 +111,7 @@ export const fetchStoriesByUuids = async (
   version: "draft" | "published",
   uuids: string[],
   language: SupportedLanguage = "en",
-): Promise<any[]> => {
+): Promise<Story[]> => {
   try {
     if (uuids.length === 0) return [];
 

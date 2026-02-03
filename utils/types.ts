@@ -26,6 +26,12 @@ export type CategoryRef = {
   prep: boolean;
 };
 
+export type StoryblokBlock = {
+  component: string;
+  _uid?: string;
+  [key: string]: unknown;
+};
+
 export type StoryContent = {
   _uid: string;
   date: string;
@@ -37,7 +43,7 @@ export type StoryContent = {
   component: string;
   language?: string;
   category_ref?: CategoryRef;
-  body?: any[]; // Storyblok blocks
+  body?: StoryblokBlock[];
 };
 
 export type Story = {
