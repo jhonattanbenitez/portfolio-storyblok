@@ -133,7 +133,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
 
       <div className="container max-w-5xl mx-auto px-4 -mt-20 relative z-10">
         {/* Project Details Card */}
-        <div className="bg-card text-card-foreground p-8 md:p-12 rounded-xl shadow-xl border border-border grid md:grid-cols-3 gap-8 mb-16">
+        <div className="bg-card bg-slate-50 text-card-foreground p-8 md:p-12 rounded-xl shadow-xl border border-border grid md:grid-cols-3 gap-8 mb-16">
           <div className="md:col-span-2 space-y-4">
             <h3 className="text-xl font-semibold">Overview</h3>
             <div
