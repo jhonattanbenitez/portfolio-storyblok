@@ -142,7 +142,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
           }}
         >
           <div className="md:col-span-2 space-y-4">
-            <h3 className="text-xl font-semibold">Overview</h3>
+            <h3 className="text-xl font-semibold">{t("common.overview")}</h3>
             <div
               className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground"
               dangerouslySetInnerHTML={{
@@ -154,19 +154,19 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
           <div className="space-y-6 md:border-l border-border md:pl-8">
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                Client
+                {t("common.client")}
               </h4>
               <p className="font-medium">{blok.client || "Confidential"}</p>
             </div>
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                Date
+                {t("common.date")}
               </h4>
               <p className="font-medium">{formatDate(blok.date)}</p>
             </div>
             <div>
               <h4 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-1">
-                Services
+                {t("common.services")}
               </h4>
               <p className="font-medium">{blok.services || "Development"}</p>
             </div>

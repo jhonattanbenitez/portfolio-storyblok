@@ -63,6 +63,10 @@ export const en = {
   common: {
     loading: "Loading...",
     backToHome: "Back to Home",
+    client: "Client",
+    date: "Date",
+    services: "Services",
+    overview: "Overview",
   },
   posts: {
     noPosts: "No posts found",

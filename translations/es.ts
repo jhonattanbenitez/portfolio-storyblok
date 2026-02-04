@@ -64,6 +64,10 @@ export const es = {
   common: {
     loading: "Cargando...",
     backToHome: "Volver al Inicio",
+    client: "Cliente",
+    date: "Fecha",
+    services: "Servicios",
+    overview: "Descripción",
   },
   posts: {
     noPosts: "No hay publicaciones",
