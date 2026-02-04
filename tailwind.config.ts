@@ -1,10 +1,12 @@
-
 import type { Config } from "tailwindcss";
 
 // tailwind.config.ts
 export default {
   darkMode: "class",
-  content: ["./src/**/*.{ts,tsx,js,jsx,mdx}"],
+  content: [
+    "./src/**/*.{ts,tsx,js,jsx,mdx}",
+    "./components/**/*.{ts,tsx,js,jsx,mdx}",
+  ],
   theme: {
     extend: {
       colors: {
@@ -35,4 +37,3 @@ export default {
   },
   plugins: [],
 } satisfies Config;
-

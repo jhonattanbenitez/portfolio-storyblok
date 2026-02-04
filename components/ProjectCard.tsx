@@ -19,7 +19,6 @@ const ProjectCard = ({
   gitUrl,
   previewUrl,
 }: ProjectCardProps) => {
-
   return (
     <div className="mb-4 h-full flex flex-col">
       {/* Image + overlay */}
@@ -46,8 +45,8 @@ const ProjectCard = ({
               href={gitUrl}
               className="
           grid place-items-center h-14 w-14 mr-2 rounded-full
-          border border-foreground/60 hover:border-foreground
-          text-inherit hover:text-foreground
+          border border-foreground/60 hover:border-foreground dark:border-white/60 dark:hover:border-white
+          text-inherit hover:text-foreground dark:text-white dark:hover:text-white
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
           transition
         "
@@ -66,8 +65,8 @@ const ProjectCard = ({
               href={previewUrl}
               className="
           grid place-items-center h-14 w-14 rounded-full
-          border border-foreground/60 hover:border-foreground
-          text-inherit hover:text-foreground
+          border border-foreground/60 hover:border-foreground dark:border-white/60 dark:hover:border-white
+          text-inherit hover:text-foreground dark:text-white dark:hover:text-white
           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
           transition
         "

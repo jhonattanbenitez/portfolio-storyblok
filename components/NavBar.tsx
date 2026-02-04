@@ -117,11 +117,16 @@ const NavBar: FC = () => {
                 {link.subLinks && hoveredIndex === index && (
                   <ul
                     className="
-                      absolute left-0 w-48
-                      bg-white border border-border rounded-lg shadow-lg
+                      absolute left-0 top-full mt-2 w-48
+                      border border-border rounded-lg shadow-lg
                       flex flex-col
                       animate-in fade-in slide-in-from-top-2
+                      before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']
                     "
+                    style={{
+                      backgroundColor:
+                        resolvedTheme === "dark" ? "#0f172a" : "#ffffff",
+                    }}
                   >
                     {link.subLinks.map((sub) => (
                       <li key={sub.href}>
@@ -129,7 +134,7 @@ const NavBar: FC = () => {
                           href={sub.href}
                           className="
                             block px-4 py-2 text-sm
-                            hover:bg-gray-300 hover:text-foreground
+                            hover:bg-muted hover:text-foreground
                             rounded-md
                             transition-colors
                           "

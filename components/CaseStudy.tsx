@@ -9,6 +9,7 @@ import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useLanguage } from "../contexts/LanguageContext";
+import { useTheme } from "../contexts/ThemeContext";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
@@ -53,6 +54,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
 
   const params = useParams();
   const { setSlugMap, language } = useLanguage();
+  const { resolvedTheme } = useTheme();
 
   const extractSlug = (full: string | undefined) => {
     if (!full) return "";
@@ -133,7 +135,12 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
 
       <div className="container max-w-5xl mx-auto px-4 -mt-20 relative z-10">
         {/* Project Details Card */}
-        <div className="bg-card bg-slate-50 text-card-foreground p-8 md:p-12 rounded-xl shadow-xl border border-border grid md:grid-cols-3 gap-8 mb-16">
+        <div
+          className="text-card-foreground p-8 md:p-12 rounded-xl shadow-xl border border-border grid md:grid-cols-3 gap-8 mb-16"
+          style={{
+            backgroundColor: resolvedTheme === "dark" ? "#1e293b" : "#ffffff",
+          }}
+        >
           <div className="md:col-span-2 space-y-4">
             <h3 className="text-xl font-semibold">Overview</h3>
             <div
