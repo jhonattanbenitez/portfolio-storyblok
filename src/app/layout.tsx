@@ -6,23 +6,24 @@ import { GoogleAnalytics } from "@next/third-parties/google";
 import CookieBanner from "../../components/CookieBanner";
 import { LanguageProvider } from "../../contexts/LanguageContext";
 import { ThemeProvider } from "../../contexts/ThemeContext";
-import NavBar from "../../components/NavBar";
+import NavBarWrapper from "../../components/NavBarWrapper";
 import ErrorBoundary from "../../components/ErrorBoundary";
 
 const inter = Inter({ subsets: ["latin"] });
 
-// Default metadata - will be overridden by dynamic metadata in pages
 export const metadata: Metadata = {
   title: "Jhonattan Benitez Portfolio",
   description:
     "Hello, I'm Jhonattan Benitez, a Front-End Developer. I specialize in building websites and web applications using modern technologies with a accessibility-first approach.",
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || 'https://jhonattanbenitez.dev'),
+  metadataBase: new URL(
+    process.env.NEXT_PUBLIC_SITE_URL || "https://jhonattanbenitez.dev",
+  ),
   alternates: {
-    canonical: '/',
+    canonical: "/",
     languages: {
-      'en': '/',
-      'es-co': '/es-co',
-      'es': '/es',
+      en: "/",
+      "es-co": "/es-co",
+      es: "/es",
     },
   },
 };
@@ -81,7 +82,7 @@ export default function RootLayout({
           <ThemeProvider>
             <LanguageProvider>
               <StoryblokProvider>
-                <NavBar />
+                <NavBarWrapper />
                 {children}
                 <CookieBanner />
               </StoryblokProvider>

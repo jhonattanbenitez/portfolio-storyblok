@@ -11,6 +11,12 @@ import NavBar from "../components/NavBar";
 
 import CaseStudy from "../components/CaseStudy";
 import CaseStudiesSection from "../components/CaseStudiesSection";
+import LandingPage from "../components/Landing/LandingPage";
+import LandingHero from "../components/Landing/LandingHero";
+import LandingFeatures from "../components/Landing/LandingFeatures";
+import LandingFeature from "../components/Landing/LandingFeature";
+import LandingCaseStudy from "../components/Landing/LandingCaseStudy";
+import LandingContactForm from "../components/Landing/LandingContactForm";
 
 export const getStoryblokApi = (preview = false) => {
   return storyblokInit({
@@ -28,6 +34,12 @@ export const getStoryblokApi = (preview = false) => {
       navigation: NavBar,
       case_study: CaseStudy,
       case_studies_section: CaseStudiesSection,
+      landing_page: LandingPage,
+      landing_hero: LandingHero,
+      landing_features: LandingFeatures,
+      landing_feature: LandingFeature,
+      landing_case_study: LandingCaseStudy,
+      landing_contact: LandingContactForm,
     },
   });
 };
