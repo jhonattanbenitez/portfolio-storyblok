@@ -6,6 +6,59 @@ import {
   Story,
 } from "./types";
 
+const MAX_RETRIES = 5;
+const BASE_DELAY = 1000; // 1 second
+
+// Helper to wait
+const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Helper for fetch with retry
+async function fetchWithRetry(
+  url: string,
+  options: RequestInit,
+): Promise<Response> {
+  let attempt = 0;
+
+  while (attempt < MAX_RETRIES) {
+    try {
+      const response = await fetch(url, options);
+
+      if (response.status === 429) {
+        // Rate limited
+        const waitTime =
+          BASE_DELAY * Math.pow(2, attempt) + Math.random() * 1000; // Exponential backoff + jitter
+        console.warn(
+          `Rate limited (429). Retrying in ${Math.round(waitTime)}ms... (Attempt ${attempt + 1}/${MAX_RETRIES})`,
+        );
+        await delay(waitTime);
+        attempt++;
+        continue;
+      }
+
+      // If 5xx error, we might also want to retry, but let's stick to 429 for now or generic server errors if needed
+      if (response.status >= 500) {
+        const waitTime = BASE_DELAY * Math.pow(2, attempt);
+        console.warn(
+          `Server error (${response.status}). Retrying in ${Math.round(waitTime)}ms... (Attempt ${attempt + 1}/${MAX_RETRIES})`,
+        );
+        await delay(waitTime);
+        attempt++;
+        continue;
+      }
+
+      return response;
+    } catch (error) {
+      console.error(`Fetch error on attempt ${attempt + 1}:`, error);
+      // Network errors invoke a retry
+      const waitTime = BASE_DELAY * Math.pow(2, attempt);
+      await delay(waitTime);
+      attempt++;
+    }
+  }
+
+  throw new Error(`Failed to fetch after ${MAX_RETRIES} attempts`);
+}
+
 export const fetchStory = async (
   version: "draft" | "published",
   slug?: string[],
@@ -44,7 +97,7 @@ export const fetchStory = async (
 
     const fetchUrl = `https://api-us.storyblok.com/v2/cdn/stories${correctSlug}?${params.toString()}`;
 
-    const response = await fetch(fetchUrl, {
+    const response = await fetchWithRetry(fetchUrl, {
       next: {
         tags: ["cms", `cms:${language}`, `story:${storySlug}`],
         revalidate: version === "published" ? 3600 : 0,
@@ -129,7 +182,7 @@ export const fetchStoriesByUuids = async (
       by_uuids: uuids.join(","),
     });
 
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `https://api-us.storyblok.com/v2/cdn/stories?${searchParams.toString()}`,
       {
         next: { tags: ["cms", `cms:stories`] },
@@ -162,7 +215,7 @@ export const fetchAllStorySlugs = async (
       per_page: "100", // Start with 100, might need pagination for larger sites
     });
 
-    const response = await fetch(
+    const response = await fetchWithRetry(
       `https://api-us.storyblok.com/v2/cdn/links?${searchParams.toString()}`,
       {
         next: { tags: ["cms", "cms:links"] },
