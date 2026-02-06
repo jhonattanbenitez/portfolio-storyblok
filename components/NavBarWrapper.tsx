@@ -5,7 +5,8 @@ import NavBar from "../components/NavBar";
 
 export default function NavBarWrapper() {
   const pathname = usePathname();
-  const isLandingPage = pathname === "/landing";
+  // Hide navbar on landing pages (English and Spanish)
+  const isLandingPage = pathname === "/landing" || pathname === "/landing-es";
 
   if (isLandingPage) return null;
 
