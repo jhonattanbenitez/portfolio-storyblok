@@ -3,7 +3,20 @@ import type {
   Story,
   StoryblokApiResponse,
   SupportedLanguage,
+  LocalizedUrl,
 } from "../utils/types";
+
+function normalizeStoryFullSlug(fullSlug: string): string {
+  return fullSlug.replace(/^\/+/, "").replace(/^(?:en|es-co)\//, "");
+}
+
+function buildLocalizedStoryHref(
+  fullSlug: string,
+  locale: SupportedLanguage,
+): string {
+  const path = normalizeStoryFullSlug(fullSlug);
+  return locale === "es-co" ? `/es-co/${path}` : `/${path}`;
+}
 
 export type StoryblokVersion = "draft" | "published";
 export type PostContentLanguage = "english" | "spanish";
@@ -257,7 +270,11 @@ export async function resolveAlternateStory({
   locale,
   version,
   fetchAlternate = async (fullSlug, targetLocale, targetVersion) =>
-    (await getStoryBySlug({ slug: fullSlug, locale: targetLocale, version: targetVersion })).story,
+    (await getStoryBySlug({
+      slug: normalizeStoryFullSlug(fullSlug),
+      locale: targetLocale,
+      version: targetVersion,
+    })).story,
   onWarning = console.warn,
 }: {
   story: Story;
@@ -305,6 +322,64 @@ export async function resolveAlternateStory({
     );
     return null;
   }
+}
+
+/** Exactly two locales are supported, so one validated alternate is the other locale. */
+export async function resolveLocalizedStoryUrls({
+  story,
+  currentLocale,
+  version,
+  fetchAlternate,
+  onWarning = console.warn,
+}: {
+  story: Story;
+  currentLocale: SupportedLanguage;
+  version: StoryblokVersion;
+  fetchAlternate?: (
+    fullSlug: string,
+    locale: SupportedLanguage,
+    version: StoryblokVersion,
+  ) => Promise<Story | null>;
+  onWarning?: (message: string) => void;
+}): Promise<LocalizedUrl[]> {
+  const currentUrl = {
+    locale: currentLocale,
+    href: buildLocalizedStoryHref(story.full_slug, currentLocale),
+  };
+  const targetLocale: SupportedLanguage = currentLocale === "en" ? "es-co" : "en";
+
+  if (story.content.component === "post") {
+    const expectedCurrentLanguage = getPostContentLanguage(currentLocale);
+    if (story.content.language !== expectedCurrentLanguage) {
+      onWarning(`Cannot localize post ${story.uuid}: current content.language did not match ${currentLocale}.`);
+      return [currentUrl];
+    }
+  }
+
+  const alternate = await resolveAlternateStory({
+    story,
+    locale: targetLocale,
+    version,
+    fetchAlternate,
+    onWarning,
+  });
+  if (!alternate) return [currentUrl];
+
+  if (
+    story.content.component === "post" &&
+    alternate.content.language !== getPostContentLanguage(targetLocale)
+  ) {
+    onWarning(`Cannot localize post ${story.uuid}: alternate content.language did not match ${targetLocale}.`);
+    return [currentUrl];
+  }
+
+  return [
+    currentUrl,
+    {
+      locale: targetLocale,
+      href: buildLocalizedStoryHref(alternate.full_slug, targetLocale),
+    },
+  ];
 }
 
 /**

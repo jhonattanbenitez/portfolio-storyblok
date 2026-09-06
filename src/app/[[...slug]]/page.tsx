@@ -4,7 +4,9 @@ import {
   getStoriesByUuids,
   getStoryBySlug,
   getStoryFromRoute,
+  getPostContentLanguage,
   resolveCaseStudyStoriesForLocale,
+  resolveLocalizedStoryUrls,
 } from "../../../lib/storyblok-data";
 import { generateMetadataFromStory } from "../../../utils/seo";
 import { notFound } from "next/navigation";
@@ -16,6 +18,7 @@ import {
 import { Metadata } from "next";
 import { draftMode } from "next/headers";
 import { getStoryblokApi } from "../../../lib/storyblok";
+import { AlternateLinksPublisher } from "../../../contexts/AlternateLinksContext";
 
 export async function generateStaticParams() {
   const paths = await getAllStoryParams();
@@ -94,6 +97,20 @@ export default async function Home({
       "case_studies_section.case_studies",
     );
 
+    const locale: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
+    const isPostForLocale =
+      pageData.story.content.component === "post" &&
+      pageData.story.content.language === getPostContentLanguage(locale);
+    const isLocalizedDetail =
+      isPostForLocale || pageData.story.content.component === "case_study";
+    const localizedUrls = isLocalizedDetail
+      ? await resolveLocalizedStoryUrls({
+          story: pageData.story,
+          currentLocale: locale,
+          version,
+        })
+      : undefined;
+
     if (pageData?.story?.content?.body) {
       const section = pageData.story.content.body.find(
         (b: StoryblokBlock) => b.component === "case_studies_section",
@@ -133,10 +150,10 @@ export default async function Home({
     }
 
     return (
-      <StoryblokStory
-        story={pageData.story}
-        alternates={pageData.story.alternates}
-      />
+      <>
+        {localizedUrls && <AlternateLinksPublisher urls={localizedUrls} />}
+        <StoryblokStory story={pageData.story} />
+      </>
     );
   } catch (error) {
     console.error("Error in page component:", error);

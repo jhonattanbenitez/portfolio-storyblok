@@ -1,26 +1,36 @@
 "use client";
 
-import React, { createContext, ReactNode, useContext, useMemo, useState } from "react";
-import { SupportedLanguage } from "../utils/types";
-
-type SlugMap = Partial<Record<SupportedLanguage, string>>;
+import React, { createContext, ReactNode, useContext, useEffect, useMemo, useState } from "react";
+import type { LocalizedUrl } from "../utils/types";
 
 type AlternateLinksContextValue = {
-  slugMap?: SlugMap;
-  setSlugMap: (map: SlugMap | undefined) => void;
+  localizedUrls?: LocalizedUrl[];
+  setLocalizedUrls: (urls: LocalizedUrl[] | undefined) => void;
 };
 
 const AlternateLinksContext = createContext<AlternateLinksContextValue | undefined>(undefined);
 
 export function AlternateLinksProvider({ children }: { children: ReactNode }) {
-  const [slugMap, setSlugMap] = useState<SlugMap>();
-  const value = useMemo(() => ({ slugMap, setSlugMap }), [slugMap]);
+  const [localizedUrls, setLocalizedUrls] = useState<LocalizedUrl[]>();
+  const value = useMemo(
+    () => ({ localizedUrls, setLocalizedUrls }),
+    [localizedUrls],
+  );
 
   return (
     <AlternateLinksContext.Provider value={value}>
       {children}
     </AlternateLinksContext.Provider>
   );
+}
+
+export function AlternateLinksPublisher({ urls }: { urls: LocalizedUrl[] }) {
+  const { setLocalizedUrls } = useAlternateLinks();
+  useEffect(() => {
+    setLocalizedUrls(urls);
+    return () => setLocalizedUrls(undefined);
+  }, [setLocalizedUrls, urls]);
+  return null;
 }
 
 export function useAlternateLinks(): AlternateLinksContextValue {

@@ -7,21 +7,9 @@ import { useTranslation } from "../hooks/useTranslation";
 import formatDate from "../utils/formatDate";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { useAlternateLinks } from "../contexts/AlternateLinksContext";
 import { useTheme } from "../contexts/ThemeContext";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
-
-interface Alternate {
-  id: number;
-  name: string;
-  slug: string;
-  published: true;
-  full_slug: string;
-  is_folder: boolean;
-  parent_id: number;
-}
 
 interface CaseStudyProps {
   blok: SbBlokData & {
@@ -39,64 +27,14 @@ interface CaseStudyProps {
     slug?: string;
     full_slug?: string;
   };
-  alternates?: Alternate[];
-  storySlug?: string;
 }
 
-const CaseStudy: React.FC<CaseStudyProps> = ({
-  blok,
-  alternates: storyAlternates,
-  storySlug,
-}) => {
+const CaseStudy: React.FC<CaseStudyProps> = ({ blok }) => {
   const { html: contentHtml } = useMarkdown(blok.content);
   const { html: introHtml } = useMarkdown(blok.intro);
   const { t } = useTranslation();
 
-  const params = useParams();
-  const pathname = usePathname();
-  const { setSlugMap } = useAlternateLinks();
-  const language = pathname.startsWith("/es-co/") || pathname === "/es-co"
-    ? "es-co"
-    : "en";
   const { resolvedTheme } = useTheme();
-
-  const extractSlug = (full: string | undefined) => {
-    if (!full) return "";
-    const parts = full.split("/");
-    return parts[parts.length - 1];
-  };
-
-  const slugMap = React.useMemo(() => {
-    if (!blok) return undefined;
-
-    // Determine current language from context
-    const currentLang = language;
-
-    // Determine current slug
-    const paramsSlug = Array.isArray(params?.slug)
-      ? params.slug[params.slug.length - 1]
-      : params?.slug;
-
-    const currentSlug =
-      storySlug || blok.slug || extractSlug(blok.full_slug) || paramsSlug || "";
-
-    const alternates = storyAlternates || [];
-
-    // Find the alternate that is NOT the current language
-    const alt = alternates.find((a) => a.slug && a.slug !== currentSlug);
-    const altSlug = extractSlug(alt?.full_slug);
-
-    const map = {
-      [currentLang]: currentSlug,
-      [currentLang === "en" ? "es-co" : "en"]: altSlug,
-    };
-    return map;
-  }, [blok, params, storyAlternates, storySlug, language]);
-
-  React.useEffect(() => {
-    if (slugMap) setSlugMap(slugMap);
-    return () => setSlugMap(undefined);
-  }, [slugMap, setSlugMap]);
 
   return (
     <article

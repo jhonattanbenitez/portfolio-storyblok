@@ -137,6 +137,11 @@ export type FetchStoryResult = {
 // Language and routing types
 export type SupportedLanguage = "en" | "es-co";
 
+export type LocalizedUrl = {
+  locale: SupportedLanguage;
+  href: string;
+};
+
 export type LanguageConfig = {
   code: SupportedLanguage;
   name: string;

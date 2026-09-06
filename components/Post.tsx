@@ -6,24 +6,13 @@ import Script from "next/script";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
-import React, { useEffect } from "react";
+import React from "react";
 import { useParams } from "next/navigation";
 
 import formatDate from "../utils/formatDate";
 import { useMarkdown } from "../hooks/useMarkdown";
-import { useAlternateLinks } from "../contexts/AlternateLinksContext";
 
 type ImageType = { filename: string };
-
-type Alternate = {
-  id: number;
-  name: string;
-  slug: string;
-  published: true;
-  full_slug: string;
-  is_folder: boolean;
-  parent_id: number;
-};
 
 type Blok = {
   _uid: string;
@@ -36,7 +25,6 @@ type Blok = {
   _editable?: string;
   first_published_at: string;
   language: string;
-  alternates?: Alternate[];
   slug?: string;
   full_slug?: string;
 };
@@ -44,13 +32,11 @@ type Blok = {
 type PostProps = {
   blok?: Blok;
   storySlug?: string;
-  alternates?: Alternate[];
 };
 
 const Post: React.FC<PostProps> = ({
   blok,
   storySlug,
-  alternates: storyAlternates,
 }) => {
   const params = useParams();
   const paramsSlug = Array.isArray(params?.slug)
@@ -68,43 +54,15 @@ const Post: React.FC<PostProps> = ({
     error: introError,
   } = useMarkdown(blok?.intro);
 
-  const { setSlugMap } = useAlternateLinks();
-
   const extractSlug = (full: string | undefined) => {
     if (!full) return "";
     const parts = full.split("/");
     return parts[parts.length - 1];
   };
 
-  const slugMap = React.useMemo(() => {
-    if (!blok) return undefined;
-
-    const currentLang = blok.language === "spanish" ? "es-co" : "en";
-
-    const currentSlug =
-      storySlug || blok.slug || extractSlug(blok.full_slug) || paramsSlug || "";
-
-    const alternates = storyAlternates || blok.alternates || [];
-
-    // Buscar el alternate que no coincida con el idioma actual
-    const alt = alternates.find((a) => a.slug && a.slug !== currentSlug);
-    const altSlug = extractSlug(alt?.full_slug);
-
-    const map = {
-      [currentLang]: currentSlug,
-      [currentLang === "en" ? "es-co" : "en"]: altSlug,
-    };
-    return map;
-  }, [blok, storySlug, storyAlternates, paramsSlug]);
-
   const isLoading = contentLoading || introLoading;
   const error = contentError || introError;
   
-  useEffect(() => {
-    if (slugMap) setSlugMap(slugMap);
-    return () => setSlugMap(undefined);
-  }, [slugMap, setSlugMap]);
-
   if (!blok) return <p>Loading...</p>;
   if (isLoading) return <p>Loading content...</p>;
   if (error)
