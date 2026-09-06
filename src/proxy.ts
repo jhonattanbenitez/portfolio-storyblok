@@ -29,7 +29,7 @@ export function proxy(request: NextRequest) {
   // Content Security Policy - Updated for reCAPTCHA
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://www.google.com https://www.gstatic.com",
+    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com",
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https://a-us.storyblok.com https://img2.storyblok.com https://www.google-analytics.com",
@@ -38,7 +38,7 @@ export function proxy(request: NextRequest) {
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",
-    "frame-ancestors 'none'",
+    "frame-ancestors 'self' https://app.storyblok.com",
   ].join("; ");
 
   response.headers.set("Content-Security-Policy", csp);
@@ -67,9 +67,6 @@ export function proxy(request: NextRequest) {
   } else if (pathname.startsWith("/api/")) {
     response.headers.set("Cache-Control", "public, max-age=0, s-maxage=86400");
   }
-
-  // Security: Prevent clickjacking
-  response.headers.set("X-Frame-Options", "DENY");
 
   // Security: Prevent MIME type sniffing
   response.headers.set("X-Content-Type-Options", "nosniff");

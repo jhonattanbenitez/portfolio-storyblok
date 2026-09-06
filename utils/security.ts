@@ -50,6 +50,7 @@ export const CSP_CONFIG = {
     'https://www.googletagmanager.com',
     'https://www.google-analytics.com',
     'https://a.storyblok.com',
+    'https://app.storyblok.com',
   ],
   'style-src': [
     "'self'",
@@ -87,7 +88,8 @@ export const CSP_CONFIG = {
     "'self'",
   ],
   'frame-ancestors': [
-    "'none'",
+    "'self'",
+    'https://app.storyblok.com',
   ],
 };
 
@@ -191,7 +193,6 @@ export function logSecurityEvent(
 
 // Headers for security
 export const SECURITY_HEADERS = {
-  'X-Frame-Options': 'DENY',
   'X-Content-Type-Options': 'nosniff',
   'Referrer-Policy': 'origin-when-cross-origin',
   'X-XSS-Protection': '1; mode=block',

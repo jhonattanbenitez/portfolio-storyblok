@@ -48,11 +48,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com",
-          },
-          {
-            key: "X-Frame-Options",
-            value: "DENY",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com; frame-ancestors 'self' https://app.storyblok.com",
           },
           {
             key: "X-Content-Type-Options",
