@@ -37,56 +37,46 @@ export default async function Post({ blok }: PostProps) {
     <>
       <article
         {...storyblokEditable(blok)}
-        className="prose prose-lg max-w-full text-foreground"
+        className="post-article max-w-full text-foreground"
       >
-        {/* Header */}
-        <header className="flex w-full justify-center bg-muted pb-12 pt-28 md:pb-16 md:pt-32">
-          <h1 className="w-full min-w-0 max-w-6xl break-words px-4 text-center uppercase text-4xl font-bold md:text-5xl lg:text-6xl">
-            {blok.title}
-          </h1>
-        </header>
-
-        {/* Intro */}
-        <section className="bg-muted">
-          <div className="container mx-auto max-w-4xl px-4 pb-4 pt-8 md:pt-12">
+        {/* Editorial header */}
+        <header className="bg-muted pb-10 pt-28 md:pb-12 md:pt-32">
+          <div className="mx-auto w-full max-w-6xl px-4">
+            <h1 className="w-full min-w-0 break-words text-center uppercase text-4xl font-bold md:text-5xl lg:text-6xl">
+              {blok.title}
+            </h1>
+          </div>
+          <div className="mx-auto mt-8 max-w-4xl px-4 md:mt-12">
             <div
-              className="prose mx-auto max-w-4xl text-lg leading-relaxed text-foreground"
+              className="prose post-intro max-w-none text-lg leading-relaxed text-foreground"
               dangerouslySetInnerHTML={{ __html: introHtml || "" }}
             />
+            <p className="mt-4 text-sm text-muted-foreground">
+              {formatDate(blok.date)}
+            </p>
           </div>
-        </section>
+        </header>
 
-        {/* Fecha */}
-        <div className="bg-muted">
-          <div className="container mx-auto max-w-4xl px-4 pb-8 pt-0">
-            <p className="text-sm text-muted-foreground">{formatDate(blok.date)}</p>
-          </div>
-        </div>
-
-        {/* Imagen */}
-        <section className="w-full flex justify-center py-8 bg-muted">
-          <div className="relative w-full max-w-6xl h-[60vh] md:h-[70vh] lg:h-[80vh]">
+        {/* Hero image */}
+        <section className="flex w-full justify-center bg-muted px-4 pb-12 md:pb-16">
+          <div className="relative h-[60vh] w-full max-w-6xl md:h-[70vh] lg:h-[80vh]">
             {blok.image?.length ? (
               <Image
                 src={blok.image[0].filename}
                 alt={`Cover image for ${blok.title}`}
                 fill
                 sizes="100vw"
-                className="rounded-lg object-cover"
+                className="rounded-sm object-cover"
                 priority={false}
               />
             ) : null}
           </div>
         </section>
 
-        {/* Contenido */}
-        <section className="container mx-auto max-w-4xl py-12 md:py-16">
+        {/* Article body */}
+        <section className="mx-auto max-w-4xl px-4 py-12 md:py-16">
           <div
-            className="
-              p-4 rounded-lg overflow-x-auto
-              bg-card text-card-foreground border border-border
-              prose max-w-none
-            "
+            className="post-body prose prose-lg max-w-none"
             dangerouslySetInnerHTML={{ __html: contentHtml || "" }}
           />
         </section>

@@ -35,7 +35,7 @@ const ProjectCard = ({
           className="
       absolute inset-0 flex items-center justify-center
       opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100
-      [background:var(--overlay,rgba(0,0,0,0.60))]
+      bg-transparent md:[background:var(--overlay,rgba(0,0,0,0.60))]
       text-foreground
     "
           aria-hidden="true"

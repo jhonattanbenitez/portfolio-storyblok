@@ -22,41 +22,52 @@
 
 .prose a {
   color: var(--primary);
-  transition: color .2s ease, background .2s ease, text-decoration .2s ease;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+  transition: color .2s ease, text-decoration-color .2s ease;
 }
 .prose a:hover {
-  color: var(--primary-foreground);
-  background: color-mix(in oklab, var(--primary) 20%, transparent);
-  text-decoration: none;
-  border-radius: .25rem;
+  color: color-mix(in oklab, var(--primary) 80%, var(--foreground));
 }
-.prose a:focus {
+.prose a:focus-visible {
   outline: 2px solid var(--ring);
   outline-offset: 2px;
+  border-radius: .125rem;
 }
 
 /* ===========================
    HIGHLIGHT.JS
    =========================== */
-.hljs {
+.prose pre {
+  margin: 1.5rem 0;
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 0.25rem;
+  background: var(--hljs-bg);
+  padding: 0;
+}
+.prose .hljs {
+  display: block;
   background: var(--hljs-bg);
   color: var(--hljs-fg);
   padding: 1rem;
-  border-radius: 0.5rem;
-  margin: 1rem 0;
+  border-radius: inherit;
+  margin: 0;
 }
-.hljs-keyword { color: var(--hljs-keyword); }
-.hljs-string { color: var(--hljs-string); }
-.hljs-comment { color: var(--hljs-comment); }
-.hljs-title { color: var(--hljs-title); }
-.hljs-number { color: var(--hljs-number); }
-.hljs strong,
-.hljs b { color: var(--hljs-strong); font-weight: 700; }
+.prose .hljs-keyword { color: var(--hljs-keyword); }
+.prose .hljs-string { color: var(--hljs-string); }
+.prose .hljs-comment { color: var(--hljs-comment); }
+.prose .hljs-title { color: var(--hljs-title); }
+.prose .hljs-number { color: var(--hljs-number); }
+.prose .hljs strong,
+.prose .hljs b { color: var(--hljs-strong); font-weight: 700; }
 
 /* ===========================
    STRONG / B
    =========================== */
-strong, b {
+.prose strong,
+.prose b {
   color: var(--emphasis-strong);
   font-weight: 700;
 }
@@ -64,25 +75,33 @@ strong, b {
 /* ===========================
    HR + P
    =========================== */
-hr {
-  border: 1px solid var(--hr-border);
+.prose hr {
+  border: 0;
+  border-top: 1px solid var(--hr-border);
   margin: 2rem 0;
 }
-p { margin: 1rem 0; }
+.prose p {
+  margin: 1.25rem 0;
+  line-height: 1.75;
+}
+.post-article .post-intro p:first-child { margin-top: 0; }
+.post-article .post-intro p:last-child { margin-bottom: 0; }
 
 /* ===========================
    TABLES
    =========================== */
 .prose table {
+  display: block;
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0; /* mejor para radius en celdas */
-  margin: 1rem 0;
+  overflow-x: auto;
+  border-collapse: collapse;
+  margin: 1.5rem 0;
 }
-.prose th, .prose td {
-  padding: 1rem;
+.prose th,
+.prose td {
+  min-width: 8rem;
+  padding: .75rem 1rem;
   border: 1px solid var(--table-border);
-  background-clip: padding-box; /* evita que el radius se vea raro con border */
 }
 .prose th {
   background-color: var(--table-th-bg);
@@ -93,25 +112,26 @@ p { margin: 1rem 0; }
   background-color: var(--table-td-bg);
   color: var(--table-td-fg);
 }
-.prose thead th:first-child { border-top-left-radius: .5rem; }
-.prose thead th:last-child  { border-top-right-radius: .5rem; }
-.prose tbody td:first-child { border-bottom-left-radius: .5rem; }
-.prose tbody td:last-child  { border-bottom-right-radius: .5rem; }
 
 /* ===========================
    HEADINGS 
    =========================== */
-.prose h2 { font-size: clamp(22px, 3.4vw, 28px); margin: 1.75rem 0 .875rem; }
-.prose h3 { font-size: clamp(20px, 3vw, 24px);   margin: 1.5rem 0 .75rem; }
-.prose h4 { font-size: clamp(18px, 2.6vw, 22px); margin: 1.25rem 0 .625rem; }
-.prose h5 { font-size: clamp(16px, 2.2vw, 20px); margin: 1rem 0 .5rem; }
-.prose h6 { font-size: clamp(14px, 2vw, 18px);   margin: .875rem 0 .4375rem; }
+.prose h2 { font-size: clamp(22px, 3.4vw, 28px); margin: 2.5rem 0 1rem; }
+.prose h3 { font-size: clamp(20px, 3vw, 24px); margin: 2rem 0 .75rem; }
+.prose h4 { font-size: clamp(18px, 2.6vw, 22px); margin: 1.75rem 0 .625rem; }
+.prose h5 { font-size: clamp(16px, 2.2vw, 20px); margin: 1.5rem 0 .5rem; }
+.prose h6 { font-size: clamp(14px, 2vw, 18px); margin: 1.25rem 0 .4375rem; }
 
 /* ===========================
    LISTS
    =========================== */
 .prose ol {
   list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin: 1rem 0;
+}
+.prose ul {
+  list-style-type: disc;
   padding-left: 1.5rem;
   margin: 1rem 0;
 }
@@ -124,34 +144,14 @@ p { margin: 1rem 0; }
 .prose li::marker { font-weight: 700; }
 
 /* ===========================
-   LINKS 
-   =========================== */
-.container.prose a {
-  color: var(--primary);
-  transition: color .2s ease, text-decoration .2s ease;
-}
-.container.prose a:hover {
-  color: var(--primary-foreground);
-  text-decoration: underline;
-}
-.container.prose a:focus {
-  outline: 2px solid var(--ring);
-  outline-offset: 2px;
-}
-.container.prose a:active {
-  color: var(--primary);
-}
-
-/* ===========================
    QUOTES / BLOCKQUOTE
    =========================== */
 .prose blockquote {
-  border-left: 4px solid var(--border);
-  background: color-mix(in oklab, var(--muted) 90%, transparent);
+  border-left: 3px solid var(--primary);
+  background: var(--muted);
   color: var(--foreground);
   font-style: italic;
   padding: 1rem 1.5rem;
-  margin: 1.5rem 0;
-  border-radius: 0.5rem;
+  margin: 2rem 0;
   quotes: "“" "”" "U+2018" "U+2019";
 }

@@ -74,9 +74,10 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
                 "/m/800x450/filters:format(webp):quality(80)/"
               }
               alt={story.name}
-              fill
+              width={800}
+              height={450}
               priority={index === 0}
-              className="object-cover"
+              className="h-full w-full object-cover"
               sizes="(min-width: 768px) 50vw, 100vw"
             />
           )}
