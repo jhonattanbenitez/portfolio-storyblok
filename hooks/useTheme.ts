@@ -1,13 +1,10 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
+import { useSyncExternalStore } from "react";
+
+const subscribe = () => () => {};
 
 export function useTheme() {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   return { mounted };
 }

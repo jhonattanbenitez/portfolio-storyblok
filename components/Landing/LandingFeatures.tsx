@@ -5,7 +5,6 @@ import {
   SbBlokData,
   StoryblokServerComponent,
 } from "@storyblok/react/rsc";
-import clsx from "clsx";
 
 interface LandingFeaturesProps {
   blok: SbBlokData & {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useEffect, startTransition, useState } from "react";
+import { useActionState, useEffect, startTransition } from "react";
 import { storyblokEditable, SbBlokData } from "@storyblok/react/rsc";
 import { submitContactForm } from "../../src/actions/contact";
 import clsx from "clsx";
@@ -39,7 +39,6 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
     submitContactForm,
     initialState,
   );
-  const [recaptchaLoaded, setRecaptchaLoaded] = useState(false);
   const recaptchaSiteKey = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
   useEffect(() => {
@@ -52,7 +51,6 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
     script.src = `https://www.google.com/recaptcha/api.js?render=${recaptchaSiteKey}`;
     script.async = true;
     script.defer = true;
-    script.onload = () => setRecaptchaLoaded(true);
     document.head.appendChild(script);
 
     return () => {

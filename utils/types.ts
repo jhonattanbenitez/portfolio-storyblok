@@ -180,35 +180,3 @@ export type SeoMetadata = {
   noindex?: boolean;
   nofollow?: boolean;
 };
-
-// Configuration types
-export type AppConfig = {
-  siteName: string;
-  siteUrl: string;
-  defaultLanguage: SupportedLanguage;
-  supportedLanguages: LanguageConfig[];
-  storyblok: {
-    token: string;
-    previewToken?: string;
-    apiUrl: string;
-  };
-  analytics: {
-    googleAnalyticsId: string;
-  };
-};
-
-// Cache and performance types
-export type CacheConfig = {
-  revalidate: number;
-  tags: string[];
-};
-
-export type FetchOptions = {
-  version: "draft" | "published";
-  language: SupportedLanguage;
-  cache?: RequestCache;
-  next?: {
-    revalidate?: number;
-    tags?: string[];
-  };
-};

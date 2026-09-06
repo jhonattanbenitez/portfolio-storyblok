@@ -20,7 +20,7 @@ export async function generateMetadata(): Promise<Metadata> {
     const pageData = await getStoryFromRoute(version, ["landing"]);
     const story = pageData?.story || null;
     return generateMetadataFromStory(story, "en", "/landing");
-  } catch (error) {
+  } catch {
     return generateMetadataFromStory(null, "en", "/landing");
   }
 }

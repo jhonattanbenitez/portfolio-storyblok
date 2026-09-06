@@ -1,22 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import CookieConsent from "react-cookie-consent";
 import { useTranslation } from "../hooks/useTranslation";
 
 export default function CookieBanner() {
   const { t } = useTranslation();
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [hasConsent, setHasConsent] = useState<boolean | null>(null);
-
-
-  useEffect(() => {
-    const consent = localStorage.getItem("cookieConsent");
-    if (consent !== null) {
-      setHasConsent(consent === "true");
-    }
-  }, []);
-
   return (
     <CookieConsent
       location="bottom"
@@ -25,11 +13,9 @@ export default function CookieBanner() {
       enableDeclineButton
       onAccept={() => {
         localStorage.setItem("cookieConsent", "true");
-        setHasConsent(true);
       }}
       onDecline={() => {
         localStorage.setItem("cookieConsent", "false");
-        setHasConsent(false);
       }}
       style={{ 
         background: "hsl(var(--background))", 

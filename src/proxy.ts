@@ -16,17 +16,16 @@ export function proxy(request: NextRequest) {
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-language", locale);
 
-  // Security headers
   const response = NextResponse.next({
     request: { headers: requestHeaders },
   });
 
-  // Apply security headers
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
     response.headers.set(key, value);
   });
 
-  // Content Security Policy - Updated for reCAPTCHA
+  // Allows reCAPTCHA frames and permits only this site and Storyblok's Visual
+  // Editor to embed page responses.
   const csp = [
     "default-src 'self'",
     "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com",
@@ -54,10 +53,6 @@ export function proxy(request: NextRequest) {
     return new NextResponse("Not Found", { status: 404 });
   }
 
-  // Rate limiting headers (basic implementation)
-  response.headers.set("x-ratelimit-limit", "100");
-  response.headers.set("x-ratelimit-remaining", "99");
-
   // Cache control for static assets
   if (pathname.startsWith("/_next/static/")) {
     response.headers.set(
@@ -68,15 +63,6 @@ export function proxy(request: NextRequest) {
     response.headers.set("Cache-Control", "public, max-age=0, s-maxage=86400");
   }
 
-  // Security: Prevent MIME type sniffing
-  response.headers.set("X-Content-Type-Options", "nosniff");
-
-  // Security: XSS Protection
-  response.headers.set("X-XSS-Protection", "1; mode=block");
-
-  // Security: Referrer Policy
-  response.headers.set("Referrer-Policy", "origin-when-cross-origin");
-
   // Security: HSTS (only in production)
   if (process.env.NODE_ENV === "production") {
     response.headers.set(
@@ -84,12 +70,6 @@ export function proxy(request: NextRequest) {
       "max-age=31536000; includeSubDomains; preload"
     );
   }
-
-  // Security: Permissions Policy
-  response.headers.set(
-    "Permissions-Policy",
-    "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
-  );
 
   return response;
 }
