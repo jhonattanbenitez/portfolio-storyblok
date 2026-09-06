@@ -27,7 +27,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Link href={getCaseStudyHref(slug)} className="group block h-full">
+    <Link href={getCaseStudyHref(slug)} className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
       <div className="h-full flex flex-col rounded-xl overflow-hidden border border-border bg-card hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
         {/* Image Container */}
         <div className="relative h-64 w-full overflow-hidden">

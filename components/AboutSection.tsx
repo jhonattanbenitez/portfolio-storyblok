@@ -101,7 +101,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
       className="bg-background text-foreground py-16"
       aria-label={t("about.sectionLabel") ?? "About"}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="md:grid md:grid-cols-2 gap-8 items-start py-8 xl:gap-16">
           {/* Image Section */}
           <div className="md:flex md:justify-center">

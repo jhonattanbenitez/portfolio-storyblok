@@ -26,7 +26,7 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="py-24 bg-gray-50 dark:bg-gray-900/50"
+      className="bg-muted py-24"
     >
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -53,8 +53,8 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
               )}
             </div>
             {/* Floating Card Example */}
-            <div className="absolute -bottom-6 -right-6 bg-white dark:bg-gray-800 p-6 rounded-xl shadow-xl border border-border hidden md:block max-w-xs">
-              <p className="font-bold text-2xl text-blue-600 mb-1">
+            <div className="absolute -bottom-6 -right-6 hidden max-w-xs rounded-xl border border-border bg-card p-6 text-card-foreground shadow-xl md:block">
+              <p className="mb-1 text-2xl font-bold text-primary">
                 95% Faster
               </p>
               <p className="text-sm text-muted-foreground">
@@ -71,7 +71,7 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
             transition={{ duration: 0.6 }}
             className="order-1 lg:order-2 space-y-8"
           >
-            <div className="inline-block px-4 py-1.5 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-sm font-semibold">
+            <div className="inline-block rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">
               Success Story
             </div>
 
@@ -119,7 +119,7 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
               href={
                 blok.cta_link?.cached_url || "/case-studies/logistics-system"
               }
-              className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700 transition"
+              className="inline-flex items-center font-semibold text-primary transition-colors duration-200 hover:text-primary/80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {blok.cta_text || "Read Full Case Study"}
               <ArrowRightIcon className="w-5 h-5 ml-2" />

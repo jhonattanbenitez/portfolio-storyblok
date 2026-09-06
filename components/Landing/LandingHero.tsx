@@ -61,7 +61,7 @@ const LandingHero = ({ blok }: LandingHeroProps) => {
             <span className="mr-2">
               {blok.subheadline_prefix || "We automate"}
             </span>
-            <span className="text-blue-600 dark:text-blue-400 font-semibold">
+            <span className="font-semibold text-primary">
               <TypeAnimation
                 sequence={sequence}
                 wrapper="span"
@@ -81,9 +81,9 @@ const LandingHero = ({ blok }: LandingHeroProps) => {
               href={blok.cta_link?.cached_url || "/contact"}
               className={clsx(
                 "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full",
-                "bg-blue-600 text-white hover:bg-blue-700 transition-all duration-300",
+                "bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
                 "shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)]",
-                "focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               )}
             >
               {blok.cta_text || "Start Automating"}

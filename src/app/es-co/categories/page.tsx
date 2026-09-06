@@ -21,13 +21,15 @@ export default async function CategoriesIndexPageEs() {
   return (
     <section className="max-w-full bg-background text-foreground">
       {/* Header */}
-      <div className="w-full flex justify-center py-24 sm:py-32 bg-muted">
-        <h1 className="px-4 mt-10 text-center uppercase font-bold text-4xl sm:text-5xl">
-          Categorías
-        </h1>
+      <div className="flex w-full justify-center bg-muted pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+        <div className="w-full max-w-6xl px-4 sm:px-6 lg:px-8">
+          <h1 className="text-center uppercase font-bold text-4xl sm:text-5xl">
+            Categorías
+          </h1>
+        </div>
       </div>
 
-      <div className="container mx-auto p-4">
+      <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
         {categories.length === 0 ? (
           <p className="text-muted-foreground">No se encontraron categorías.</p>
         ) : (
@@ -35,11 +37,11 @@ export default async function CategoriesIndexPageEs() {
             {categories.map((cat) => (
               <li
                 key={cat.id}
-                className="p-4 rounded-md border border-border hover:bg-muted/50"
+                className="rounded-md border border-border transition-colors duration-200 hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring"
               >
                 <Link
                   href={`/es-co/categories/${cat.slug}`}
-                  className="underline"
+                  className="block p-4 underline focus-visible:outline-none"
                 >
                   {cat.name || cat.slug}
                 </Link>

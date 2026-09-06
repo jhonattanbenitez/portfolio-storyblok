@@ -54,7 +54,7 @@ const ContactForm = () => {
             onChange={handleChange}
             required
             aria-required="true"
-            className="border p-2 w-full"
+            className="w-full rounded-md border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
         </label>
 
@@ -68,7 +68,7 @@ const ContactForm = () => {
             onChange={handleChange}
             required
             aria-required="true"
-            className="border p-2 w-full"
+            className="w-full rounded-md border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
         </label>
 
@@ -82,18 +82,22 @@ const ContactForm = () => {
             required
             aria-required="true"
             rows={5}
-            className="border p-2 w-full"
+            className="w-full rounded-md border border-input bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
         </label>
 
-        <button type="submit" className="bg-blue-600 text-white p-2 rounded">
+        <button
+          type="submit"
+          disabled={status === "sending"}
+          className="rounded-md bg-primary px-4 py-3 font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+        >
           {status === "sending" ? t("contact.sending") : t("contact.send")}
         </button>
 
         {status &&
           status !== "sending" &&
           (status === "error" ? (
-            <p role="alert" className="text-red-600">
+            <p role="alert" className="text-destructive">
               {t("contact.error")}
             </p>
           ) : (

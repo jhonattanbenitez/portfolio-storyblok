@@ -63,7 +63,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
     >
       <Link
         href={href}
-        className="flex flex-col flex-grow"
+        className="flex flex-grow flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={story.content.title}
       >
         <div className="relative w-full mb-4 flex-shrink-0 h-auto">

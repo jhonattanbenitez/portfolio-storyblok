@@ -89,11 +89,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="bg-gray-50 dark:bg-gray-900 py-16"
+      className="bg-muted py-16"
       id="contact"
     >
       <div className="max-w-2xl mx-auto px-4">
-        <h2 className="text-4xl font-bold text-gray-900 dark:text-white text-center mb-8">
+        <h2 className="mb-8 text-center text-4xl font-bold text-foreground">
           {blok.title}
         </h2>
 
@@ -111,7 +111,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+            className="w-full rounded-md border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
 
           {/* Email */}
@@ -127,7 +127,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+            className="w-full rounded-md border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
 
           {/* Message */}
@@ -142,13 +142,13 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
             onChange={handleChange}
             required
             rows={5}
-            className="w-full p-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:focus:border-blue-400"
+            className="w-full rounded-md border border-input bg-background p-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary"
           />
 
           <button
             type="submit"
             disabled={status === "sending"}
-            className="w-full bg-blue-600 text-white py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors duration-300 disabled:opacity-60"
+            className="w-full rounded-md bg-primary px-6 py-3 font-medium text-primary-foreground transition-colors duration-200 hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
           >
             {status === "sending" ? t("contact.sending") : t("contact.send")}
           </button>
@@ -157,7 +157,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
           {status !== "idle" &&
             status !== "sending" &&
             (status === "error" ? (
-              <p role="alert" className="text-red-600">
+              <p role="alert" className="text-destructive">
                 {t("contact.error")}
               </p>
             ) : (
@@ -168,7 +168,7 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
         </form>
 
         {/* reCAPTCHA Badge Notice */}
-        <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-6">
+        <p className="mt-6 text-center text-xs text-muted-foreground">
           {t("contact.recaptcha") ||
             "This site is protected by reCAPTCHA and the Google"}{" "}
           <a

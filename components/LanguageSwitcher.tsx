@@ -10,9 +10,10 @@ type Lang = (typeof locales)[number];
 
 interface LanguageSwitcherProps {
   localizedUrls?: LocalizedUrl[];
+  responsiveCompact?: boolean;
 }
 
-export default function LanguageSwitcher({ localizedUrls }: LanguageSwitcherProps) {
+export default function LanguageSwitcher({ localizedUrls, responsiveCompact = false }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
@@ -38,16 +39,15 @@ export default function LanguageSwitcher({ localizedUrls }: LanguageSwitcherProp
 
   return (
     <div
-      className="flex items-center space-x-2 bg-gray-100 dark:bg-gray-800
-      rounded-lg p-1 border border-gray-200 dark:border-gray-700"
+      className={`flex items-center gap-1 rounded-md border border-border bg-secondary p-1 text-secondary-foreground ${responsiveCompact ? "h-8 lg:h-10" : "h-10"}`}
     >
       <button
         onClick={() => go("en")}
         disabled={!isAvailable("en")}
-        className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
+        className={`${responsiveCompact ? "h-6 px-2 text-xs lg:h-8 lg:px-3 lg:text-sm" : "h-8 px-3 text-sm"} rounded-md font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
           current === "en"
-            ? "bg-blue-600 text-white shadow-md"
-            : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:bg-background hover:text-foreground"
         }`}
         aria-label="Switch to English"
       >
@@ -56,10 +56,10 @@ export default function LanguageSwitcher({ localizedUrls }: LanguageSwitcherProp
       <button
         onClick={() => go("es-co")}
         disabled={!isAvailable("es-co")}
-        className={`px-3 py-1 rounded-md text-sm font-medium transition-all duration-200 ${
+        className={`${responsiveCompact ? "h-6 px-2 text-xs lg:h-8 lg:px-3 lg:text-sm" : "h-8 px-3 text-sm"} rounded-md font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
           current === "es-co"
-            ? "bg-blue-600 text-white shadow-md"
-            : "text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+            ? "bg-primary text-primary-foreground shadow-sm"
+            : "text-muted-foreground hover:bg-background hover:text-foreground"
         }`}
         aria-label="Switch to Spanish"
       >

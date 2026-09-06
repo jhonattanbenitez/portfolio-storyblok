@@ -80,7 +80,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
       className="relative z-10 bg-background pb-16"
       aria-label={t("projects.sectionLabel") ?? "Projects"}
     >
-      <div className="max-w-6xl mx-auto px-4">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h2 className="pt-16 mb-8 md:mb-12 text-center text-4xl font-bold text-foreground">
           {t("projects.title")}
         </h2>

@@ -16,7 +16,7 @@ export const heroStyles = {
   `,
   
   title: `
-    text-gray-900 dark:text-white mb-4 text-4xl sm:text-5xl lg:text-6xl lg:leading-normal font-extrabold
+    text-foreground mb-4 text-4xl sm:text-5xl lg:text-6xl lg:leading-normal font-extrabold
   `,
   
   titleGradient: `
@@ -28,7 +28,7 @@ export const heroStyles = {
   `,
   
   profileImageWrapper: `
-    rounded-full bg-gray-200 dark:bg-[#181818] w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative
+    rounded-full bg-secondary w-[250px] h-[250px] lg:w-[400px] lg:h-[400px] relative
   `,
   
   profileImage: `

@@ -5,7 +5,11 @@ import { useTheme } from '../contexts/ThemeContext';
 import { useTheme as useMounted } from '../hooks/useTheme';
 import { SunIcon, MoonIcon, ComputerDesktopIcon, ChevronDownIcon } from '@heroicons/react/24/outline';
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  responsiveCompact?: boolean;
+}
+
+export default function ThemeToggle({ responsiveCompact = false }: ThemeToggleProps) {
   const { theme, setTheme } = useTheme();
   const { mounted } = useMounted();
   const [isOpen, setIsOpen] = useState(false);
@@ -36,7 +40,7 @@ export default function ThemeToggle() {
   // Prevent hydration mismatch
   if (!mounted) {
     return (
-      <div className="w-20 h-10 bg-gray-200 dark:bg-gray-700 rounded-lg animate-pulse"></div>
+      <div className={`${responsiveCompact ? 'md:h-8 md:w-10 lg:h-10 lg:w-20' : 'h-10 w-20'} animate-pulse rounded-md border border-border bg-secondary`} />
     );
   }
 
@@ -44,16 +48,18 @@ export default function ThemeToggle() {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors duration-200"
+        className={`flex items-center rounded-md border border-border bg-secondary text-sm font-medium text-secondary-foreground transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
+          responsiveCompact ? 'h-8 gap-1 px-2 lg:h-10 lg:gap-2 lg:px-3' : 'h-10 gap-2 px-3'
+        }`}
         aria-label="Toggle theme"
       >
         <CurrentIcon className="w-4 h-4" />
-        <span className="hidden sm:inline">{currentTheme?.label}</span>
+        <span className={responsiveCompact ? "hidden lg:inline" : "hidden sm:inline"}>{currentTheme?.label}</span>
         <ChevronDownIcon className="w-4 h-4" />
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg shadow-lg z-50">
+        <div className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-border bg-popover text-popover-foreground shadow-lg">
           {themes.map((themeOption) => {
             const Icon = themeOption.icon;
             return (
@@ -63,16 +69,16 @@ export default function ThemeToggle() {
                   setTheme(themeOption.value);
                   setIsOpen(false);
                 }}
-                className={`w-full flex items-center gap-3 px-4 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors duration-200 ${
+                className={`flex w-full items-center gap-3 px-4 py-2 text-left text-sm transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring ${
                   theme === themeOption.value
-                    ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                    : 'text-gray-700 dark:text-gray-300'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-muted-foreground'
                 }`}
               >
                 <Icon className="w-4 h-4" />
                 <span>{themeOption.label}</span>
                 {theme === themeOption.value && (
-                  <div className="ml-auto w-2 h-2 bg-blue-600 dark:bg-blue-400 rounded-full"></div>
+                  <div className="ml-auto h-2 w-2 rounded-full bg-current" />
                 )}
               </button>
             );

@@ -17,9 +17,10 @@ interface LinkItem {
 
 interface MenuOverlayProps {
   links: LinkItem[];
+  navBackground: string;
 }
 
-const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
+const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, navBackground }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleSubmenu = (index: number) => {
@@ -27,7 +28,11 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
   };
 
   return (
-    <nav className="w-full border-t border-border bg-background text-foreground">
+    <div
+      id="mobile-navigation-panel"
+      className="w-full border-y border-[var(--border)] text-[var(--foreground)] shadow-sm md:hidden"
+      style={{ backgroundColor: navBackground }}
+    >
       <ul
         className="
           flex flex-col items-stretch py-2
@@ -45,11 +50,11 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                   onClick={() => toggleSubmenu(index)}
                   className={`
                     w-full h-12 flex items-center justify-center gap-2
-                    rounded-md
-                    px-3 transition-colors
+                    rounded-md border border-transparent
+                    px-3 transition-colors duration-200
                     hover:bg-secondary/60 hover:text-foreground
                     focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
-                    ${openIndex === index ? "bg-secondary/40" : ""}
+                    ${openIndex === index ? "border-border bg-secondary text-secondary-foreground" : ""}
                   `}
                 >
                   <span>{link.title}</span>
@@ -92,7 +97,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                   h-12 flex items-center justify-center
                   transition-colors
                   hover:bg-secondary/60 hover:text-foreground
-                  rounded-md
+                  rounded-md focus-within:ring-2 focus-within:ring-ring
                 "
               >
                 {link.href && <NavLink href={link.href} title={link.title} />}
@@ -109,7 +114,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
           </div>
         </li>
       </ul>
-    </nav>
+    </div>
   );
 };
 

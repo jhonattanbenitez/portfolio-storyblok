@@ -134,14 +134,14 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                     type="text"
                     required
                     className={clsx(
-                      "w-full px-4 py-3 rounded-lg bg-background border",
-                      "focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition",
-                      state.errors?.name ? "border-red-500" : "border-border",
+                      "w-full rounded-md border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary",
+                      state.errors?.name ? "border-destructive" : "border-input",
                     )}
                     placeholder="John Doe"
                   />
                   {state.errors?.name && (
-                    <p className="text-sm text-red-500 flex items-center mt-1">
+                    <p className="mt-1 flex items-center text-sm text-destructive">
                       <ExclamationCircleIcon className="w-4 h-4 mr-1" />
                       {state.errors.name[0]}
                     </p>
@@ -161,14 +161,14 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                     type="email"
                     required
                     className={clsx(
-                      "w-full px-4 py-3 rounded-lg bg-background border",
-                      "focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition",
-                      state.errors?.email ? "border-red-500" : "border-border",
+                      "w-full rounded-md border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary",
+                      state.errors?.email ? "border-destructive" : "border-input",
                     )}
                     placeholder="john@example.com"
                   />
                   {state.errors?.email && (
-                    <p className="text-sm text-red-500 flex items-center mt-1">
+                    <p className="mt-1 flex items-center text-sm text-destructive">
                       <ExclamationCircleIcon className="w-4 h-4 mr-1" />
                       {state.errors.email[0]}
                     </p>
@@ -189,14 +189,14 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                   required
                   rows={4}
                   className={clsx(
-                    "w-full px-4 py-3 rounded-lg bg-background border",
-                    "focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition",
-                    state.errors?.message ? "border-red-500" : "border-border",
+                    "w-full rounded-md border bg-background px-4 py-3 text-foreground placeholder:text-muted-foreground transition-colors duration-200",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:border-primary",
+                    state.errors?.message ? "border-destructive" : "border-input",
                   )}
                   placeholder="Tell us about your project..."
                 />
                 {state.errors?.message && (
-                  <p className="text-sm text-red-500 flex items-center mt-1">
+                  <p className="mt-1 flex items-center text-sm text-destructive">
                     <ExclamationCircleIcon className="w-4 h-4 mr-1" />
                     {state.errors.message[0]}
                   </p>
@@ -204,7 +204,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
               </div>
 
               {state.message && !state.success && (
-                <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 text-sm flex items-center">
+                <div className="flex items-center rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                   <ExclamationCircleIcon className="w-5 h-5 mr-2" />
                   {state.message}
                 </div>
@@ -214,10 +214,10 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                 type="submit"
                 disabled={isPending}
                 className={clsx(
-                  "w-full py-4 rounded-lg font-bold text-white transition-all transform hover:scale-[1.02]",
+                  "w-full rounded-md py-4 font-bold text-primary-foreground transition-all transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   isPending
-                    ? "bg-blue-400 cursor-not-allowed"
-                    : "bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-500/25",
+                    ? "cursor-not-allowed bg-primary/50 opacity-60"
+                    : "bg-primary hover:bg-primary/90 shadow-lg shadow-blue-500/25",
                 )}
               >
                 {isPending ? "Sending..." : "Send Message"}
