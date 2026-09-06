@@ -12,7 +12,12 @@ interface LandingFeatureProps {
     description: string;
     image?: { filename: string; alt?: string };
     layout: "logistics" | "inventory" | "dashboard"; // aligned with user request
-    benefits?: SbBlokData[]; // Assuming nested items with 'text'
+    benefits?: Array<
+      SbBlokData & {
+        text?: string;
+        name?: string;
+      }
+    >;
   };
 }
 
@@ -60,7 +65,7 @@ const LandingFeature = ({ blok }: LandingFeatureProps) => {
               isFullWidth && "text-left grid md:grid-cols-2 gap-4 space-y-0",
             )}
           >
-            {blok.benefits.map((benefit: any) => (
+            {blok.benefits.map((benefit) => (
               <li key={benefit._uid} className="flex items-start">
                 <CheckCircleIcon className="w-6 h-6 text-green-500 mr-3 flex-shrink-0" />
                 <span className="text-foreground/80">

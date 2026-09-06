@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import { useTranslation } from "../hooks/useTranslation";
-import { getCaseStudyHref } from "../utils/resolveCaseStudyStories";
+import { getCaseStudyHref } from "../utils/storyUrls";
 
 interface CaseStudyCardProps {
   title: string;

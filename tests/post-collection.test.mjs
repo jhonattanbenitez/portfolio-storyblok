@@ -5,7 +5,7 @@ import {
   buildStoriesSearchParams,
   filterPostsForLocale,
   getPostContentLanguage,
-} from "../utils/fetchStories.ts";
+} from "../lib/storyblok-data.ts";
 
 const englishPost = {
   id: 106899427097798,
@@ -47,31 +47,29 @@ test("locale selection uses the custom content language field", () => {
 
 test("collection query filters content language without UUID alternate lookup", () => {
   const params = buildStoriesSearchParams({
-    token: "test-token",
     version: "published",
-    language: "es-co",
+    locale: "es-co",
     startsWith: "posts/",
     contentLanguage: "spanish",
   });
 
-  assert.equal(params.get("filter_query[language][in]"), "spanish");
-  assert.equal(params.has("by_uuids"), false);
-  assert.equal(params.get("language"), "es-co");
+  assert.equal(params["filter_query[language][in]"], "spanish");
+  assert.equal("by_uuids" in params, false);
+  assert.equal(params.language, "es-co");
 });
 
 test("category and language filters compose in one collection request", () => {
   const params = buildStoriesSearchParams({
-    token: "test-token",
     version: "published",
-    language: "es-co",
+    locale: "es-co",
     startsWith: "posts/",
     categorySlug: "mi-viaje-usando-teachyourselfcs",
     contentLanguage: "spanish",
   });
 
   assert.equal(
-    params.get("filter_query[category_ref.cached_url][in]"),
+    params["filter_query[category_ref.cached_url][in]"],
     "categories/mi-viaje-usando-teachyourselfcs",
   );
-  assert.equal(params.get("filter_query[language][in]"), "spanish");
+  assert.equal(params["filter_query[language][in]"], "spanish");
 });

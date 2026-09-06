@@ -2,9 +2,9 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import {
-  getCaseStudyHref,
   resolveCaseStudyStoriesForLocale,
-} from "../utils/resolveCaseStudyStories.ts";
+} from "../lib/storyblok-data.ts";
+import { getCaseStudyHref } from "../utils/storyUrls.ts";
 import { en } from "../translations/en.ts";
 import { es } from "../translations/es.ts";
 

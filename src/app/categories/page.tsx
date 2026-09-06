@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { fetchStories } from "../../../utils/fetchStories";
+import { getStories } from "../../../lib/storyblok-data";
 import { RouteParams, SupportedLanguage } from "../../../utils/types";
 
 export default async function CategoriesIndexPage({
@@ -19,14 +19,14 @@ export default async function CategoriesIndexPage({
   const startsWith = urlLang === "es-co" ? "es-co/categories/" : "categories/";
   const targetLanguage = urlLang === "es-co" ? "spanish" : "english";
 
-  const data = await fetchStories({
+  const data = await getStories({
     version: "published",
-    language: urlLang,
+    locale: urlLang,
     startsWith,
     perPage: 100,
   });
 
-  const allCategories = data?.stories ?? [];
+  const allCategories = data.stories;
 
   /** 🧩 Filtrar por idioma correcto */
   const categories = allCategories.filter(

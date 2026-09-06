@@ -1,14 +1,14 @@
 import { MetadataRoute } from 'next';
 import { generateSitemapData } from '../../utils/seo';
-import { fetchStories } from '../../utils/fetchStories';
+import { getStories } from '../../lib/storyblok-data';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jhonattanbenitez.dev';
   
   try {
     // Fetch all published stories
-    const storiesResponse = await fetchStories({ version: 'published' });
-    const stories = storiesResponse?.stories || [];
+    const storiesResponse = await getStories({ version: 'published' });
+    const stories = storiesResponse.stories;
     
     // Generate sitemap data
     const sitemapData = generateSitemapData(stories, baseUrl);

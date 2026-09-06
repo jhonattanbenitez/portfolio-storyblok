@@ -19,10 +19,15 @@ import LandingCaseStudy from "../components/Landing/LandingCaseStudy";
 import LandingContactForm from "../components/Landing/LandingContactForm";
 
 export const getStoryblokApi = (preview = false) => {
+  const isServer = typeof window === "undefined";
+  const accessToken = preview
+    ? (isServer ? process.env.STORYBLOK_PREVIEW_TOKEN : undefined) ||
+      process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+    : (isServer ? process.env.STORYBLOK_TOKEN : undefined) ||
+      process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
+
   return storyblokInit({
-    accessToken: preview
-      ? process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
-      : process.env.NEXT_PUBLIC_STORYBLOK_TOKEN,
+    accessToken,
     components: {
       page: Page,
       teaser: Teaser,

@@ -1,9 +1,11 @@
 import { StoryblokStory } from "@storyblok/react/rsc";
 import {
-  fetchStory,
-  fetchStoriesByUuids,
-  fetchAllStorySlugs,
-} from "../../../utils/fetchStory";
+  getAllStoryParams,
+  getStoriesByUuids,
+  getStoryBySlug,
+  getStoryFromRoute,
+  resolveCaseStudyStoriesForLocale,
+} from "../../../lib/storyblok-data";
 import { generateMetadataFromStory } from "../../../utils/seo";
 import { notFound } from "next/navigation";
 import {
@@ -13,12 +15,19 @@ import {
 } from "../../../utils/types";
 import { Metadata } from "next";
 import { draftMode } from "next/headers";
-import { resolveCaseStudyStoriesForLocale } from "../../../utils/resolveCaseStudyStories";
+import { getStoryblokApi } from "../../../lib/storyblok";
 
 export async function generateStaticParams() {
-  const paths = await fetchAllStorySlugs();
-  return paths;
+  const paths = await getAllStoryParams();
+  return paths.filter(({ slug }) => {
+    const routeSegments = slug[0] === "es-co" ? slug.slice(1) : slug;
+
+    // Category URLs are owned by the explicit App Router category routes.
+    return routeSegments[0] !== "categories";
+  });
 }
+
+getStoryblokApi();
 
 export async function generateMetadata({
   params,
@@ -46,7 +55,7 @@ export async function generateMetadata({
       fetchSlug = [...(slug || []), "home"];
     }
 
-    const pageData = await fetchStory(version, fetchSlug);
+    const pageData = await getStoryFromRoute(version, fetchSlug);
     const story = pageData?.story || null;
 
     // Generate pathname for canonical URL
@@ -79,7 +88,7 @@ export default async function Home({
       fetchSlug = [...(slug || []), "home"];
     }
 
-    const pageData = await fetchStory(
+    const pageData = await getStoryFromRoute(
       version,
       fetchSlug,
       "case_studies_section.case_studies",
@@ -98,20 +107,21 @@ export default async function Home({
       ) {
         // Fallback: Fetch stories manually if they are not resolved
         const language = slug && slug[0] === "es-co" ? "es-co" : "en";
-        const referencedStories = await fetchStoriesByUuids(
+        const referencedStories = await getStoriesByUuids({
           version,
-          section.case_studies as string[],
-          language,
-        );
+          uuids: section.case_studies as string[],
+          locale: language,
+        });
         section.case_studies = await resolveCaseStudyStoriesForLocale({
           stories: referencedStories,
           locale: language,
           version,
           fetchAlternate: async (fullSlug, locale, alternateVersion) => {
-            const alternateData = await fetchStory(alternateVersion, [
-              ...(locale === "es-co" ? [locale] : []),
-              ...fullSlug.split("/").filter(Boolean),
-            ]);
+            const alternateData = await getStoryBySlug({
+              version: alternateVersion,
+              slug: fullSlug,
+              locale,
+            });
             return alternateData?.story ?? null;
           },
         });

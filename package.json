@@ -6,7 +6,7 @@
     "dev": "next dev --turbopack --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
@@ -33,7 +33,6 @@
     "unified": "^11.0.5"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/nodemailer": "^6.4.17",

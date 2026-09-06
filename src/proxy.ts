@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { SECURITY_HEADERS } from "../utils/security";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname === "/es" || pathname.startsWith("/es/")) {

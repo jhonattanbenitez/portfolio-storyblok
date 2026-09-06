@@ -1,17 +1,17 @@
 import Link from "next/link";
-import { fetchStories } from "../../../../utils/fetchStories";
+import { getStories } from "../../../../lib/storyblok-data";
 
 export default async function CategoriesIndexPageEs() {
   // 🔹 Obtener historias solo en español (es-co)
-  const data = await fetchStories({
+  const data = await getStories({
     version: "published",
-    language: "es-co",
+    locale: "es-co",
     startsWith: "categories/",
     perPage: 100,
   });
 
   // 🔹 Filtrar por idioma dentro del contenido, si usas ese campo en Storyblok
-  const categories = (data?.stories ?? []).filter(
+  const categories = data.stories.filter(
     (cat) => cat.content?.language === "spanish"
   );
 

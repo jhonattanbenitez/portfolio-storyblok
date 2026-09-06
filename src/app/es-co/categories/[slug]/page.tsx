@@ -1,7 +1,13 @@
 import CategoryPageComponent from "../../../../../components/CategoryPageComponent";
+import { getPosts, getStoryBySlug } from "../../../../../lib/storyblok-data";
 
-export default function CategoryPageES() {
-  return <CategoryPageComponent />;
+export default async function CategoryPageES({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  const [category, stories] = await Promise.all([
+    getStoryBySlug({ slug: `categories/${slug}`, version: "published", locale: "es-co" }),
+    getPosts({ version: "published", locale: "es-co", categorySlug: slug }),
+  ]);
+  const categoryName = String(category.story.content.name || category.story.name || slug.replace(/-/g, " "));
+  return <CategoryPageComponent stories={stories} categoryName={categoryName} locale="es-co" />;
 }
-
 

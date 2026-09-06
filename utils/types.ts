@@ -41,7 +41,8 @@ export type StoryContent = {
   title: string;
   content: string;
   component: string;
-  language?: string;
+  language?: "english" | "spanish";
+  name?: string;
   category_ref?: CategoryRef;
   body?: StoryblokBlock[];
 };
