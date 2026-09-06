@@ -1,5 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { CacheConfig, SupportedLanguage } from "./types";
+import { invalidateAllCmsCache, invalidateStoryCache } from "./revalidation";
 
 // Cache configuration constants
 export const CACHE_CONFIG: Record<string, CacheConfig> = {
@@ -31,33 +32,22 @@ export const CACHE_TAGS = {
 } as const;
 
 // Revalidation functions
-export async function revalidateStory(slug: string) {
-  try {
-    revalidateTag(CACHE_TAGS.STORY(slug), "default");
-    revalidateTag(CACHE_TAGS.CMS, "default");
-    console.log(`Revalidated cache for story: ${slug}`);
-  } catch (error) {
-    console.error("Error revalidating story cache:", error);
-  }
+type RevalidateTag = typeof revalidateTag;
+
+export async function revalidateStory(slug: string, invalidate: RevalidateTag = revalidateTag) {
+  invalidateStoryCache(slug, invalidate);
+  console.log(`Revalidated cache for story: ${slug}`);
 }
 
-export async function revalidateLanguage(language: SupportedLanguage) {
-  try {
-    revalidateTag(CACHE_TAGS.LANGUAGE(language), "default");
-    revalidateTag(CACHE_TAGS.CMS, "default");
-    console.log(`Revalidated cache for language: ${language}`);
-  } catch (error) {
-    console.error("Error revalidating language cache:", error);
-  }
+export async function revalidateLanguage(language: SupportedLanguage, invalidate: RevalidateTag = revalidateTag) {
+  invalidate(CACHE_TAGS.LANGUAGE(language), "default");
+  invalidate(CACHE_TAGS.CMS, "default");
+  console.log(`Revalidated cache for language: ${language}`);
 }
 
-export async function revalidateAll() {
-  try {
-    revalidateTag(CACHE_TAGS.CMS, "default");
-    console.log("Revalidated all CMS cache");
-  } catch (error) {
-    console.error("Error revalidating all cache:", error);
-  }
+export async function revalidateAll(invalidate: RevalidateTag = revalidateTag) {
+  invalidateAllCmsCache(invalidate);
+  console.log("Revalidated all CMS cache");
 }
 
 // Cache key generation

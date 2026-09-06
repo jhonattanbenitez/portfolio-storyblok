@@ -1,5 +1,9 @@
 import nodemailer from "nodemailer";
 import { NextResponse } from "next/server";
+import {
+  renderContactEmailHtml,
+  validateContactPayload,
+} from "../../../../utils/contact";
 
 async function verifyRecaptcha(token: string): Promise<boolean> {
   const secretKey = process.env.RECAPTCHA_SECRET_KEY;
@@ -34,45 +38,24 @@ async function verifyRecaptcha(token: string): Promise<boolean> {
 }
 
 export async function POST(req: Request) {
-  const { name, email, message, recaptchaToken } = await req.json();
-
-  // Verify reCAPTCHA token
-  if (!recaptchaToken) {
-    return NextResponse.json(
-      { error: "reCAPTCHA token missing" },
-      { status: 400 }
-    );
+  let body: unknown;
+  try {
+    body = await req.json();
+  } catch {
+    return NextResponse.json({ error: "Malformed request body" }, { status: 400 });
   }
 
+  const { data, errors } = validateContactPayload(body);
+  if (!data) {
+    return NextResponse.json({ error: "Invalid contact form", errors }, { status: 400 });
+  }
+  const { name, email, message, recaptchaToken } = data;
+
+  // Verify reCAPTCHA token
   const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
   if (!isRecaptchaValid) {
     return NextResponse.json(
       { error: "reCAPTCHA verification failed" },
-      { status: 400 }
-    );
-  }
-
-  // Validate required fields
-  if (!name || !email || !message) {
-    return NextResponse.json(
-      { error: "Missing required fields" },
-      { status: 400 }
-    );
-  }
-
-  // Validate field lengths
-  if (name.length > 100 || message.length > 5000) {
-    return NextResponse.json(
-      { error: "Input fields exceed maximum length" },
-      { status: 400 }
-    );
-  }
-
-  // Validate email format
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRegex.test(email)) {
-    return NextResponse.json(
-      { error: "Invalid email address" },
       { status: 400 }
     );
   }
@@ -93,7 +76,7 @@ export async function POST(req: Request) {
       to: process.env.SMTP_USER,
       subject: `Portfolio Form Submission from ${name}`,
       text: message,
-      html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p>`,
+      html: renderContactEmailHtml(data),
     });
 
     return NextResponse.json({ success: true });

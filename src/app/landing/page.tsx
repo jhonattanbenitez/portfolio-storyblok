@@ -1,5 +1,9 @@
 import { StoryblokStory } from "@storyblok/react/rsc";
-import { getStoryFromRoute } from "../../../lib/storyblok-data";
+import {
+  getStoryFromRoute,
+  getStoryblokVersion,
+  isStoryblokNotFound,
+} from "../../../lib/storyblok-data";
 import { generateMetadataFromStory } from "../../../utils/seo";
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
@@ -10,8 +14,7 @@ getStoryblokApi();
 
 export async function generateMetadata(): Promise<Metadata> {
   const { isEnabled } = await draftMode();
-  const isDev = process.env.NODE_ENV === "development";
-  const version = isEnabled || isDev ? "draft" : "published";
+  const version = getStoryblokVersion(isEnabled);
 
   try {
     const pageData = await getStoryFromRoute(version, ["landing"]);
@@ -24,8 +27,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function LandingPage() {
   const { isEnabled } = await draftMode();
-  const isDev = process.env.NODE_ENV === "development";
-  const version = isEnabled || isDev ? "draft" : "published";
+  const version = getStoryblokVersion(isEnabled);
 
   try {
     const pageData = await getStoryFromRoute(version, ["landing"]);
@@ -42,6 +44,7 @@ export default async function LandingPage() {
     );
   } catch (error) {
     console.error("Error in landing page:", error);
-    notFound();
+    if (isStoryblokNotFound(error)) notFound();
+    throw error;
   }
 }

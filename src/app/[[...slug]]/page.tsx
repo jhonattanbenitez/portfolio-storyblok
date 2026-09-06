@@ -5,6 +5,8 @@ import {
   getStoryBySlug,
   getStoryFromRoute,
   getPostContentLanguage,
+  getStoryblokVersion,
+  isStoryblokNotFound,
   resolveCaseStudyStoriesForLocale,
   resolveLocalizedStoryUrls,
 } from "../../../lib/storyblok-data";
@@ -66,8 +68,7 @@ export async function generateMetadata({
   const pathname = slug ? `/${slug.join("/")}` : "/";
   try {
     const { isEnabled } = await draftMode();
-    const isDev = process.env.NODE_ENV === "development";
-    const version = isEnabled || isDev ? "draft" : "published";
+    const version = getStoryblokVersion(isEnabled);
 
     // Fetch story data for metadata
     let fetchSlug = slug;
@@ -99,8 +100,7 @@ export default async function Home({
   try {
     const { slug } = await params;
     const { isEnabled } = await draftMode();
-    const isDev = process.env.NODE_ENV === "development";
-    const version = isEnabled || isDev ? "draft" : "published";
+    const version = getStoryblokVersion(isEnabled);
 
     // Map folder root to 'home' story
     let fetchSlug = slug;
@@ -171,6 +171,7 @@ export default async function Home({
     );
   } catch (error) {
     console.error("Error in page component:", error);
-    notFound();
+    if (isStoryblokNotFound(error)) notFound();
+    throw error;
   }
 }

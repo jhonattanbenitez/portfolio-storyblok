@@ -1,6 +1,10 @@
 "use server";
 
 import nodemailer from "nodemailer";
+import {
+  renderContactEmailHtml,
+  validateContactPayload,
+} from "../../utils/contact";
 
 interface ActionState {
   success: boolean;
@@ -44,33 +48,27 @@ export async function submitContactForm(
   prevState: ActionState,
   formData: FormData,
 ): Promise<ActionState> {
-  const name = formData.get("name") as string;
-  const email = formData.get("email") as string;
-  const message = formData.get("message") as string;
-  const recaptchaToken = formData.get("recaptchaToken") as string;
+  const validation = validateContactPayload({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    message: formData.get("message"),
+    recaptchaToken: formData.get("recaptchaToken"),
+  });
 
   const errors: ActionState["errors"] = {};
-
-  // Validation
-  if (!recaptchaToken) {
-    errors.recaptcha = ["reCAPTCHA token missing"];
-  } else {
-    const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
-    if (!isRecaptchaValid) {
-      errors.recaptcha = ["reCAPTCHA verification failed"];
-    }
+  for (const [field, messages] of Object.entries(validation.errors)) {
+    errors[field === "recaptchaToken" ? "recaptcha" : field as keyof NonNullable<ActionState["errors"]>] = messages;
   }
 
-  if (!name) errors.name = ["Name is required"];
-  else if (name.length > 100) errors.name = ["Name exceeds 100 characters"];
+  if (!validation.data) {
+    return { success: false, message: "Validation failed", errors };
+  }
+  const { name, email, message, recaptchaToken } = validation.data;
 
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email) errors.email = ["Email is required"];
-  else if (!emailRegex.test(email)) errors.email = ["Invalid email format"];
-
-  if (!message) errors.message = ["Message is required"];
-  else if (message.length > 5000)
-    errors.message = ["Message exceeds 5000 characters"];
+  const isRecaptchaValid = await verifyRecaptcha(recaptchaToken);
+  if (!isRecaptchaValid) {
+    errors.recaptcha = ["reCAPTCHA verification failed"];
+  }
 
   if (Object.keys(errors).length > 0) {
     return { success: false, message: "Validation failed", errors };
@@ -92,7 +90,7 @@ export async function submitContactForm(
       to: process.env.SMTP_USER,
       subject: `Portfolio Landing Form Submission from ${name}`,
       text: message,
-      html: `<p><strong>Name:</strong> ${name}</p><p><strong>Email:</strong> ${email}</p><p><strong>Message:</strong> ${message}</p>`,
+      html: renderContactEmailHtml(validation.data),
     });
 
     return { success: true, message: "Message sent successfully!" };

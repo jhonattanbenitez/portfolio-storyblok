@@ -42,6 +42,14 @@ export class StoryblokDataError extends Error {
   }
 }
 
+export function getStoryblokVersion(draftModeEnabled: boolean): StoryblokVersion {
+  return draftModeEnabled ? "draft" : "published";
+}
+
+export function isStoryblokNotFound(error: unknown): boolean {
+  return error instanceof StoryblokDataError && error.status === 404;
+}
+
 export function getStoryblokToken(
   version: StoryblokVersion,
   env: NodeJS.ProcessEnv = process.env,
