@@ -1,13 +1,10 @@
-"use client";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import Image from "next/image";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
-import React from "react";
-
 import formatDate from "../utils/formatDate";
-import { useMarkdown } from "../hooks/useMarkdown";
+import { markdownToHtml } from "../utils/markdown";
 
 type ImageType = { filename: string };
 
@@ -29,26 +26,12 @@ type PostProps = {
   blok?: Blok;
 };
 
-const Post: React.FC<PostProps> = ({ blok }) => {
-
-  const {
-    html: contentHtml,
-    isLoading: contentLoading,
-    error: contentError,
-  } = useMarkdown(blok?.content);
-  const {
-    html: introHtml,
-    isLoading: introLoading,
-    error: introError,
-  } = useMarkdown(blok?.intro);
-
-  const isLoading = contentLoading || introLoading;
-  const error = contentError || introError;
-  
+export default async function Post({ blok }: PostProps) {
   if (!blok) return <p>Loading...</p>;
-  if (isLoading) return <p>Loading content...</p>;
-  if (error)
-    return <p className="text-destructive">Error loading content: {error}</p>;
+  const [contentHtml, introHtml] = await Promise.all([
+    markdownToHtml(blok.content),
+    markdownToHtml(blok.intro),
+  ]);
 
   return (
     <>
@@ -110,6 +93,4 @@ const Post: React.FC<PostProps> = ({ blok }) => {
       </article>
     </>
   );
-};
-
-export default Post;
+}

@@ -1,19 +1,16 @@
 "use client";
 import Link from "next/link";
 import Image from "next/image";
-import { Story } from "../utils/types";
+import type { StoryWithRenderedIntro } from "../utils/markdown";
 import formatDate from "../utils/formatDate";
-import { useMarkdown } from "../hooks/useMarkdown";
 
 interface StoryCardProps {
-  story: Story;
+  story: StoryWithRenderedIntro;
   index: number;
   language?: "en" | "es-co";
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) => {
-  const { html: introHtml } = useMarkdown(story.content.intro);
-
   const normalizedLang = (language || "en").toLowerCase();
   const isPreferredLang = (lang?: string) => {
     const l = (lang || "").toLowerCase();
@@ -104,7 +101,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
             group-hover:text-foreground
           "
           dangerouslySetInnerHTML={{
-            __html: introHtml || story.content.intro,
+            __html: story.introHtml,
           }}
         />
 

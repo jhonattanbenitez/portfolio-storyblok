@@ -1,6 +1,7 @@
 import CategoryPageComponent from "../../../../components/CategoryPageComponent";
 import { getPosts, getStoryBySlug, resolveLocalizedStoryUrls } from "../../../../lib/storyblok-data";
 import { generateMetadataFromStory } from "../../../../utils/seo";
+import { renderStoryIntros } from "../../../../utils/markdown";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
@@ -16,5 +17,5 @@ export default async function CategoryPage({ params }: { params: Promise<{ slug:
     getPosts({ version: "published", locale: "en", categorySlug: slug }),
   ]);
   const categoryName = String(category.story.content.name || category.story.name || slug.replace(/-/g, " "));
-  return <CategoryPageComponent stories={stories} categoryName={categoryName} locale="en" />;
+  return <CategoryPageComponent stories={await renderStoryIntros(stories)} categoryName={categoryName} locale="en" />;
 }

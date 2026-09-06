@@ -9,7 +9,7 @@ import ProjectsSection from "../components/ProjectsSection";
 import ContactForm from "../components/ContactForm";
 import NavBar from "../components/NavBar";
 
-import CaseStudy from "../components/CaseStudy";
+import CaseStudy from "../components/CaseStudyServer";
 import CaseStudiesSection from "../components/CaseStudiesSection";
 import LandingPage from "../components/Landing/LandingPage";
 import LandingHero from "../components/Landing/LandingHero";

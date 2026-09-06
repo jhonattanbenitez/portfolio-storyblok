@@ -1,11 +1,11 @@
 "use client";
 
-import type { Story } from "../utils/types";
+import type { StoryWithRenderedIntro } from "../utils/markdown";
 import { useTranslation } from "../hooks/useTranslation";
 import StoryCard from "../components/StoryCard";
 
 type PostsPageComponentProps = {
-  stories: Story[];
+  stories: StoryWithRenderedIntro[];
   locale: "en" | "es-co";
 };
 

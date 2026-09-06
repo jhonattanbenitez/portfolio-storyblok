@@ -2,7 +2,6 @@
 import React from "react";
 import { storyblokEditable, SbBlokData } from "@storyblok/react/rsc";
 import Image from "next/image";
-import { useMarkdown } from "../hooks/useMarkdown";
 import { useTranslation } from "../hooks/useTranslation";
 import formatDate from "../utils/formatDate";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
@@ -11,7 +10,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
-interface CaseStudyProps {
+export interface CaseStudyProps {
   blok: SbBlokData & {
     title: string;
     intro: string;
@@ -27,11 +26,11 @@ interface CaseStudyProps {
     slug?: string;
     full_slug?: string;
   };
+  contentHtml: string;
+  introHtml: string;
 }
 
-const CaseStudy: React.FC<CaseStudyProps> = ({ blok }) => {
-  const { html: contentHtml } = useMarkdown(blok.content);
-  const { html: introHtml } = useMarkdown(blok.intro);
+const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) => {
   const { t } = useTranslation();
 
   const { resolvedTheme } = useTheme();

@@ -1,6 +1,7 @@
 "use client";
 
-import type { Story, SupportedLanguage } from "../utils/types";
+import type { SupportedLanguage } from "../utils/types";
+import type { StoryWithRenderedIntro } from "../utils/markdown";
 import { useTranslation } from "../hooks/useTranslation";
 import StoryCard from "../components/StoryCard";
 
@@ -9,7 +10,7 @@ export default function CategoryPageComponent({
   categoryName,
   locale,
 }: {
-  stories: Story[];
+  stories: StoryWithRenderedIntro[];
   categoryName: string;
   locale: SupportedLanguage;
 }) {
