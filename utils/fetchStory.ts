@@ -149,8 +149,8 @@ function parseSlugAndLanguage(slug?: string[]): {
   let storySlug = "home";
 
   if (slug && slug.length > 0) {
-    if (slug[0] === "es-co" || slug[0] === "es") {
-      language = slug[0] === "es" ? "es-co" : slug[0];
+    if (slug[0] === "es-co") {
+      language = "es-co";
       storySlug = slug.slice(1).join("/") || "home";
     } else {
       storySlug = slug.join("/");

@@ -9,6 +9,7 @@ export const en = {
     caseStudies: "Case Studies",
   },
   hero: {
+    sectionLabel: "Introduction",
     title: "Hello, I'm ",
     subtitle: "Front-End Developer",
     description:
@@ -18,6 +19,8 @@ export const en = {
     imageAlt: "Jhonattan Benitez profile picture",
   },
   about: {
+    sectionLabel: "About",
+    tabsLabel: "About sections",
     title: "About Me",
     skills: "Skills",
     education: "Education",
@@ -26,6 +29,7 @@ export const en = {
       "I am a passionate front-end developer with experience in creating beautiful and functional web applications.",
   },
   projects: {
+    sectionLabel: "Projects",
     title: "My Projects",
     viewProject: "View Project",
     sourceCode: "Source Code",
@@ -70,5 +74,8 @@ export const en = {
   },
   posts: {
     noPosts: "No posts found",
+  },
+  caseStudies: {
+    readCaseStudy: "Read Case Study",
   },
 } as const;

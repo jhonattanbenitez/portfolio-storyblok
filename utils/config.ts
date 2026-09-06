@@ -19,12 +19,6 @@ export const appConfig: AppConfig = {
       nativeName: 'Español (Colombia)',
       flag: '🇨🇴',
     },
-    {
-      code: 'es',
-      name: 'Spanish',
-      nativeName: 'Español',
-      flag: '🇪🇸',
-    },
   ],
   storyblok: {
     token: process.env.NEXT_PUBLIC_STORYBLOK_TOKEN || '',

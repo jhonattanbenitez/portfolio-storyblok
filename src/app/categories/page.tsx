@@ -11,7 +11,7 @@ export default async function CategoriesIndexPage({
 
   let urlLang: SupportedLanguage = "en";
   if (slug && slug.length > 0) {
-    if (slug[0] === "es-co" || slug[0] === "es") {
+    if (slug[0] === "es-co") {
       urlLang = "es-co";
     }
   }

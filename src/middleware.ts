@@ -1,15 +1,25 @@
 import { NextRequest, NextResponse } from "next/server";
-import {
-  detectLanguageFromHeaders,
-  detectLanguageFromPath,
-} from "../utils/i18n";
 import { SECURITY_HEADERS } from "../utils/security";
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
+  if (pathname === "/es" || pathname.startsWith("/es/")) {
+    const url = request.nextUrl.clone();
+    url.pathname = `/es-co${pathname.slice(3)}`;
+    return NextResponse.redirect(url, 308);
+  }
+
+  const locale = pathname === "/es-co" || pathname.startsWith("/es-co/")
+    ? "es-co"
+    : "en";
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-language", locale);
+
   // Security headers
-  const response = NextResponse.next();
+  const response = NextResponse.next({
+    request: { headers: requestHeaders },
+  });
 
   // Apply security headers
   Object.entries(SECURITY_HEADERS).forEach(([key, value]) => {
@@ -32,31 +42,6 @@ export function middleware(request: NextRequest) {
   ].join("; ");
 
   response.headers.set("Content-Security-Policy", csp);
-
-  // Language detection and redirection
-  const detectedLanguage = detectLanguageFromHeaders(request.headers);
-  const pathLanguage = detectLanguageFromPath(pathname);
-
-  // Only redirect if user hasn't explicitly chosen a language (no language in URL)
-  // and detected language is not default, and we're on the root path
-  if (detectedLanguage !== "en" && pathLanguage === "en" && pathname === "/") {
-    // Check if user has a saved language preference
-    const savedLanguage = request.cookies.get("preferred-language")?.value;
-    if (!savedLanguage) {
-      const url = request.nextUrl.clone();
-      url.pathname = `/${detectedLanguage}`;
-      return NextResponse.redirect(url);
-    }
-  }
-
-  // Handle language-specific routes
-  if (pathname.startsWith("/es-co") || pathname.startsWith("/es")) {
-    // Ensure proper language handling
-    const language = pathname.startsWith("/es-co") ? "es-co" : "es";
-
-    // Set language header for the request
-    response.headers.set("x-language", language);
-  }
 
   // Block access to sensitive files
   if (

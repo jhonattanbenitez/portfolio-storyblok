@@ -1,6 +1,7 @@
-import { StoriesResponse } from "./types";
+import type { StoriesResponse, Story, SupportedLanguage } from "./types";
 
-type Language = "en" | "es" | "es-co";
+type Language = "en" | "es-co";
+export type PostContentLanguage = "english" | "spanish";
 
 interface FetchStoriesOpts {
   version: "draft" | "published";
@@ -8,6 +9,53 @@ interface FetchStoriesOpts {
   startsWith?: string; 
   perPage?: number; 
   categorySlug?: string; 
+  contentLanguage?: PostContentLanguage;
+}
+
+export function getPostContentLanguage(
+  locale: SupportedLanguage,
+): PostContentLanguage {
+  return locale === "es-co" ? "spanish" : "english";
+}
+
+export function filterPostsForLocale(
+  stories: Story[],
+  locale: SupportedLanguage,
+): Story[] {
+  const contentLanguage = getPostContentLanguage(locale);
+  return stories.filter((story) => story.content.language === contentLanguage);
+}
+
+export function buildStoriesSearchParams({
+  token,
+  version,
+  language,
+  startsWith,
+  perPage,
+  categorySlug,
+  contentLanguage,
+}: FetchStoriesOpts & { token: string }): URLSearchParams {
+  const params = new URLSearchParams({
+    token,
+    version,
+    starts_with: startsWith ?? "posts/",
+    language: language ?? "en",
+    per_page: String(perPage ?? 25),
+    fallback_lang: "false",
+  });
+
+  if (categorySlug) {
+    params.set(
+      "filter_query[category_ref.cached_url][in]",
+      `categories/${categorySlug}`,
+    );
+  }
+
+  if (contentLanguage) {
+    params.set("filter_query[language][in]", contentLanguage);
+  }
+
+  return params;
 }
 
 export const fetchStories = async ({
@@ -16,32 +64,24 @@ export const fetchStories = async ({
   startsWith = "posts/",
   perPage = 25,
   categorySlug,
+  contentLanguage,
 }: FetchStoriesOpts): Promise<StoriesResponse | null> => {
-  const token = process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
+  const token =
+    process.env.STORYBLOK_TOKEN || process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
   if (!token) {
     console.error("Storyblok API Token is missing");
     return null;
   }
 
-  const params = new URLSearchParams({
+  const params = buildStoriesSearchParams({
     token,
     version,
-    starts_with: startsWith,
-    language, 
-    per_page: String(perPage),
-    fallback_lang: "false",
+    startsWith,
+    language,
+    perPage,
+    categorySlug,
+    contentLanguage,
   });
-
-  if (categorySlug) {
-
-    const categoryCachedUrl = `categories/${categorySlug}`;
-    params.append(
-      "filter_query[category_ref.cached_url][in]",
-      categoryCachedUrl
-    );
-
-    console.log("Filtering by category cached_url:", categoryCachedUrl);
-  }
 
   try {
     const response = await fetch(
@@ -65,3 +105,24 @@ export const fetchStories = async ({
     return null;
   }
 };
+
+export async function fetchPosts({
+  version,
+  locale,
+  categorySlug,
+}: {
+  version: "draft" | "published";
+  locale: SupportedLanguage;
+  categorySlug?: string;
+}): Promise<Story[]> {
+  const response = await fetchStories({
+    version,
+    language: locale,
+    startsWith: "posts/",
+    perPage: 100,
+    categorySlug,
+    contentLanguage: getPostContentLanguage(locale),
+  });
+
+  return filterPostsForLocale(response?.stories ?? [], locale);
+}

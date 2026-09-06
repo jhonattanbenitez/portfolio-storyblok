@@ -26,7 +26,7 @@ const NavBar: FC = () => {
   // 🔹 Detectar idioma según la URL actual
   const urlLang = (() => {
     const first = pathname.split("/").filter(Boolean)[0];
-    if (first === "es-co" || first === "es") return "es-co";
+    if (first === "es-co") return "es-co";
     return "en";
   })();
 

@@ -1,9 +1,12 @@
 "use client";
 import React from "react";
 import { useTranslation } from "../hooks/useTranslation";
+import type { en } from "../translations/en";
+
+type ProjectTagName = keyof typeof en.tags;
 
 type ProjectTagProps = {
-  name: string;
+  name: ProjectTagName;
   onClick: (name: string) => void;
   isSelected: boolean;
 };

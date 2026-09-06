@@ -14,15 +14,14 @@ export const LANGUAGES: LanguageConfig[] = [
     nativeName: 'Español (Colombia)',
     flag: '🇨🇴',
   },
-  {
-    code: 'es',
-    name: 'Spanish',
-    nativeName: 'Español',
-    flag: '🇪🇸',
-  },
 ];
 
 export const DEFAULT_LANGUAGE: SupportedLanguage = 'en';
+
+export const HTML_LANGUAGES: Record<SupportedLanguage, string> = {
+  en: 'en',
+  'es-co': 'es-CO',
+};
 
 // Language detection utilities
 export function detectLanguageFromPath(pathname: string): SupportedLanguage {
@@ -36,45 +35,13 @@ export function detectLanguageFromPath(pathname: string): SupportedLanguage {
   
   // Check if first segment is a language code
   if (isValidLanguageCode(firstSegment)) {
-    return firstSegment as SupportedLanguage;
+    return firstSegment;
   }
   
   return DEFAULT_LANGUAGE;
 }
 
-export function detectLanguageFromHeaders(headers: Headers): SupportedLanguage {
-  const acceptLanguage = headers.get('accept-language');
-  
-  if (!acceptLanguage) {
-    return DEFAULT_LANGUAGE;
-  }
-  
-  // Parse Accept-Language header
-  const languages = acceptLanguage
-    .split(',')
-    .map(lang => {
-      const [code, qValue] = lang.trim().split(';q=');
-      return {
-        code: code.split('-')[0], // Get language code without region
-        quality: qValue ? parseFloat(qValue) : 1.0,
-      };
-    })
-    .sort((a, b) => b.quality - a.quality);
-  
-  // Find the best supported language
-  for (const lang of languages) {
-    if (lang.code === 'es') {
-      return 'es-co'; // Default to Colombian Spanish
-    }
-    if (lang.code === 'en') {
-      return 'en';
-    }
-  }
-  
-  return DEFAULT_LANGUAGE;
-}
-
-export function isValidLanguageCode(code: string): boolean {
+export function isValidLanguageCode(code: string): code is SupportedLanguage {
   return LANGUAGES.some(lang => lang.code === code);
 }
 
@@ -175,41 +142,7 @@ export function getLocaleForLanguage(language: SupportedLanguage): string {
   const localeMap: Record<SupportedLanguage, string> = {
     'en': 'en-US',
     'es-co': 'es-CO',
-    'es': 'es-ES',
   };
   
   return localeMap[language] || 'en-US';
-}
-
-// Browser language detection (client-side)
-export function detectBrowserLanguage(): SupportedLanguage {
-  if (typeof window === 'undefined') {
-    return DEFAULT_LANGUAGE;
-  }
-  
-  const browserLang = navigator.language || navigator.languages?.[0];
-  
-  if (!browserLang) {
-    return DEFAULT_LANGUAGE;
-  }
-  
-  // Check for exact matches first
-  if (browserLang === 'es-CO' || browserLang.startsWith('es-CO')) {
-    return 'es-co';
-  }
-  
-  if (browserLang === 'es-ES' || browserLang.startsWith('es-ES')) {
-    return 'es';
-  }
-  
-  // Check for language code matches
-  if (browserLang.startsWith('es')) {
-    return 'es-co'; // Default to Colombian Spanish
-  }
-  
-  if (browserLang.startsWith('en')) {
-    return 'en';
-  }
-  
-  return DEFAULT_LANGUAGE;
 }

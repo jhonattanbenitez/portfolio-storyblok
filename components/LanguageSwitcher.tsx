@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter, usePathname, useSearchParams } from "next/navigation";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useAlternateLinks } from "../contexts/AlternateLinksContext";
 
 const locales = ["en", "es-co"] as const;
 type Lang = (typeof locales)[number];
@@ -57,7 +57,7 @@ export default function LanguageSwitcher({ slugMap }: LanguageSwitcherProps) {
   const router = useRouter();
   const pathname = usePathname();
   const search = useSearchParams();
-  const { setLanguage, slugMap: contextSlugMap } = useLanguage();
+  const { slugMap: contextSlugMap } = useAlternateLinks();
 
   // Usa el slugMap del contexto si no se pasa por props
   const effectiveSlugMap = slugMap || contextSlugMap;
@@ -70,8 +70,6 @@ export default function LanguageSwitcher({ slugMap }: LanguageSwitcherProps) {
 
   const go = (next: Lang) => {
     if (next === current) return;
-    setLanguage(next);
-
     const target =
       replaceLocaleAndSlug(pathname, next, effectiveSlugMap) +
       (search.size ? `?${search.toString()}` : "");

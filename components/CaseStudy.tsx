@@ -7,8 +7,8 @@ import { useTranslation } from "../hooks/useTranslation";
 import formatDate from "../utils/formatDate";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useParams, usePathname } from "next/navigation";
+import { useAlternateLinks } from "../contexts/AlternateLinksContext";
 import { useTheme } from "../contexts/ThemeContext";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
@@ -53,7 +53,11 @@ const CaseStudy: React.FC<CaseStudyProps> = ({
   const { t } = useTranslation();
 
   const params = useParams();
-  const { setSlugMap, language } = useLanguage();
+  const pathname = usePathname();
+  const { setSlugMap } = useAlternateLinks();
+  const language = pathname.startsWith("/es-co/") || pathname === "/es-co"
+    ? "es-co"
+    : "en";
   const { resolvedTheme } = useTheme();
 
   const extractSlug = (full: string | undefined) => {

@@ -13,6 +13,7 @@ import {
 } from "../../../utils/types";
 import { Metadata } from "next";
 import { draftMode } from "next/headers";
+import { resolveCaseStudyStoriesForLocale } from "../../../utils/resolveCaseStudyStories";
 
 export async function generateStaticParams() {
   const paths = await fetchAllStorySlugs();
@@ -33,8 +34,8 @@ export async function generateMetadata({
     // Determine language from slug
     let language: SupportedLanguage = "en";
     if (slug && slug.length > 0) {
-      if (slug[0] === "es-co" || slug[0] === "es") {
-        language = slug[0] === "es" ? "es-co" : slug[0];
+      if (slug[0] === "es-co") {
+        language = "es-co";
       }
     }
 
@@ -96,12 +97,24 @@ export default async function Home({
         typeof section.case_studies[0] === "string"
       ) {
         // Fallback: Fetch stories manually if they are not resolved
-        const resolvedStories = await fetchStoriesByUuids(
+        const language = slug && slug[0] === "es-co" ? "es-co" : "en";
+        const referencedStories = await fetchStoriesByUuids(
           version,
           section.case_studies as string[],
-          slug && slug[0] === "es" ? "es-co" : "en", // Simple language detection
+          language,
         );
-        section.case_studies = resolvedStories;
+        section.case_studies = await resolveCaseStudyStoriesForLocale({
+          stories: referencedStories,
+          locale: language,
+          version,
+          fetchAlternate: async (fullSlug, locale, alternateVersion) => {
+            const alternateData = await fetchStory(alternateVersion, [
+              ...(locale === "es-co" ? [locale] : []),
+              ...fullSlug.split("/").filter(Boolean),
+            ]);
+            return alternateData?.story ?? null;
+          },
+        });
       }
     }
 

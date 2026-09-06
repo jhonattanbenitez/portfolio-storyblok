@@ -67,7 +67,7 @@ export type Story = {
   release_id: null | string;
   lang: string;
   path: null | string;
-  alternates: unknown[];
+  alternates: StoryAlternate[];
   default_full_slug: null | string;
   translated_slugs:
     | null
@@ -77,6 +77,16 @@ export type Story = {
         path?: string;
         slug?: string;
       }[];
+};
+
+export type StoryAlternate = {
+  id: number;
+  name: string;
+  slug: string;
+  published: boolean;
+  full_slug: string;
+  is_folder: boolean;
+  parent_id: number;
 };
 
 export type StoriesResponse = {
@@ -91,7 +101,7 @@ export type AlternateURLs = {
   name: string;
   slug: string;
   full_slug: string;
-  lang: string;
+  lang?: string;
 };
 
 // Enhanced API response types
@@ -124,7 +134,7 @@ export type FetchStoryResult = {
 };
 
 // Language and routing types
-export type SupportedLanguage = "en" | "es-co" | "es";
+export type SupportedLanguage = "en" | "es-co";
 
 export type LanguageConfig = {
   code: SupportedLanguage;

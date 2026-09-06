@@ -4,10 +4,12 @@ import "./globals.css";
 import StoryblokProvider from "../../components/StoryblokProvider";
 import { GoogleAnalytics } from "@next/third-parties/google";
 import CookieBanner from "../../components/CookieBanner";
-import { LanguageProvider } from "../../contexts/LanguageContext";
+import { AlternateLinksProvider } from "../../contexts/AlternateLinksContext";
 import { ThemeProvider } from "../../contexts/ThemeContext";
 import NavBarWrapper from "../../components/NavBarWrapper";
 import ErrorBoundary from "../../components/ErrorBoundary";
+import { headers } from "next/headers";
+import { DEFAULT_LANGUAGE, HTML_LANGUAGES } from "../../utils/i18n";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,18 +25,23 @@ export const metadata: Metadata = {
     languages: {
       en: "/",
       "es-co": "/es-co",
-      es: "/es",
     },
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const requestHeaders = await headers();
+  const locale = requestHeaders.get("x-language") === "es-co"
+    ? "es-co"
+    : DEFAULT_LANGUAGE;
+  const htmlLanguage = HTML_LANGUAGES[locale];
+
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang={htmlLanguage} suppressHydrationWarning>
       <head>
         <script
           dangerouslySetInnerHTML={{
@@ -51,24 +58,6 @@ export default function RootLayout({
                   
                   document.documentElement.classList.add(resolvedTheme);
                   
-                  // Language detection
-                  var savedLanguage = localStorage.getItem('language');
-                  if (!savedLanguage) {
-                    var browserLang = navigator.language || navigator.languages?.[0];
-                    if (browserLang) {
-                      if (browserLang.startsWith('es')) {
-                        savedLanguage = 'es-co';
-                      } else if (browserLang.startsWith('en')) {
-                        savedLanguage = 'en';
-                      } else {
-                        savedLanguage = 'en';
-                      }
-                      localStorage.setItem('language', savedLanguage);
-                    }
-                  }
-                  
-                  // Set language attribute
-                  document.documentElement.lang = savedLanguage || 'en';
                 } catch (e) {
                   console.warn('Error in layout script:', e);
                 }
@@ -80,13 +69,13 @@ export default function RootLayout({
       <body className={inter.className}>
         <ErrorBoundary>
           <ThemeProvider>
-            <LanguageProvider>
+            <AlternateLinksProvider>
               <StoryblokProvider>
                 <NavBarWrapper />
                 {children}
                 <CookieBanner />
               </StoryblokProvider>
-            </LanguageProvider>
+            </AlternateLinksProvider>
           </ThemeProvider>
         </ErrorBoundary>
         <GoogleAnalytics gaId="G-ZT1LVQ4YHC" />

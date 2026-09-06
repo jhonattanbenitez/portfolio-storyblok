@@ -19,11 +19,9 @@ export default function CategoryPageComponent() {
   /** 🌐 Determinar idioma desde la URL */
   const urlLang = (() => {
     const first = pathname.split("/").filter(Boolean)[0];
-    if (first === "es-co" || first === "es") return "es-co";
+    if (first === "es-co") return "es-co";
     return "en";
   })();
-
-  const urlPrefix = urlLang === "es-co" ? "/es-co" : "";
 
   /** 🏷️ Obtener slug de la categoría desde los parámetros */
   const categorySlug = useMemo(() => {
@@ -149,7 +147,6 @@ export default function CategoryPageComponent() {
                   key={story.id}
                   story={story}
                   index={index}
-                  urlPrefix={urlPrefix}
                   language={urlLang}
                 />
               ))}

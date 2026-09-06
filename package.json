@@ -6,7 +6,8 @@
     "dev": "next dev --turbopack --experimental-https",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs"
   },
   "dependencies": {
     "@heroicons/react": "^2.2.0",

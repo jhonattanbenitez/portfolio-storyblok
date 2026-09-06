@@ -1,5 +1,7 @@
 import PostsPageComponent from "../../../components/PostsPageComponent";
+import { fetchPosts } from "../../../utils/fetchStories";
 
-export default function PostsPage() {
-  return <PostsPageComponent />;
+export default async function PostsPage() {
+  const stories = await fetchPosts({ version: "published", locale: "en" });
+  return <PostsPageComponent stories={stories} locale="en" />;
 }

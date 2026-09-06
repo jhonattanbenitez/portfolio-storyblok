@@ -11,7 +11,7 @@ import { useParams } from "next/navigation";
 
 import formatDate from "../utils/formatDate";
 import { useMarkdown } from "../hooks/useMarkdown";
-import { useLanguage } from "../contexts/LanguageContext";
+import { useAlternateLinks } from "../contexts/AlternateLinksContext";
 
 type ImageType = { filename: string };
 
@@ -68,7 +68,7 @@ const Post: React.FC<PostProps> = ({
     error: introError,
   } = useMarkdown(blok?.intro);
 
-  const { setSlugMap } = useLanguage();
+  const { setSlugMap } = useAlternateLinks();
 
   const extractSlug = (full: string | undefined) => {
     if (!full) return "";

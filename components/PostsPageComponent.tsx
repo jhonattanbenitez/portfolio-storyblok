@@ -1,61 +1,19 @@
 "use client";
 
-import { useEffect, useState, Suspense } from "react";
-import { fetchStories } from "../utils/fetchStories";
-import { Story } from "../utils/types";
+import type { Story } from "../utils/types";
 import { useTranslation } from "../hooks/useTranslation";
-import { usePathname } from "next/navigation";
 import StoryCard from "../components/StoryCard";
 
-export default function PostsPageComponent() {
-  const [stories, setStories] = useState<Story[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+type PostsPageComponentProps = {
+  stories: Story[];
+  locale: "en" | "es-co";
+};
+
+export default function PostsPageComponent({
+  stories,
+  locale,
+}: PostsPageComponentProps) {
   const { t } = useTranslation();
-  const pathname = usePathname();
-
-  // Determine language from URL
-  const urlLang = (() => {
-    const first = pathname.split("/").filter(Boolean)[0];
-    if (first === "es-co" || first === "es") return "es-co";
-    return "en";
-  })();
-
-  const urlPrefix = urlLang === "es-co" ? "/es-co" : "";
-
-  useEffect(() => {
-    async function getStories() {
-      setIsLoading(true);
-      try {
-        // Fetch all stories without language filter, then filter on our side
-        const storiesData = await fetchStories({
-          version: "published",
-          language: "en", // Default language for API call
-        });
-        const raw = storiesData ? storiesData.stories : [];
-
-        const targetLanguage = urlLang === "es-co" ? "spanish" : "english";
-        const filtered = raw.filter(
-          (story) => story.content.language === targetLanguage
-        );
-
-        setStories(filtered);
-      } catch (error) {
-        console.error("Error fetching stories:", error);
-        setStories([]);
-      } finally {
-        setIsLoading(false);
-      }
-    }
-    getStories();
-  }, [urlLang]);
-
-  const LoadingScreen = (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <p className="text-center text-foreground">{t("common.loading")}</p>
-    </div>
-  );
-
-  if (isLoading) return LoadingScreen;
 
   if (!stories.length) {
     return (
@@ -66,8 +24,7 @@ export default function PostsPageComponent() {
   }
 
   return (
-    <Suspense fallback={LoadingScreen}>
-      <section className="max-w-full bg-background text-foreground">
+    <section className="max-w-full bg-background text-foreground">
         {/* Header */}
         <div className="w-full flex justify-center py-32 mb-8 sm:py-48 lg:py-16 bg-muted">
           <div className="relative w-full max-w-6xl lg:h-[50vh] flex items-center justify-center">
@@ -85,13 +42,11 @@ export default function PostsPageComponent() {
                 key={story.id}
                 story={story}
                 index={index}
-                urlPrefix={urlPrefix}
-                language={urlLang}
+                language={locale}
               />
             ))}
           </div>
         </div>
-      </section>
-    </Suspense>
+    </section>
   );
 }

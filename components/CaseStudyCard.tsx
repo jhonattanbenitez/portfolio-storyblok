@@ -3,6 +3,8 @@ import React from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
+import { useTranslation } from "../hooks/useTranslation";
+import { getCaseStudyHref } from "../utils/resolveCaseStudyStories";
 
 interface CaseStudyCardProps {
   title: string;
@@ -22,8 +24,10 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
   client,
   services,
 }) => {
+  const { t } = useTranslation();
+
   return (
-    <Link href={`/${slug}`} className="group block h-full">
+    <Link href={getCaseStudyHref(slug)} className="group block h-full">
       <div className="h-full flex flex-col rounded-xl overflow-hidden border border-border bg-card hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
         {/* Image Container */}
         <div className="relative h-64 w-full overflow-hidden">
@@ -62,7 +66,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
           </p>
 
           <div className="mt-auto flex items-center text-primary font-medium group-hover:text-primary/80 transition-colors">
-            <span>Read Case Study</span>
+            <span>{t("caseStudies.readCaseStudy")}</span>
             <ArrowRightIcon className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
           </div>
         </div>

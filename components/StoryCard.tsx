@@ -8,8 +8,7 @@ import { useMarkdown } from "../hooks/useMarkdown";
 interface StoryCardProps {
   story: Story;
   index: number;
-  urlPrefix?: string;
-  language?: "en" | "es-co" | "es";
+  language?: "en" | "es-co";
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) => {

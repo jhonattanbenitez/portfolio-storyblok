@@ -29,11 +29,6 @@ const LANGUAGE_SEO: Record<SupportedLanguage, Partial<SeoMetadata>> = {
     description: 'Hola, soy Jhonattan Benitez, un Desarrollador Frontend. Me especializo en construir sitios web y aplicaciones web usando tecnologías modernas con un enfoque de accesibilidad primero.',
     keywords: ['desarrollador frontend', 'react', 'nextjs', 'typescript', 'portafolio', 'desarrollo web'],
   },
-  es: {
-    title: 'Portafolio de Jhonattan Benitez',
-    description: 'Hola, soy Jhonattan Benitez, un Desarrollador Frontend. Me especializo en construir sitios web y aplicaciones web usando tecnologías modernas con un enfoque de accesibilidad primero.',
-    keywords: ['desarrollador frontend', 'react', 'nextjs', 'typescript', 'portafolio', 'desarrollo web'],
-  },
 };
 
 // Generate metadata from Storyblok story
@@ -132,7 +127,6 @@ export function generateMetadataFromStory(
       languages: {
         'en': '/',
         'es-co': '/es-co',
-        'es': '/es',
       },
     },
     other: {
@@ -147,7 +141,7 @@ function generateStructuredData(
   language: SupportedLanguage,
   baseUrl: string
 ) {
-  const isSpanish = language === 'es-co' || language === 'es';
+  const isSpanish = language === 'es-co';
   
   return {
     '@context': 'https://schema.org',
