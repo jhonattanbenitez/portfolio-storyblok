@@ -1,5 +1,8 @@
 import Link from "next/link";
 import { getStories } from "../../../../lib/storyblok-data";
+import { deterministicLocalizedUrls, generateMetadataFromStory } from "../../../../utils/seo";
+
+export const metadata = generateMetadataFromStory(null, "es-co", "/es-co/categories", deterministicLocalizedUrls("/categories"));
 
 export default async function CategoriesIndexPageEs() {
   // 🔹 Obtener historias solo en español (es-co)

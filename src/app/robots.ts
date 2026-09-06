@@ -1,7 +1,8 @@
 import { MetadataRoute } from 'next';
+import { getSiteUrl } from '../../utils/seo';
 
 export default function robots(): MetadataRoute.Robots {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://jhonattanbenitez.dev';
+  const baseUrl = getSiteUrl();
   
   return {
     rules: {

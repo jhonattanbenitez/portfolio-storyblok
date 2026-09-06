@@ -8,7 +8,11 @@ import {
   resolveCaseStudyStoriesForLocale,
   resolveLocalizedStoryUrls,
 } from "../../../lib/storyblok-data";
-import { generateMetadataFromStory } from "../../../utils/seo";
+import {
+  deterministicLocalizedUrls,
+  generateMetadataFromStory,
+  generateStructuredData,
+} from "../../../utils/seo";
 import { notFound } from "next/navigation";
 import {
   RouteParams,
@@ -32,24 +36,38 @@ export async function generateStaticParams() {
 
 getStoryblokApi();
 
+async function localizedUrlsForPage(
+  story: NonNullable<Awaited<ReturnType<typeof getStoryFromRoute>>["story"]>,
+  locale: SupportedLanguage,
+  pathname: string,
+  version: "draft" | "published",
+) {
+  const isPost = story.content.component === "post";
+  const isDetail =
+    (isPost && story.content.language === getPostContentLanguage(locale)) ||
+    story.content.component === "case_study";
+  if (isDetail) {
+    return resolveLocalizedStoryUrls({ story, currentLocale: locale, version });
+  }
+  if (["/", "/es-co", "/posts", "/es-co/posts", "/case-studies", "/es-co/case-studies"].includes(pathname)) {
+    const englishPath = pathname.replace(/^\/es-co(?=\/|$)/, "") || "/";
+    return deterministicLocalizedUrls(englishPath);
+  }
+  return [{ locale, href: pathname }];
+}
+
 export async function generateMetadata({
   params,
 }: {
   params: Promise<RouteParams>;
 }): Promise<Metadata> {
+  const { slug } = await params;
+  const language: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
+  const pathname = slug ? `/${slug.join("/")}` : "/";
   try {
-    const { slug } = await params;
     const { isEnabled } = await draftMode();
     const isDev = process.env.NODE_ENV === "development";
     const version = isEnabled || isDev ? "draft" : "published";
-
-    // Determine language from slug
-    let language: SupportedLanguage = "en";
-    if (slug && slug.length > 0) {
-      if (slug[0] === "es-co") {
-        language = "es-co";
-      }
-    }
 
     // Fetch story data for metadata
     let fetchSlug = slug;
@@ -61,15 +79,15 @@ export async function generateMetadata({
     const pageData = await getStoryFromRoute(version, fetchSlug);
     const story = pageData?.story || null;
 
-    // Generate pathname for canonical URL
-    const pathname = slug ? `/${slug.join("/")}` : "/";
-
-    return generateMetadataFromStory(story, language, pathname);
+    const localizedUrls = story
+      ? await localizedUrlsForPage(story, language, pathname, version)
+      : [{ locale: language, href: pathname }];
+    return generateMetadataFromStory(story, language, pathname, localizedUrls);
   } catch (error) {
     console.error("Error generating metadata:", error);
 
     // Return default metadata on error
-    return generateMetadataFromStory(null, "en", "/");
+    return generateMetadataFromStory(null, language, pathname);
   }
 }
 
@@ -98,18 +116,8 @@ export default async function Home({
     );
 
     const locale: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
-    const isPostForLocale =
-      pageData.story.content.component === "post" &&
-      pageData.story.content.language === getPostContentLanguage(locale);
-    const isLocalizedDetail =
-      isPostForLocale || pageData.story.content.component === "case_study";
-    const localizedUrls = isLocalizedDetail
-      ? await resolveLocalizedStoryUrls({
-          story: pageData.story,
-          currentLocale: locale,
-          version,
-        })
-      : undefined;
+    const pathname = slug ? `/${slug.join("/")}` : "/";
+    const localizedUrls = await localizedUrlsForPage(pageData.story, locale, pathname, version);
 
     if (pageData?.story?.content?.body) {
       const section = pageData.story.content.body.find(
@@ -151,7 +159,13 @@ export default async function Home({
 
     return (
       <>
-        {localizedUrls && <AlternateLinksPublisher urls={localizedUrls} />}
+        <AlternateLinksPublisher urls={localizedUrls} />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(generateStructuredData(pageData.story, locale, pathname)),
+          }}
+        />
         <StoryblokStory story={pageData.story} />
       </>
     );

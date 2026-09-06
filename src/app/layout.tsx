@@ -10,6 +10,7 @@ import NavBarWrapper from "../../components/NavBarWrapper";
 import ErrorBoundary from "../../components/ErrorBoundary";
 import { headers } from "next/headers";
 import { DEFAULT_LANGUAGE, HTML_LANGUAGES } from "../../utils/i18n";
+import { getSiteUrl } from "../../utils/seo";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,16 +18,7 @@ export const metadata: Metadata = {
   title: "Jhonattan Benitez Portfolio",
   description:
     "Hello, I'm Jhonattan Benitez, a Front-End Developer. I specialize in building websites and web applications using modern technologies with a accessibility-first approach.",
-  metadataBase: new URL(
-    process.env.NEXT_PUBLIC_SITE_URL || "https://jhonattanbenitez.dev",
-  ),
-  alternates: {
-    canonical: "/",
-    languages: {
-      en: "/",
-      "es-co": "/es-co",
-    },
-  },
+  metadataBase: new URL(getSiteUrl()),
 };
 
 export default async function RootLayout({

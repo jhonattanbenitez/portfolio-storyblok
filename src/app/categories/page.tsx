@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { getStories } from "../../../lib/storyblok-data";
 import { RouteParams, SupportedLanguage } from "../../../utils/types";
+import { deterministicLocalizedUrls, generateMetadataFromStory } from "../../../utils/seo";
+
+export const metadata = generateMetadataFromStory(null, "en", "/categories", deterministicLocalizedUrls("/categories"));
 
 export default async function CategoriesIndexPage({
   params,

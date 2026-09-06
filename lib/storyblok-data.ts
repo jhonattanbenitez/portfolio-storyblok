@@ -227,6 +227,22 @@ export async function getStories(options: GetStoriesOptions): Promise<StoriesRes
   });
 }
 
+export async function getAllStories(
+  version: StoryblokVersion = "published",
+): Promise<Story[]> {
+  const stories: Story[] = [];
+  const perPage = 100;
+  for (let page = 1; ; page++) {
+    const response = await requestStoryblok<StoriesResponse>("stories", {
+      version,
+      params: { per_page: perPage, page, fallback_lang: "false" },
+      tags: ["cms:stories"],
+    });
+    stories.push(...response.stories);
+    if (response.stories.length < perPage) return stories;
+  }
+}
+
 export async function getPosts({
   version,
   locale,

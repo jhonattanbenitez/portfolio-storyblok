@@ -1,13 +1,10 @@
 "use client";
 import { storyblokEditable } from "@storyblok/react/rsc";
 import Image from "next/image";
-import Head from "next/head";
-import Script from "next/script";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
 import React from "react";
-import { useParams } from "next/navigation";
 
 import formatDate from "../utils/formatDate";
 import { useMarkdown } from "../hooks/useMarkdown";
@@ -23,7 +20,6 @@ type Blok = {
   image?: ImageType[];
   component: string;
   _editable?: string;
-  first_published_at: string;
   language: string;
   slug?: string;
   full_slug?: string;
@@ -31,17 +27,9 @@ type Blok = {
 
 type PostProps = {
   blok?: Blok;
-  storySlug?: string;
 };
 
-const Post: React.FC<PostProps> = ({
-  blok,
-  storySlug,
-}) => {
-  const params = useParams();
-  const paramsSlug = Array.isArray(params?.slug)
-    ? params.slug[params.slug.length - 1]
-    : params?.slug;
+const Post: React.FC<PostProps> = ({ blok }) => {
 
   const {
     html: contentHtml,
@@ -54,12 +42,6 @@ const Post: React.FC<PostProps> = ({
     error: introError,
   } = useMarkdown(blok?.intro);
 
-  const extractSlug = (full: string | undefined) => {
-    if (!full) return "";
-    const parts = full.split("/");
-    return parts[parts.length - 1];
-  };
-
   const isLoading = contentLoading || introLoading;
   const error = contentError || introError;
   
@@ -68,46 +50,8 @@ const Post: React.FC<PostProps> = ({
   if (error)
     return <p className="text-destructive">Error loading content: {error}</p>;
 
-  const structuredData = {
-    "@context": "https://schema.org",
-    "@type": "BlogPosting",
-    headline: blok.title,
-    description: blok.intro,
-    image: blok.image?.length ? blok.image[0].filename : "",
-    datePublished: blok.first_published_at,
-    author: { "@type": "Person", name: "Jhonattan Benitez" },
-  };
-
   return (
     <>
-      <Head>
-        <title>{blok.title}</title>
-        <meta name="description" content={blok.intro} />
-        <meta
-          name="keywords"
-          content={`blog, post, ${blok.title}, ${blok.intro}`}
-        />
-        <meta property="og:title" content={blok.title} />
-        <meta property="og:description" content={blok.intro} />
-        <meta property="og:image" content={blok.image?.[0]?.filename} />
-        <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={blok.title} />
-        <meta name="twitter:description" content={blok.intro} />
-        <meta name="twitter:image" content={blok.image?.[0]?.filename} />
-        <link
-          rel="canonical"
-          href={`https://www.jhonattan.dev/posts/${
-            storySlug || blok.slug || extractSlug(blok.full_slug) || paramsSlug
-          }`}
-        />
-      </Head>
-
-      <Script
-        id="structured-data"
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-      />
-
       <article
         {...storyblokEditable(blok)}
         className="prose prose-lg max-w-full text-foreground"
