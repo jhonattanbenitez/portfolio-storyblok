@@ -57,8 +57,8 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
       className="
         group flex h-full flex-col rounded-sm border border-border
         bg-card text-card-foreground
-        shadow-sm transition-all duration-300
-        hover:shadow-lg hover:ring-1 hover:ring-ring
+        transition-colors duration-200
+        hover:border-primary/40 hover:shadow-sm
       "
     >
       <Link
@@ -66,7 +66,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
         className="flex flex-grow flex-col rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         aria-label={story.content.title}
       >
-        <div className="relative w-full mb-4 flex-shrink-0 h-auto">
+        <div className="relative mb-4 aspect-video w-full flex-shrink-0 overflow-hidden border-b border-border">
           {story.content.image?.[0]?.filename && (
             <Image
               src={
@@ -74,10 +74,9 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
                 "/m/800x450/filters:format(webp):quality(80)/"
               }
               alt={story.name}
-              width={800}
-              height={450}
+              fill
               priority={index === 0}
-              className="object-cover rounded-sm"
+              className="object-cover"
               sizes="(min-width: 768px) 50vw, 100vw"
             />
           )}

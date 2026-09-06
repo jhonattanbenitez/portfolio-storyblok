@@ -27,15 +27,15 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
   const { t } = useTranslation();
 
   return (
-    <Link href={getCaseStudyHref(slug)} className="group block h-full rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
-      <div className="h-full flex flex-col rounded-xl overflow-hidden border border-border bg-card hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1">
+    <Link href={getCaseStudyHref(slug)} className="group block h-full rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring">
+      <div className="flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card transition-colors duration-200 group-hover:border-primary/40 group-hover:shadow-sm">
         {/* Image Container */}
         <div className="relative h-64 w-full overflow-hidden">
           <Image
             src={image || "/default-project.png"}
             alt={title}
             fill
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            className="object-cover"
             sizes="(min-width: 768px) 50vw, 33vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60" />
@@ -67,7 +67,7 @@ const CaseStudyCard: React.FC<CaseStudyCardProps> = ({
 
           <div className="mt-auto flex items-center text-primary font-medium group-hover:text-primary/80 transition-colors">
             <span>{t("caseStudies.readCaseStudy")}</span>
-            <ArrowRightIcon className="w-4 h-4 ml-2 transition-transform group-hover:translate-x-1" />
+            <ArrowRightIcon className="ml-2 h-4 w-4" />
           </div>
         </div>
       </div>

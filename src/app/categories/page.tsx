@@ -64,9 +64,9 @@ export default async function CategoriesIndexPage({
               return (
                 <li
                   key={cat.id}
-                  className="rounded-md border border-border transition-colors duration-200 hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring"
+                  className="rounded-sm border border-border bg-card text-card-foreground transition-colors duration-200 hover:border-primary/40 hover:bg-muted/50 focus-within:ring-2 focus-within:ring-ring"
                 >
-                  <Link href={href} className="block p-4 underline focus-visible:outline-none">
+                  <Link href={href} className="block p-4 font-semibold focus-visible:outline-none">
                     {cat.name || cat.slug}
                   </Link>
                 </li>

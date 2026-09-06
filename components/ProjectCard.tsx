@@ -20,9 +20,9 @@ const ProjectCard = ({
   previewUrl,
 }: ProjectCardProps) => {
   return (
-    <div className="mb-4 h-full flex flex-col">
+    <div className="group mb-4 flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card text-card-foreground transition-colors duration-200 hover:border-primary/40 hover:shadow-sm">
       {/* Image + overlay */}
-      <div className="relative h-52 md:h-72 rounded-t-xl overflow-hidden group">
+      <div className="relative h-52 overflow-hidden border-b border-border md:h-72">
         <Image
           src={imgUrl || "/default-project.png"}
           alt={title}
@@ -34,7 +34,7 @@ const ProjectCard = ({
         <div
           className="
       absolute inset-0 flex items-center justify-center
-      opacity-0 group-hover:opacity-100 transition-opacity duration-300
+      opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100
       [background:var(--overlay,rgba(0,0,0,0.60))]
       text-foreground
     "
@@ -88,7 +88,6 @@ const ProjectCard = ({
       <div
         className="
           flex-grow flex flex-col p-5
-          rounded-b-xl border bg-card text-card-foreground border-border
         "
       >
         <h5 className="font-semibold text-xl mb-3">{title}</h5>
