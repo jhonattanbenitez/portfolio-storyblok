@@ -26,7 +26,7 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="bg-muted py-24"
+      className="bg-muted py-16 md:py-24"
     >
       <div className="container mx-auto px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
@@ -75,11 +75,11 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
               Success Story
             </div>
 
-            <h2 className="text-3xl md:text-5xl font-bold text-foreground">
+            <h2 className="text-3xl font-bold text-foreground md:text-4xl">
               {blok.title || "Logistics Management System"}
             </h2>
 
-            <p className="text-xl text-muted-foreground leading-relaxed">
+            <p className="text-lg leading-relaxed text-muted-foreground">
               {blok.description ||
                 "How we transformed a chaotic manual delivery process into a streamlined digital workflow, reducing daily closing times from 40 minutes to just 2 minutes."}
             </p>

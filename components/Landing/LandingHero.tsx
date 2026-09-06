@@ -53,7 +53,7 @@ const LandingHero = ({ blok }: LandingHeroProps) => {
           transition={{ duration: 0.6 }}
           className="max-w-4xl mx-auto space-y-8"
         >
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight text-foreground">
+          <h1 className="text-5xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
             {blok.headline || "Custom Business Software Solutions"}
           </h1>
 

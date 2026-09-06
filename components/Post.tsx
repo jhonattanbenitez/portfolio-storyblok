@@ -40,17 +40,17 @@ export default async function Post({ blok }: PostProps) {
         className="prose prose-lg max-w-full text-foreground"
       >
         {/* Header */}
-        <header className="w-full flex justify-center pb-8 pt-24 bg-muted">
-          <h1 className="px-4 text-center uppercase font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+        <header className="flex w-full justify-center bg-muted pb-12 pt-28 md:pb-16 md:pt-32">
+          <h1 className="w-full min-w-0 max-w-6xl break-words px-4 text-center uppercase text-4xl font-bold md:text-5xl lg:text-6xl">
             {blok.title}
           </h1>
         </header>
 
         {/* Intro */}
         <section className="bg-muted">
-          <div className="container max-w-4xl mx-auto p-4">
+          <div className="container mx-auto max-w-4xl px-4 pb-4 pt-8 md:pt-12">
             <div
-              className="prose max-w-4xl mx-auto text-foreground"
+              className="prose mx-auto max-w-4xl text-lg leading-relaxed text-foreground"
               dangerouslySetInnerHTML={{ __html: introHtml || "" }}
             />
           </div>
@@ -58,8 +58,8 @@ export default async function Post({ blok }: PostProps) {
 
         {/* Fecha */}
         <div className="bg-muted">
-          <div className="container max-w-4xl mx-auto p-4">
-            <p className="text-muted-foreground">{formatDate(blok.date)}</p>
+          <div className="container mx-auto max-w-4xl px-4 pb-8 pt-0">
+            <p className="text-sm text-muted-foreground">{formatDate(blok.date)}</p>
           </div>
         </div>
 
@@ -80,7 +80,7 @@ export default async function Post({ blok }: PostProps) {
         </section>
 
         {/* Contenido */}
-        <section className="container mx-auto max-w-4xl">
+        <section className="container mx-auto max-w-4xl py-12 md:py-16">
           <div
             className="
               p-4 rounded-lg overflow-x-auto

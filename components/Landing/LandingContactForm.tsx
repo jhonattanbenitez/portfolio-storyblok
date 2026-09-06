@@ -84,7 +84,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="py-24 bg-background relative"
+      className="relative bg-background py-16 md:py-24"
       id="contact"
     >
       {/* Background blobs */}

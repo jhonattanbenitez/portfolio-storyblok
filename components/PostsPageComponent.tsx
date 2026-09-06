@@ -26,16 +26,16 @@ export default function PostsPageComponent({
   return (
     <section className="max-w-full bg-background text-foreground">
         {/* Header */}
-        <div className="mb-8 flex w-full justify-center bg-muted pb-16 pt-28 sm:pb-20 sm:pt-32 lg:pb-24 lg:pt-36">
+        <div className="flex w-full justify-center bg-muted pb-16 pt-28 md:pb-24 md:pt-32">
           <div className="relative flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8">
-            <h1 className="px-4 text-center uppercase font-bold text-4xl sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="px-4 text-center uppercase text-4xl font-bold md:text-5xl lg:text-6xl">
               {t("postHeader.blog")}
             </h1>
           </div>
         </div>
 
         {/* Cards Grid */}
-        <div className="mx-auto max-w-6xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
           <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
             {stories.map((story, index) => (
               <StoryCard

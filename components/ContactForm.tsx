@@ -89,11 +89,11 @@ const ContactForm: React.FC<ContactFormProps> = ({ blok }) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="bg-muted py-16"
+      className="bg-muted py-16 md:py-24"
       id="contact"
     >
       <div className="max-w-2xl mx-auto px-4">
-        <h2 className="mb-8 text-center text-4xl font-bold text-foreground">
+        <h2 className="mb-8 text-center text-3xl font-bold text-foreground md:text-4xl">
           {blok.title}
         </h2>
 

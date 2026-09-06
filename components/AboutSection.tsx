@@ -98,11 +98,11 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="bg-background text-foreground py-16"
+      className="bg-background py-16 text-foreground md:py-24"
       aria-label={t("about.sectionLabel") ?? "About"}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="md:grid md:grid-cols-2 gap-8 items-start py-8 xl:gap-16">
+        <div className="items-start gap-8 md:grid md:grid-cols-2 xl:gap-16">
           {/* Image Section */}
           <div className="md:flex md:justify-center">
             <div className="relative w-full max-w-md mx-auto">

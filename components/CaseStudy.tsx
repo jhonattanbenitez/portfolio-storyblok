@@ -59,11 +59,11 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) =
               <ArrowLeftIcon className="w-4 h-4 mr-2" />
               {t("common.backToHome")}
             </Link>
-            <h1 className="text-4xl md:text-6xl font-bold mb-6 tracking-tight">
+            <h1 className="mb-6 text-4xl font-bold tracking-tight md:text-5xl lg:text-6xl">
               {blok.title}
             </h1>
             {blok.services && (
-              <p className="text-lg md:text-xl font-light text-white/90">
+              <p className="text-lg font-light leading-relaxed text-white/90">
                 {blok.services}
               </p>
             )}

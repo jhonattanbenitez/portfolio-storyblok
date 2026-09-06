@@ -77,11 +77,11 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
     <section
       {...storyblokEditable(blok)}
       id="projects"
-      className="relative z-10 bg-background pb-16"
+      className="relative z-10 bg-background py-16 md:py-24"
       aria-label={t("projects.sectionLabel") ?? "Projects"}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <h2 className="pt-16 mb-8 md:mb-12 text-center text-4xl font-bold text-foreground">
+        <h2 className="mb-8 text-center text-3xl font-bold text-foreground md:mb-12 md:text-4xl">
           {t("projects.title")}
         </h2>
         <div className="flex overflow-x-auto py-8 md:pb-12 md:justify-center md:flex-wrap md:gap-2">
