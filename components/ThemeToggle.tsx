@@ -10,7 +10,7 @@ interface ThemeToggleProps {
 }
 
 export default function ThemeToggle({ responsiveCompact = false }: ThemeToggleProps) {
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme, resolvedTheme } = useTheme();
   const { mounted } = useMounted();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -34,6 +34,7 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
 
   const currentTheme = themes.find(t => t.value === theme);
   const CurrentIcon = currentTheme?.icon || SunIcon;
+  const menuBackground = resolvedTheme === 'dark' ? '#0f172a' : '#ffffff';
 
 
 
@@ -59,7 +60,10 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-border bg-popover text-popover-foreground shadow-lg">
+        <div
+          className="absolute right-0 z-50 mt-2 w-48 rounded-md border border-border text-popover-foreground shadow-lg"
+          style={{ backgroundColor: menuBackground }}
+        >
           {themes.map((themeOption) => {
             const Icon = themeOption.icon;
             return (

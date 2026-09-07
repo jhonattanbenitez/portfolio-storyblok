@@ -6,6 +6,7 @@ import { useTranslation } from "../hooks/useTranslation";
 import formatDate from "../utils/formatDate";
 import { ArrowLeftIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import { useTheme } from "../contexts/ThemeContext";
 import "highlight.js/styles/github-dark.css";
 import "./post-styles.css";
 
@@ -31,6 +32,9 @@ export interface CaseStudyProps {
 
 const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) => {
   const { t } = useTranslation();
+  const { resolvedTheme } = useTheme();
+  const heroBackground = resolvedTheme === "dark" ? "#172033" : "#ffffff";
+  const detailsBackground = resolvedTheme === "dark" ? "#0f172a" : "#ffffff";
 
   return (
     <article
@@ -38,7 +42,10 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) =
       className="min-h-screen bg-background text-foreground pb-20 pt-20"
     >
       {/* Hero Header */}
-      <div className="relative w-full h-[60vh] md:h-[70vh] bg-muted">
+      <div
+        className="relative h-[60vh] w-full md:h-[70vh]"
+        style={{ backgroundColor: heroBackground }}
+      >
         {blok.image?.filename && (
           <Image
             src={blok.image.filename}
@@ -73,7 +80,10 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) =
 
       <div className="container max-w-5xl mx-auto px-4 -mt-20 relative z-10">
         {/* Project Details Card */}
-        <div className="grid gap-8 rounded-xl border border-border bg-card p-8 text-card-foreground shadow-xl md:grid-cols-3 md:p-12 mb-16">
+        <div
+          className="mb-16 grid gap-8 rounded-xl border border-border p-8 text-card-foreground shadow-xl md:grid-cols-3 md:p-12"
+          style={{ backgroundColor: detailsBackground }}
+        >
           <div className="md:col-span-2 space-y-4">
             <h3 className="text-xl font-semibold">{t("common.overview")}</h3>
             <div

@@ -24,6 +24,7 @@ const NavBar: FC = () => {
   const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const navBackground = resolvedTheme === "dark" ? "#172033" : "#ffffff";
+  const submenuBackground = resolvedTheme === "dark" ? "#0f172a" : "#ffffff";
 
   // 🔹 Detectar idioma según la URL actual
   const urlLang = (() => {
@@ -148,9 +149,10 @@ const NavBar: FC = () => {
                 {/* === SUBMENÚ === */}
                 {link.subLinks && hoveredIndex === index && (
                   <ul
+                    style={{ backgroundColor: submenuBackground }}
                     className="
                       absolute left-0 top-full mt-2 w-48
-                      border border-border rounded-md bg-popover text-popover-foreground shadow-lg
+                      border border-border rounded-md text-popover-foreground shadow-lg
                       flex flex-col
                       animate-in fade-in slide-in-from-top-2
                       before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']
