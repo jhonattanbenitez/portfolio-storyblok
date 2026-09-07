@@ -37,7 +37,7 @@ export default async function CategoriesIndexPage({
   );
 
   return (
-    <section className="max-w-full bg-background text-foreground">
+    <main className="max-w-full bg-background text-foreground">
       {/* Header */}  
       <div className="flex w-full justify-center bg-muted pb-16 pt-28 md:pb-24 md:pt-32">
         <div className="w-full max-w-6xl px-4 sm:px-6 lg:px-8">
@@ -75,6 +75,6 @@ export default async function CategoriesIndexPage({
           </ul>
         )}
       </div>
-    </section>
+    </main>
   );
 }

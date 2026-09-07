@@ -20,6 +20,7 @@ const NavBar: FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
+  const suppressDesktopSubmenuFocusRef = useRef(false);
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   const pathname = usePathname();
@@ -141,14 +142,45 @@ const NavBar: FC = () => {
                 key={link.href}
                 className="relative group"
                 onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
+                onMouseLeave={(event) => {
+                  if (!event.currentTarget.contains(document.activeElement)) {
+                    setHoveredIndex(null);
+                  }
+                }}
+                onBlurCapture={(event) => {
+                  if (!event.currentTarget.contains(event.relatedTarget as Node)) {
+                    setHoveredIndex(null);
+                  }
+                }}
+                onKeyDown={(event) => {
+                  if (event.key !== "Escape" || hoveredIndex !== index) return;
+                  event.preventDefault();
+                  suppressDesktopSubmenuFocusRef.current = true;
+                  setHoveredIndex(null);
+                  event.currentTarget.querySelector("a")?.focus();
+                }}
               >
                 {/* === LINK PRINCIPAL === */}
-                <NavLink href={link.href} title={link.title} responsiveCompact />
+                <NavLink
+                  href={link.href}
+                  title={link.title}
+                  responsiveCompact
+                  ariaExpanded={link.subLinks ? hoveredIndex === index : undefined}
+                  ariaControls={link.subLinks ? `desktop-submenu-${index}` : undefined}
+                  onFocus={() => {
+                    if (!link.subLinks) return;
+                    if (suppressDesktopSubmenuFocusRef.current) {
+                      suppressDesktopSubmenuFocusRef.current = false;
+                      return;
+                    }
+                    setHoveredIndex(index);
+                  }}
+                />
 
                 {/* === SUBMENÚ === */}
                 {link.subLinks && hoveredIndex === index && (
                   <ul
+                    id={`desktop-submenu-${index}`}
                     style={{ backgroundColor: submenuBackground }}
                     className="
                       absolute left-0 top-full mt-2 w-48

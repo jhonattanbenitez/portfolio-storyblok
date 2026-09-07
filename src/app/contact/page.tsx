@@ -40,7 +40,7 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="space-y-6">
+    <main className="space-y-6">
       <h2 className="text-xl font-semibold">{t("contact.title")}</h2>
 
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
@@ -108,7 +108,7 @@ const ContactForm = () => {
       </form>
 
       {/* Social Links si quieres añadirlos aquí */}
-    </div>
+    </main>
   );
 };
 

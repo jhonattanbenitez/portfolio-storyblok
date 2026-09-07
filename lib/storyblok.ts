@@ -7,7 +7,6 @@ import Hero from "../components/Hero/Hero";
 import AboutSection from "../components/AboutSection";
 import ProjectsSection from "../components/ProjectsSection";
 import ContactForm from "../components/ContactForm";
-import NavBar from "../components/NavBar";
 
 import CaseStudy from "../components/CaseStudyServer";
 import CaseStudiesSection from "../components/CaseStudiesSection";
@@ -17,6 +16,10 @@ import LandingFeatures from "../components/Landing/LandingFeatures";
 import LandingFeature from "../components/Landing/LandingFeature";
 import LandingCaseStudy from "../components/Landing/LandingCaseStudy";
 import LandingContactForm from "../components/Landing/LandingContactForm";
+
+// Navigation is application-owned in the root layout. Legacy CMS navigation
+// blocks remain valid content but intentionally render no second landmark.
+const ApplicationOwnedNavigation = () => null;
 
 export const getStoryblokApi = (preview = false) => {
   const isServer = typeof window === "undefined";
@@ -36,7 +39,7 @@ export const getStoryblokApi = (preview = false) => {
       about: AboutSection,
       projects: ProjectsSection,
       contact: ContactForm,
-      navigation: NavBar,
+      navigation: ApplicationOwnedNavigation,
       case_study: CaseStudy,
       case_studies_section: CaseStudiesSection,
       landing_page: LandingPage,

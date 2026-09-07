@@ -17,7 +17,7 @@ export default function CategoryPageComponent({
   const { t } = useTranslation();
 
   return (
-    <section className="max-w-full bg-background text-foreground">
+    <main className="max-w-full bg-background text-foreground">
         {/* Header */}
         <div className="flex w-full justify-center bg-muted pb-16 pt-28 md:pb-24 md:pt-32">
           <div className="relative flex w-full max-w-6xl items-center justify-center px-4 sm:px-6 lg:px-8">
@@ -46,6 +46,6 @@ export default function CategoryPageComponent({
             </div>
           )}
         </div>
-    </section>
+    </main>
   );
 }
