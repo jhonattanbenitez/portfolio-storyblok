@@ -103,7 +103,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
           </div>
 
           {state.success ? (
-            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-8 text-center animate-in fade-in slide-in-from-bottom-4">
+            <div className="bg-green-500/10 border border-green-500/20 rounded-xl p-8 text-center animate-in fade-in slide-in-from-bottom-4" aria-live="polite">
               <CheckCircleIcon className="w-16 h-16 text-green-500 mx-auto mb-4" />
               <h3 className="text-2xl font-bold text-green-600 mb-2">
                 Message Sent!
@@ -113,7 +113,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="mt-6 text-sm text-muted-foreground hover:text-foreground underline"
+                className="mt-6 text-sm text-muted-foreground hover:text-foreground underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 Send another message
               </button>
@@ -204,7 +204,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
               </div>
 
               {state.message && !state.success && (
-                <div className="flex items-center rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
+                <div role="alert" className="flex items-center rounded-md border border-destructive/20 bg-destructive/10 p-3 text-sm text-destructive">
                   <ExclamationCircleIcon className="w-5 h-5 mr-2" />
                   {state.message}
                 </div>
@@ -214,7 +214,7 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                 type="submit"
                 disabled={isPending}
                 className={clsx(
-                  "w-full rounded-md py-4 font-bold text-primary-foreground transition-all transform hover:scale-[1.02] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "w-full rounded-md py-4 font-bold text-primary-foreground transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   isPending
                     ? "cursor-not-allowed bg-primary/50 opacity-60"
                     : "bg-primary hover:bg-primary/90 shadow-lg shadow-blue-500/25",
@@ -227,14 +227,14 @@ const LandingContactForm = ({ blok }: LandingContactFormProps) => {
                 This site is protected by reCAPTCHA and the Google{" "}
                 <a
                   href="https://policies.google.com/privacy"
-                  className="underline hover:text-foreground"
+                  className="underline hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   Privacy Policy
                 </a>{" "}
                 and{" "}
                 <a
                   href="https://policies.google.com/terms"
-                  className="underline hover:text-foreground"
+                  className="underline hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   Terms of Service
                 </a>{" "}

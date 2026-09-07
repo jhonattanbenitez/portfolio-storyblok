@@ -38,7 +38,6 @@ const ProjectCard = ({
       bg-transparent md:[background:var(--overlay,rgba(0,0,0,0.60))]
       text-foreground
     "
-          aria-hidden="true"
         >
           {gitUrl && (
             <Link
@@ -90,7 +89,7 @@ const ProjectCard = ({
           flex-grow flex flex-col p-5
         "
       >
-        <h5 className="font-semibold text-xl mb-3">{title}</h5>
+        <h3 className="font-semibold text-xl mb-3">{title}</h3>
         <p className="text-muted-foreground flex-grow">{description}</p>
       </div>
     </div>

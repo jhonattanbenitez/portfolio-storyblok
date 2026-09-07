@@ -2,7 +2,7 @@
 
 import { storyblokEditable, SbBlokData } from "@storyblok/react/rsc";
 import { TypeAnimation } from "react-type-animation";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import clsx from "clsx";
 import Link from "next/link";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
@@ -23,6 +23,7 @@ interface LandingHeroProps {
 }
 
 const LandingHero = ({ blok }: LandingHeroProps) => {
+  const shouldReduceMotion = useReducedMotion();
   const sequence = blok.typing_words
     ? blok.typing_words.flatMap((word) => [word.item, 2000])
     : ["Logistics", 2000, "Inventory", 2000, "Sales", 2000, "Workflows", 2000];
@@ -48,9 +49,9 @@ const LandingHero = ({ blok }: LandingHeroProps) => {
 
       <div className="container relative z-10 px-4 mx-auto text-center">
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={shouldReduceMotion ? false : { opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
           className="max-w-4xl mx-auto space-y-8"
         >
           <h1 className="text-5xl font-bold tracking-tight text-foreground md:text-6xl lg:text-7xl">
@@ -62,26 +63,30 @@ const LandingHero = ({ blok }: LandingHeroProps) => {
               {blok.subheadline_prefix || "We automate"}
             </span>
             <span className="font-semibold text-primary">
-              <TypeAnimation
-                sequence={sequence}
-                wrapper="span"
-                speed={50}
-                repeat={Infinity}
-                cursor={true}
-              />
+              {shouldReduceMotion ? (
+                blok.typing_words?.[0]?.item || "Logistics"
+              ) : (
+                <TypeAnimation
+                  sequence={sequence}
+                  wrapper="span"
+                  speed={50}
+                  repeat={Infinity}
+                  cursor={true}
+                />
+              )}
             </span>
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
+            transition={shouldReduceMotion ? { duration: 0 } : { delay: 0.3, duration: 0.5 }}
           >
             <Link
               href={blok.cta_link?.cached_url || "/contact"}
               className={clsx(
                 "inline-flex items-center justify-center px-8 py-4 text-lg font-semibold rounded-full",
-                "bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-300",
+                "bg-primary text-primary-foreground hover:bg-primary/90 transition-colors duration-200",
                 "shadow-[0_0_20px_rgba(37,99,235,0.3)] hover:shadow-[0_0_30px_rgba(37,99,235,0.5)]",
                 "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
               )}

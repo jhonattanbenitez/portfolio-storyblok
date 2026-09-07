@@ -130,12 +130,23 @@ body {
     color 0.25s ease;
 }
 
+/* The required reCAPTCHA disclosure is rendered beside each protected form. */
+.grecaptcha-badge {
+  display: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   html,
   body,
   *,
   *::before,
   *::after {
     transition: none !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

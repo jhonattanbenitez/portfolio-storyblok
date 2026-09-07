@@ -98,7 +98,7 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
   return (
     <section
       {...storyblokEditable(blok)}
-      className="bg-background py-16 text-foreground md:py-24"
+      className="overflow-x-clip bg-background py-16 text-foreground md:py-24"
       aria-label={t("about.sectionLabel") ?? "About"}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -128,9 +128,9 @@ const AboutSection: React.FC<AboutSectionProps> = ({ blok }) => {
             </div>
 
             {/* Tab Container */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex min-w-0 flex-1 flex-col">
               {/* Tab Navigation */}
-              <div className="relative">
+              <div className="relative min-w-0 max-w-full">
                 <div
                   className="
                     flex w-full overflow-x-auto 

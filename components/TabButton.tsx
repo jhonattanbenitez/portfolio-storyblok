@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import clsx from "clsx";
 
 const underline = {
@@ -21,6 +21,7 @@ const TabButton = ({
   className,
   ...rest
 }: TabButtonProps) => {
+  const shouldReduceMotion = useReducedMotion();
   return (
     <button
       type="button"
@@ -30,7 +31,7 @@ const TabButton = ({
       {...(rest.role === "tab" ? { "aria-selected": active, role: "tab" } : {})}
       className={clsx(
         "relative inline-flex items-center h-12 px-6 rounded-t-lg",
-        "transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "transition-[color,background-color,border-color,box-shadow,transform] duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         "border-l border-r border-t border-b-0",
         "text-muted-foreground hover:text-foreground",
         // Inactive tab styling
@@ -54,7 +55,7 @@ const TabButton = ({
         initial={false}
         animate={active ? "active" : "inactive"}
         variants={underline}
-        transition={{ type: "spring", stiffness: 300, damping: 28 }}
+        transition={shouldReduceMotion ? { duration: 0 } : { type: "spring", stiffness: 300, damping: 28 }}
         className="absolute bottom-0 left-0 right-0 h-[3px] bg-primary origin-left rounded-t-sm"
       />
 

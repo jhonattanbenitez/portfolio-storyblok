@@ -110,7 +110,7 @@ const NavBar: FC = () => {
               flex items-center rounded border border-border
               text-foreground
               hover:bg-secondary/60
-              focus:outline-none focus-visible:ring-2 focus-visible:ring-ring
+              focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
               transition-colors
               p-2
             "

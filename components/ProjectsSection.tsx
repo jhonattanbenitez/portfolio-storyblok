@@ -2,7 +2,7 @@
 import React, { useState, useRef } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectTag from "./ProjectTag";
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
 import { useTranslation } from "../hooks/useTranslation";
 
@@ -53,6 +53,7 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
 
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
+  const shouldReduceMotion = useReducedMotion();
 
   const projectsData = blok.project.map((project) => ({
     id: project._uid,
@@ -77,15 +78,15 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
     <section
       {...storyblokEditable(blok)}
       id="projects"
-      className="relative z-10 bg-background py-16 md:py-24"
+      className="relative z-10 overflow-x-clip bg-background py-16 md:py-24"
       aria-label={t("projects.sectionLabel") ?? "Projects"}
     >
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <h2 className="mb-8 text-center text-3xl font-bold text-foreground md:mb-12 md:text-4xl">
           {t("projects.title")}
         </h2>
-        <div className="flex overflow-x-auto py-8 md:pb-12 md:justify-center md:flex-wrap md:gap-2">
-          <div className="flex gap-2">
+        <div className="flex min-w-0 max-w-full overflow-x-auto py-8 md:flex-wrap md:justify-center md:gap-2 md:pb-12">
+          <div className="flex w-max gap-2">
             <ProjectTag
               onClick={handleTagClick}
               name="all"
@@ -115,9 +116,9 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
             <motion.li
               key={project.id}
               variants={cardVariants}
-              initial="initial"
-              animate={isInView ? "animate" : "initial"}
-              transition={{ duration: 0.3, delay: index * 0.1 }}
+              initial={shouldReduceMotion ? false : "initial"}
+              animate={shouldReduceMotion || isInView ? "animate" : "initial"}
+              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: index * 0.1 }}
             >
               <ProjectCard
                 title={project.title}

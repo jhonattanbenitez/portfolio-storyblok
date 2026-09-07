@@ -3,7 +3,7 @@
 import { storyblokEditable, SbBlokData } from "@storyblok/react/rsc";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 
 interface Stat extends SbBlokData {
@@ -23,6 +23,7 @@ interface LandingCaseStudyProps {
 }
 
 const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
+  const shouldReduceMotion = useReducedMotion();
   return (
     <section
       {...storyblokEditable(blok)}
@@ -32,10 +33,10 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Image Side */}
           <motion.div
-            initial={{ opacity: 0, x: -50 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: -50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
             className="order-2 lg:order-1 relative"
           >
             <div className="relative rounded-2xl overflow-hidden shadow-2xl aspect-[4/3] border border-border">
@@ -65,10 +66,10 @@ const LandingCaseStudy = ({ blok }: LandingCaseStudyProps) => {
 
           {/* Content Side */}
           <motion.div
-            initial={{ opacity: 0, x: 50 }}
+            initial={shouldReduceMotion ? false : { opacity: 0, x: 50 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
             className="order-1 lg:order-2 space-y-8"
           >
             <div className="inline-block rounded-full bg-accent px-4 py-1.5 text-sm font-semibold text-accent-foreground">

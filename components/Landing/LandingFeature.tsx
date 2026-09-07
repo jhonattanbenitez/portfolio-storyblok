@@ -2,7 +2,7 @@
 
 import { storyblokEditable, SbBlokData } from "@storyblok/react/rsc";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import clsx from "clsx";
 import { CheckCircleIcon } from "@heroicons/react/24/solid";
 
@@ -22,16 +22,17 @@ interface LandingFeatureProps {
 }
 
 const LandingFeature = ({ blok }: LandingFeatureProps) => {
+  const shouldReduceMotion = useReducedMotion();
   const isReversed = blok.layout === "inventory";
   const isFullWidth = blok.layout === "dashboard";
 
   return (
     <motion.div
       {...storyblokEditable(blok)}
-      initial={{ opacity: 0, y: 50 }}
+      initial={shouldReduceMotion ? false : { opacity: 0, y: 50 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: "-100px" }}
-      transition={{ duration: 0.6 }}
+      transition={{ duration: shouldReduceMotion ? 0 : 0.6 }}
       className={clsx(
         "flex flex-col gap-12 items-center",
         isFullWidth ? "text-center" : "lg:flex-row",
