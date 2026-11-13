@@ -1,7 +1,8 @@
 import type { Metadata, MetadataRoute } from "next";
 import type { LocalizedUrl, Story, SupportedLanguage } from "./types";
+import { markdownToPlainText } from "./markdown.ts";
 
-export const PRODUCTION_SITE_URL = "https://jhonattanbenitez.dev";
+export const PRODUCTION_SITE_URL = "https://www.jhonattan.dev";
 export const SEO_LOCALES = {
   en: { hreflang: "en", openGraph: "en_US", structuredData: "en" },
   "es-co": { hreflang: "es-CO", openGraph: "es_CO", structuredData: "es-CO" },
@@ -13,6 +14,13 @@ export function getSiteUrl(env: NodeJS.ProcessEnv = process.env): string {
 
 export function absoluteUrl(pathname: string, baseUrl = getSiteUrl()): string {
   return `${baseUrl}${pathname === "/" ? "" : `/${pathname.replace(/^\/+/, "")}`}`;
+}
+
+/** Encode HTML-sensitive characters without changing the JSON value. */
+export function serializeJsonLd(value: unknown): string {
+  return (JSON.stringify(value) ?? "null").replace(/[<>&\u2028\u2029]/g, (character) =>
+    `\\u${character.charCodeAt(0).toString(16).padStart(4, "0")}`
+  );
 }
 
 export function deterministicLocalizedUrls(
@@ -43,11 +51,12 @@ export function generateMetadataFromStory(
   locale: SupportedLanguage = "en",
   pathname = "/",
   localizedUrls: LocalizedUrl[] = [{ locale, href: pathname }],
+  isPreview = false,
 ): Metadata {
   const spanish = locale === "es-co";
   const title = story?.content.title || story?.name ||
     (spanish ? "Portafolio de Jhonattan Benitez" : "Jhonattan Benitez Portfolio");
-  const description = story?.content.intro || (spanish
+  const description = markdownToPlainText(story?.content.intro) || (spanish
     ? "Desarrollador Frontend especializado en experiencias web modernas y accesibles."
     : "Frontend Developer specializing in modern, accessible web experiences.");
   const canonical = absoluteUrl(pathname);
@@ -57,7 +66,7 @@ export function generateMetadataFromStory(
     authors: [{ name: "Jhonattan Benitez" }],
     creator: "Jhonattan Benitez",
     publisher: "Jhonattan Benitez",
-    robots: { index: true, follow: true },
+    robots: { index: !isPreview, follow: !isPreview },
     alternates: { canonical, languages: metadataLanguages(localizedUrls) },
     openGraph: {
       type: story?.content.component === "post" ? "article" : "website",
@@ -72,6 +81,14 @@ export function generateMetadataFromStory(
       images: [{ url: imageUrl(story), width: 1200, height: 630, alt: title }],
     },
     twitter: { card: "summary_large_image", title, description, images: [imageUrl(story)] },
+  };
+}
+
+/** Aliases must remain nonindexable even if a streamed redirect sends HTTP 200. */
+export function generateRedirectMetadata(pathname: string): Metadata {
+  return {
+    robots: { index: false, follow: true },
+    alternates: { canonical: absoluteUrl(pathname) },
   };
 }
 
@@ -94,7 +111,7 @@ export function generateStructuredData(
     url,
     mainEntityOfPage: { "@type": "WebPage", "@id": url },
     headline: story.content.title || story.name,
-    description: story.content.intro,
+    description: markdownToPlainText(story.content.intro),
     image: imageUrl(story),
     datePublished: story.first_published_at,
     dateModified: story.updated_at,

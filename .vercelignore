@@ -1,0 +1,19 @@
+# Credentials belong in Vercel environment variables, never in an upload.
+.env*
+certificates/
+*.pem
+*.key
+*.p12
+*.pfx
+.aws/
+.codex/
+.agents/
+
+# Local artifacts, repository metadata, and validation evidence.
+.git/
+.vercel/
+.next/
+node_modules/
+coverage/
+docs/
+tests/

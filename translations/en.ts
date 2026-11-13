@@ -52,7 +52,9 @@ export const en = {
   cookieBanner: {
     accept: "Accept",
     decline: "Decline",
-    description: "This website uses cookies to enhance user experience.",
+    description: "Optional analytics cookies help measure visits. You can accept, decline, or change your choice in Cookie preferences.",
+    preferences: "Cookie preferences",
+    storageUnavailable: "Your preference could not be saved. Analytics remains disabled in this tab.",
   },
   tags: {
     all: "All",

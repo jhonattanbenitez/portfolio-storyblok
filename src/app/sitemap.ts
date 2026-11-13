@@ -57,7 +57,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         return reference ? byId.get(reference.id) || null : null;
       },
     });
-    pages.push(...urls.map((url) => ({ url, alternates: urls, lastModified: story.updated_at })));
+    const currentUrl = urls.find((url) => url.locale === locale);
+    if (currentUrl) pages.push({ url: currentUrl, alternates: urls, lastModified: story.updated_at });
   }
 
   for (const englishStory of englishCaseStudies) {

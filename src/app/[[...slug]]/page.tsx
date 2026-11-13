@@ -1,4 +1,4 @@
-import { StoryblokStory } from "@storyblok/react/rsc";
+import { StoryblokStory, StoryblokServerComponent } from "@storyblok/react/rsc";
 import {
   getAllStoryParams,
   getStoriesByUuids,
@@ -7,22 +7,26 @@ import {
   getPostContentLanguage,
   getStoryblokVersion,
   isStoryblokNotFound,
+  isStoryblokInvalidRequest,
   resolveCaseStudyStoriesForLocale,
   resolveLocalizedStoryUrls,
+  resolveStoryRouteRedirect,
 } from "../../../lib/storyblok-data";
 import {
   deterministicLocalizedUrls,
   generateMetadataFromStory,
+  generateRedirectMetadata,
   generateStructuredData,
+  serializeJsonLd,
 } from "../../../utils/seo";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect, unstable_rethrow } from "next/navigation";
 import {
   RouteParams,
   SupportedLanguage,
   StoryblokBlock,
 } from "../../../utils/types";
 import { Metadata } from "next";
-import { draftMode } from "next/headers";
+import { getAuthorizedDraftMode } from "../../../lib/draft-session";
 import { getStoryblokApi } from "../../../lib/storyblok";
 import { AlternateLinksPublisher } from "../../../contexts/AlternateLinksContext";
 
@@ -66,8 +70,8 @@ export async function generateMetadata({
   const { slug } = await params;
   const language: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
   const pathname = slug ? `/${slug.join("/")}` : "/";
+  const { isEnabled } = await getAuthorizedDraftMode();
   try {
-    const { isEnabled } = await draftMode();
     const version = getStoryblokVersion(isEnabled);
 
     // Fetch story data for metadata
@@ -79,27 +83,39 @@ export async function generateMetadata({
 
     const pageData = await getStoryFromRoute(version, fetchSlug);
     const story = pageData?.story || null;
+    const redirectHref = story && await resolveStoryRouteRedirect({ story, locale: language, version });
+    if (redirectHref) return generateRedirectMetadata(redirectHref);
 
     const localizedUrls = story
       ? await localizedUrlsForPage(story, language, pathname, version)
       : [{ locale: language, href: pathname }];
-    return generateMetadataFromStory(story, language, pathname, localizedUrls);
+    return generateMetadataFromStory(story, language, pathname, localizedUrls, isEnabled);
   } catch (error) {
+    unstable_rethrow(error);
+    if (isStoryblokInvalidRequest(error)) notFound();
     console.error("Error generating metadata:", error);
 
     // Return default metadata on error
-    return generateMetadataFromStory(null, language, pathname);
+    return generateMetadataFromStory(null, language, pathname, undefined, isEnabled);
   }
 }
 
 export default async function Home({
   params,
+  searchParams,
 }: {
   params: Promise<RouteParams>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
+  let prepared: {
+    pageData: Awaited<ReturnType<typeof getStoryFromRoute>>;
+    localizedUrls: Awaited<ReturnType<typeof localizedUrlsForPage>>;
+    isEnabled: boolean;
+    structuredData: string;
+  };
   try {
     const { slug } = await params;
-    const { isEnabled } = await draftMode();
+    const { isEnabled } = await getAuthorizedDraftMode();
     const version = getStoryblokVersion(isEnabled);
 
     // Map folder root to 'home' story
@@ -117,6 +133,10 @@ export default async function Home({
 
     const locale: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
     const pathname = slug ? `/${slug.join("/")}` : "/";
+    const redirectHref = await resolveStoryRouteRedirect({
+      story: pageData.story, locale, version, searchParams: await searchParams,
+    });
+    if (redirectHref) permanentRedirect(redirectHref);
     const localizedUrls = await localizedUrlsForPage(pageData.story, locale, pathname, version);
 
     if (pageData?.story?.content?.body) {
@@ -157,21 +177,24 @@ export default async function Home({
       notFound();
     }
 
-    return (
-      <>
-        <AlternateLinksPublisher urls={localizedUrls} />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{
-            __html: JSON.stringify(generateStructuredData(pageData.story, locale, pathname)),
-          }}
-        />
-        <StoryblokStory story={pageData.story} />
-      </>
-    );
+    prepared = {
+      pageData, localizedUrls, isEnabled,
+      structuredData: serializeJsonLd(generateStructuredData(pageData.story, locale, pathname)),
+    };
   } catch (error) {
+    unstable_rethrow(error);
+    if (isStoryblokNotFound(error) || isStoryblokInvalidRequest(error)) notFound();
     console.error("Error in page component:", error);
-    if (isStoryblokNotFound(error)) notFound();
     throw error;
   }
+  const { pageData, localizedUrls, isEnabled, structuredData } = prepared;
+  return (
+    <>
+      <AlternateLinksPublisher urls={localizedUrls} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
+      {isEnabled
+        ? <StoryblokStory story={pageData.story} />
+        : <StoryblokServerComponent blok={pageData.story.content} />}
+    </>
+  );
 }

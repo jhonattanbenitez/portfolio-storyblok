@@ -27,12 +27,12 @@ const MAX_ATTEMPTS = 5;
 const BASE_RETRY_DELAY_MS = 1000;
 
 export class StoryblokDataError extends Error {
-  readonly code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE";
+  readonly code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE" | "INVALID_REQUEST";
   readonly status?: number;
 
   constructor(
     message: string,
-    code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE",
+    code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE" | "INVALID_REQUEST",
     status?: number,
   ) {
     super(message);
@@ -40,6 +40,29 @@ export class StoryblokDataError extends Error {
     this.code = code;
     this.status = status;
   }
+}
+
+/** Validate decoded route data without allowing it to become URL syntax. */
+function encodeStoryblokSegment(segment: string): string {
+  const invalid = () => new StoryblokDataError("Invalid Storyblok request path", "INVALID_REQUEST", 400);
+  if (typeof segment !== "string") throw invalid();
+  let candidate = segment;
+  // Decoding is only for validation. The original segment is encoded once below.
+  for (let depth = 0; ; depth++) {
+    if (!candidate || candidate === "." || candidate === ".." || /[/\\\u0000-\u001f\u007f]/u.test(candidate)) throw invalid();
+    if (!candidate.includes("%")) break;
+    if (depth === 3) throw invalid();
+    try { candidate = decodeURIComponent(candidate); } catch { throw invalid(); }
+  }
+  try { return encodeURIComponent(segment); } catch { throw invalid(); }
+}
+
+function encodeStoryblokEndpoint(endpoint: string): string {
+  if (typeof endpoint !== "string" || !endpoint || endpoint.length > 4096) {
+    throw new StoryblokDataError("Invalid Storyblok request path", "INVALID_REQUEST", 400);
+  }
+  const path = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
+  return path.split("/").map(encodeStoryblokSegment).join("/");
 }
 
 export function getStoryblokVersion(draftModeEnabled: boolean): StoryblokVersion {
@@ -50,12 +73,16 @@ export function isStoryblokNotFound(error: unknown): boolean {
   return error instanceof StoryblokDataError && error.status === 404;
 }
 
+export function isStoryblokInvalidRequest(error: unknown): boolean {
+  return error instanceof StoryblokDataError && error.code === "INVALID_REQUEST";
+}
+
 export function getStoryblokToken(
   version: StoryblokVersion,
   env: NodeJS.ProcessEnv = process.env,
 ): string {
   const token = version === "draft"
-    ? env.STORYBLOK_PREVIEW_TOKEN || env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+    ? env.STORYBLOK_PREVIEW_TOKEN
     : env.STORYBLOK_TOKEN || env.NEXT_PUBLIC_STORYBLOK_TOKEN;
 
   if (!token) {
@@ -100,20 +127,20 @@ export async function requestStoryblok<T>(
     random = Math.random,
   }: RequestOptions,
 ): Promise<T> {
-  const searchParams = new URLSearchParams({
-    token: getStoryblokToken(version),
-    version,
-  });
+  const url = new URL(API_URL);
+  url.pathname += `/${encodeStoryblokEndpoint(endpoint)}`;
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined) searchParams.set(key, String(value));
+    if (value !== undefined) url.searchParams.set(key, String(value));
   }
-
-  const url = `${API_URL}/${endpoint.replace(/^\//, "")}?${searchParams}`;
+  // Authentication and version cannot be replaced by path data or query options.
+  url.searchParams.set("token", getStoryblokToken(version));
+  url.searchParams.set("version", version);
+  const requestUrl = url.toString();
   let lastError: unknown;
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
     try {
-      const response = await fetchImpl(url, getStoryblokFetchOptions(version, tags));
+      const response = await fetchImpl(requestUrl, getStoryblokFetchOptions(version, tags));
       if (response.ok) return (await response.json()) as T;
 
       if (response.status !== 429 && response.status < 500) {
@@ -153,6 +180,8 @@ export function parseSlugAndLocale(slug?: string[]): {
   locale: SupportedLanguage;
   storySlug: string;
 } {
+  // Next decodes route segments independently: reject an encoded slash before join.
+  slug?.forEach(encodeStoryblokSegment);
   if (slug?.[0] === "es-co") {
     return { locale: "es-co", storySlug: slug.slice(1).join("/") || "home" };
   }
@@ -194,6 +223,8 @@ export interface GetStoriesOptions {
   page?: number;
   categorySlug?: string;
   contentLanguage?: PostContentLanguage;
+  contentType?: string;
+  sortBy?: string;
 }
 
 export function getPostContentLanguage(locale: SupportedLanguage): PostContentLanguage {
@@ -212,9 +243,13 @@ export function buildStoriesSearchParams({
   page,
   categorySlug,
   contentLanguage,
+  contentType,
+  sortBy,
 }: GetStoriesOptions): Record<string, string | number | undefined> {
   return {
     language: locale,
+    content_type: contentType,
+    sort_by: sortBy,
     starts_with: startsWith,
     per_page: perPage,
     page,
@@ -243,7 +278,7 @@ export async function getAllStories(
   for (let page = 1; ; page++) {
     const response = await requestStoryblok<StoriesResponse>("stories", {
       version,
-      params: { per_page: perPage, page, fallback_lang: "false" },
+      params: { per_page: perPage, page, sort_by: "id:asc", fallback_lang: "false" },
       tags: ["cms:stories"],
     });
     stories.push(...response.stories);
@@ -251,24 +286,44 @@ export async function getAllStories(
   }
 }
 
-export async function getPosts({
-  version,
-  locale,
-  categorySlug,
-}: {
+type PostCollectionOptions = {
   version: StoryblokVersion;
   locale: SupportedLanguage;
   categorySlug?: string;
-}): Promise<Story[]> {
+};
+
+/** Page-level API for future pagination; existing pages retain their full collection. */
+export async function getPostsPage({
+  version,
+  locale,
+  categorySlug,
+  page = 1,
+  perPage = 100,
+}: PostCollectionOptions & { page?: number; perPage?: number }): Promise<Story[]> {
+  if (!Number.isInteger(page) || page < 1 || !Number.isInteger(perPage) || perPage < 1 || perPage > 100) {
+    throw new RangeError("Post pagination requires page >= 1 and perPage between 1 and 100");
+  }
   const response = await getStories({
     version,
     locale,
     startsWith: "posts/",
-    perPage: 100,
+    contentType: "post",
+    sortBy: "content.date:desc,id:desc",
+    page,
+    perPage,
     categorySlug,
     contentLanguage: getPostContentLanguage(locale),
   });
   return filterPostsForLocale(response.stories, locale);
+}
+
+export async function getPosts(options: PostCollectionOptions): Promise<Story[]> {
+  const stories: Story[] = [];
+  for (let page = 1; ; page++) {
+    const batch = await getPostsPage({ ...options, page });
+    stories.push(...batch);
+    if (batch.length < 100) return stories;
+  }
 }
 
 export async function getStoriesByUuids({
@@ -348,6 +403,40 @@ export async function resolveAlternateStory({
   }
 }
 
+/** Redirect only identities with an explicit language; field-localized pages remain valid. */
+export async function resolveStoryRouteRedirect({
+  story,
+  locale,
+  version,
+  searchParams = {},
+  fetchAlternate,
+  onWarning,
+}: {
+  story: Story;
+  locale: SupportedLanguage;
+  version: StoryblokVersion;
+  searchParams?: Record<string, string | string[] | undefined>;
+  fetchAlternate?: Parameters<typeof resolveAlternateStory>[0]["fetchAlternate"];
+  onWarning?: (message: string) => void;
+}): Promise<string | null> {
+  if (!["post", "Category"].includes(story.content.component)) return null;
+  const language = story.content.language;
+  if (language !== "english" && language !== "spanish") return null;
+  const ownLocale: SupportedLanguage = language === "spanish" ? "es-co" : "en";
+  if (ownLocale === locale) return null;
+  const alternate = await resolveAlternateStory({ story, locale, version, fetchAlternate, onWarning });
+  const hasTarget = alternate?.content.component === story.content.component &&
+    alternate.content.language === getPostContentLanguage(locale);
+  const href = hasTarget
+    ? buildLocalizedStoryHref(alternate.full_slug, locale)
+    : buildLocalizedStoryHref(story.full_slug, ownLocale);
+  const query = new URLSearchParams();
+  for (const [key, value] of Object.entries(searchParams)) {
+    for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) query.append(key, item);
+  }
+  return query.size ? `${href}?${query}` : href;
+}
+
 /** Exactly two locales are supported, so one validated alternate is the other locale. */
 export async function resolveLocalizedStoryUrls({
   story,
@@ -372,7 +461,8 @@ export async function resolveLocalizedStoryUrls({
   };
   const targetLocale: SupportedLanguage = currentLocale === "en" ? "es-co" : "en";
 
-  if (story.content.component === "post") {
+  const hasContentLanguage = ["post", "Category"].includes(story.content.component);
+  if (hasContentLanguage) {
     const expectedCurrentLanguage = getPostContentLanguage(currentLocale);
     if (story.content.language !== expectedCurrentLanguage) {
       onWarning(`Cannot localize post ${story.uuid}: current content.language did not match ${currentLocale}.`);
@@ -390,7 +480,7 @@ export async function resolveLocalizedStoryUrls({
   if (!alternate) return [currentUrl];
 
   if (
-    story.content.component === "post" &&
+    hasContentLanguage &&
     alternate.content.language !== getPostContentLanguage(targetLocale)
   ) {
     onWarning(`Cannot localize post ${story.uuid}: alternate content.language did not match ${targetLocale}.`);

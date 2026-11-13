@@ -53,7 +53,9 @@ export const es = {
     accept: "Aceptar",
     decline: "Rechazar",
     description:
-      "Este sitio web utiliza cookies para mejorar la experiencia del usuario.",
+      "Las cookies opcionales de analítica permiten medir visitas. Puedes aceptar, rechazar o cambiar tu decisión en Preferencias de cookies.",
+    preferences: "Preferencias de cookies",
+    storageUnavailable: "No se pudo guardar tu preferencia. La analítica permanece desactivada en esta pestaña.",
   },
   tags: {
     all: "Todos",

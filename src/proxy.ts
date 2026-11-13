@@ -15,6 +15,14 @@ export function proxy(request: NextRequest) {
     : "en";
   const requestHeaders = new Headers(request.headers);
   requestHeaders.set("x-language", locale);
+  // Cookie presence only restricts caching/measurement. Authorization always
+  // requires Draft Mode plus a signed session, never this unverified marker.
+  const isLivePreviewPath = pathname === "/live-preview" || pathname.startsWith("/live-preview/");
+  const isPreview = isLivePreviewPath
+    || request.cookies.has("__prerender_bypass")
+    || request.nextUrl.searchParams.has("_storyblok");
+  requestHeaders.set("x-preview-request", isPreview ? "1" : "0");
+  requestHeaders.set("x-live-preview-path", isLivePreviewPath ? "1" : "0");
 
   const response = NextResponse.next({
     request: { headers: requestHeaders },
@@ -28,7 +36,7 @@ export function proxy(request: NextRequest) {
   // Editor to embed page responses.
   const csp = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com",
+    `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com`,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com data:",
     "img-src 'self' data: https://a-us.storyblok.com https://img2.storyblok.com https://www.google-analytics.com",
@@ -41,6 +49,11 @@ export function proxy(request: NextRequest) {
   ].join("; ");
 
   response.headers.set("Content-Security-Policy", csp);
+  if (isPreview) {
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
+    response.headers.set("X-Robots-Tag", "noindex, nofollow, noarchive");
+    response.headers.set("Referrer-Policy", "no-referrer");
+  }
 
   // Block access to sensitive files
   if (
@@ -60,7 +73,7 @@ export function proxy(request: NextRequest) {
       "public, max-age=31536000, immutable"
     );
   } else if (pathname.startsWith("/api/")) {
-    response.headers.set("Cache-Control", "public, max-age=0, s-maxage=86400");
+    response.headers.set("Cache-Control", "private, no-store, max-age=0");
   }
 
   // Security: HSTS (only in production)

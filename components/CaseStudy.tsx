@@ -89,7 +89,7 @@ const CaseStudy: React.FC<CaseStudyProps> = ({ blok, contentHtml, introHtml }) =
             <div
               className="prose prose-lg dark:prose-invert max-w-none text-muted-foreground"
               dangerouslySetInnerHTML={{
-                __html: introHtml || blok.intro || "",
+                __html: introHtml || "",
               }}
             />
           </div>

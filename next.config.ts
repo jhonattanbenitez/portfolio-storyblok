@@ -48,7 +48,7 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value:
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com; frame-ancestors 'self' https://app.storyblok.com",
+              `script-src 'self' 'unsafe-inline'${process.env.NODE_ENV === "development" ? " 'unsafe-eval'" : ""} https://www.googletagmanager.com https://www.google-analytics.com https://a.storyblok.com https://app.storyblok.com https://www.google.com https://www.gstatic.com; frame-src https://www.google.com; frame-ancestors 'self' https://app.storyblok.com`,
           },
           {
             key: "X-Content-Type-Options",
@@ -65,10 +65,18 @@ const nextConfig: NextConfig = {
         headers: [
           {
             key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=86400",
+            value: "private, no-store, max-age=0",
           },
         ],
       },
+      ...["/api/draft", "/api/revalidate", "/live-preview/:path*"].map((source) => ({
+        source,
+        headers: [
+          { key: "Cache-Control", value: "private, no-store, max-age=0" },
+          { key: "X-Robots-Tag", value: "noindex, nofollow, noarchive" },
+          { key: "Referrer-Policy", value: "no-referrer" },
+        ],
+      })),
     ];
   },
 

@@ -7,7 +7,29 @@ import {
   generateMetadataFromStory,
   generateStructuredData,
   metadataLanguages,
+  serializeJsonLd,
+  getSiteUrl,
+  PRODUCTION_SITE_URL,
 } from "../utils/seo.ts";
+
+test("canonical configuration precedence uses the approved production fallback", () => {
+  assert.equal(PRODUCTION_SITE_URL, "https://www.jhonattan.dev");
+  assert.equal(getSiteUrl({}), PRODUCTION_SITE_URL);
+  assert.equal(getSiteUrl({ SITE_URL: "https://canonical.example/", NEXT_PUBLIC_SITE_URL: "https://fallback.example" }), "https://canonical.example");
+});
+
+test("JSON-LD cannot close its script element and preserves its original values", () => {
+  const value = { headline: '</script><script>syntheticProbe()</script>', description: '<!-- & > \u2028\u2029', url: 'https://example.com/posts/test' };
+  const json = serializeJsonLd(value);
+  assert.doesNotMatch(json, /[<>&\u2028\u2029]/);
+  assert.deepEqual(JSON.parse(json), value);
+});
+
+test("draft metadata cannot advertise indexing, including fallback metadata", () => {
+  for (const value of [story, null]) {
+    assert.deepEqual(generateMetadataFromStory(value, "en", "/posts/story", undefined, true).robots, { index: false, follow: false });
+  }
+});
 
 const postUrls = [
   { locale: "en", href: "/posts/conventional-interfaces-and-generic-operations" },
@@ -83,5 +105,5 @@ test("sitemap contains both localized post and case-study variants without dupli
     assert.ok(urls.includes(absoluteUrl(localized.href)));
   }
   assert.equal(urls.some((url) => url.includes("/es/")), false);
-  assert.equal(urls.some((url) => url.includes("www.jhonattan.dev")), false);
+  assert.equal(urls.every((url) => url.startsWith("https://www.jhonattan.dev/")), true);
 });

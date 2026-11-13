@@ -20,9 +20,12 @@ test("published and draft requests select their dedicated server token", () => {
   assert.equal(getStoryblokToken("draft", env), "draft-server");
 });
 
-test("public tokens remain a temporary compatibility fallback", () => {
+test("only published delivery keeps a public-token compatibility fallback", () => {
   assert.equal(getStoryblokToken("published", { NEXT_PUBLIC_STORYBLOK_TOKEN: "legacy" }), "legacy");
-  assert.equal(getStoryblokToken("draft", { NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN: "legacy-preview" }), "legacy-preview");
+  assert.throws(
+    () => getStoryblokToken("draft", { NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN: "legacy-preview" }),
+    (error) => error.code === "MISSING_TOKEN",
+  );
 });
 
 test("missing tokens fail with a typed error", () => {

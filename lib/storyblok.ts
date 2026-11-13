@@ -24,8 +24,7 @@ const ApplicationOwnedNavigation = () => null;
 export const getStoryblokApi = (preview = false) => {
   const isServer = typeof window === "undefined";
   const accessToken = preview
-    ? (isServer ? process.env.STORYBLOK_PREVIEW_TOKEN : undefined) ||
-      process.env.NEXT_PUBLIC_STORYBLOK_PREVIEW_TOKEN
+    ? (isServer ? process.env.STORYBLOK_PREVIEW_TOKEN : undefined)
     : (isServer ? process.env.STORYBLOK_TOKEN : undefined) ||
       process.env.NEXT_PUBLIC_STORYBLOK_TOKEN;
 

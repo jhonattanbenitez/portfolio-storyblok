@@ -1,0 +1,22 @@
+{
+  "appPages": [
+    "[[...slug]]/page.tsx",
+    "categories/[slug]/page.tsx",
+    "categories/page.tsx",
+    "contact/page.tsx",
+    "es-co/categories/[slug]/page.tsx",
+    "es-co/categories/page.tsx",
+    "es-co/posts/page.tsx",
+    "landing/page.tsx",
+    "live-preview/[[...slug]]/page.tsx",
+    "posts/page.tsx"
+  ],
+  "handlers": ["api/contact/route.ts", "api/draft/route.ts", "api/revalidate/route.ts"],
+  "metadataRoutes": ["robots.ts", "sitemap.ts"],
+  "permanentRedirects": [
+    { "from": "/home", "to": "/", "status": 308 },
+    { "from": "/es", "to": "/es-co", "status": 308 },
+    { "from": "/es/posts", "to": "/es-co/posts", "status": 308 }
+  ],
+  "publicPaths": ["/", "/es-co", "/posts", "/es-co/posts", "/categories", "/es-co/categories", "/case-studies", "/es-co/case-studies", "/contact", "/landing", "/robots.txt", "/sitemap.xml"]
+}

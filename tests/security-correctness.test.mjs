@@ -4,7 +4,57 @@ import test from "node:test";
 import {
   isDraftRequestAuthorized,
   isRevalidationRequestAuthorized,
+  getInternalPreviewPath,
+  createPreviewSession,
+  isPreviewSessionAuthorized,
+  PREVIEW_SESSION_SECONDS,
 } from "../lib/request-security.ts";
+
+test("signed preview sessions expire and require the dedicated private secret", () => {
+  const env = { STORYBLOK_DRAFT_SECRET: "synthetic-session-secret" };
+  const now = Date.UTC(2026, 10, 12);
+  const value = createPreviewSession(env, now);
+  assert.equal(isPreviewSessionAuthorized(value, env, now), true);
+  assert.equal(isPreviewSessionAuthorized(value, env, now + (PREVIEW_SESSION_SECONDS - 1) * 1000), true);
+  assert.equal(isPreviewSessionAuthorized(value, env, now + PREVIEW_SESSION_SECONDS * 1000), false);
+  assert.equal(isPreviewSessionAuthorized(value, {}, now), false);
+  assert.throws(() => createPreviewSession({}, now));
+});
+
+test("modified sessions and sessions signed with another or rotated secret are rejected", () => {
+  const env = { STORYBLOK_DRAFT_SECRET: "synthetic-session-secret" };
+  const now = Date.UTC(2026, 10, 12);
+  const value = createPreviewSession(env, now);
+  assert.equal(isPreviewSessionAuthorized(value, { STORYBLOK_DRAFT_SECRET: "another-secret" }, now), false);
+  assert.equal(isPreviewSessionAuthorized(value.replace("v1.", "v2."), env, now), false);
+  assert.equal(isPreviewSessionAuthorized(value.slice(0, -1) + "!", env, now), false);
+  const parts = value.split(".");
+  parts[1] = String(Number(parts[1]) + 1);
+  assert.equal(isPreviewSessionAuthorized(parts.join("."), env, now), false);
+});
+
+test("malformed and future preview sessions never authorize drafts", () => {
+  const env = { STORYBLOK_DRAFT_SECRET: "synthetic-session-secret" };
+  const now = Date.UTC(2026, 10, 12);
+  for (const value of [undefined, "", "development-id", "forged", "v1.9999999999999999999.nonce.signature"]) {
+    assert.equal(isPreviewSessionAuthorized(value, env, now), false);
+  }
+  assert.equal(isPreviewSessionAuthorized(createPreviewSession(env, now + 3600000), env, now), false);
+});
+
+test("preview destinations preserve existing internal localized paths", () => {
+  for (const path of ["/", "/posts/example", "/es-co/posts/ejemplo", "/live-preview/es-co/posts/ejemplo", "/case-studies/example/"]) {
+    assert.equal(getInternalPreviewPath(path), path);
+  }
+  assert.equal(getInternalPreviewPath("posts/example"), "/posts/example");
+  assert.equal(getInternalPreviewPath("/posts/caf%C3%A9"), "/posts/café");
+});
+
+test("preview destinations reject URL, traversal, encoding, and control-character attacks", () => {
+  for (const path of [null, "", "//example.invalid", "///example.invalid", "https://example.invalid", "javascript:alert(1)", "/\\example.invalid", "/%5cexample.invalid", "/%2fexample.invalid", "/%252f%252fexample.invalid", "/posts/../api/contact", "/posts/%2e%2e/", "/./", "/posts//example", "/posts/%00", "/posts/%0d%0aLocation:evil", "/posts/%", "/posts/foo?secret=x", "/posts/foo#bar", "/posts/foo%3fbar", "/api/draft", "/_next/static", "/.env.local", "/.git/config", " ", "/" + "a".repeat(2049)]) {
+    assert.equal(getInternalPreviewPath(path), null, `Accepted unsafe destination: ${path}`);
+  }
+});
 import {
   getStoryblokVersion,
   isStoryblokNotFound,
