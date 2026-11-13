@@ -195,8 +195,10 @@ try {
     await page.getByRole("button", { name: "Switch to Spanish" }).click();
     await page.waitForURL(`${origin}/es-co/categories/aprendizaje`);
     await page.getByRole("heading", { level: 1, name: /Categoría española/ }).waitFor();
+    await page.waitForFunction(() => document.documentElement.lang === "es-CO");
     await page.getByRole("button", { name: "Switch to English" }).click();
     await page.waitForURL(`${origin}/categories/learning`);
+    await page.waitForFunction(() => document.documentElement.lang === "en");
     const aliases = [
       ["/es-co/posts/security-fixture", "/es-co/posts/security-fixture-es"],
       ["/posts/security-fixture-es", "/posts/security-fixture"],
