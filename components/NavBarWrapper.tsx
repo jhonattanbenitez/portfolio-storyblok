@@ -16,5 +16,7 @@ export default function NavBarWrapper() {
 
   if (isLandingPage) return null;
 
-  return <NavBar />;
+  // Home locale changes close its transient mobile menu without changing the
+  // persistent navigation behavior of blog and detail routes.
+  return <NavBar key={pathname === "/" || pathname === "/es-co" ? pathname : undefined} />;
 }

@@ -1,0 +1,52 @@
+{
+  "fixtureMetadata": {
+    "synthetic": true,
+    "purpose": "Offline content-readiness contract and unchanged C3 legacy regression tests only.",
+    "notAnEditorialBackup": true,
+    "notEvidenceOfSpaceSlugSupport": true,
+    "localizedFieldSuffix": "fixture_es",
+    "suffixNote": "An opaque test suffix supplied explicitly; no es-co to es_co mapping is asserted."
+  },
+  "baseStory": {
+    "id": 910001,
+    "uuid": "00000000-0000-4000-8000-000000910001",
+    "name": "Synthetic black box article",
+    "slug": "black-box-abstraction-thinking-in-boxes",
+    "full_slug": "posts/black-box-abstraction-thinking-in-boxes",
+    "group_id": "synthetic-field-pilot",
+    "published": true,
+    "unpublished_changes": false,
+    "alternates": [],
+    "translated_slugs": [],
+    "content": {
+      "component": "post",
+      "language": "english",
+      "title": "Synthetic black box article",
+      "intro": "An invented English introduction for this local test.",
+      "content": "## Synthetic body\n\nA fictional interface hides a fictional implementation.",
+      "title__i18n__fixture_es": "Artículo sintético de caja negra",
+      "intro__i18n__fixture_es": "Una introducción inventada para esta prueba local.",
+      "content__i18n__fixture_es": "## Cuerpo sintético\n\nUna interfaz ficticia oculta una implementación ficticia."
+    }
+  },
+  "localizedFields": {
+    "title": "title__i18n__fixture_es",
+    "intro": "intro__i18n__fixture_es",
+    "content": "content__i18n__fixture_es"
+  },
+  "publication": {
+    "mode": "joint",
+    "publishedSnapshotConfirmed": true,
+    "snapshotStoryId": 910001,
+    "localePublished": null
+  },
+  "expectedContent": {
+    "title": "Artículo sintético de caja negra",
+    "intro": "Una introducción inventada para esta prueba local.",
+    "content": "## Cuerpo sintético\n\nUna interfaz ficticia oculta una implementación ficticia."
+  },
+  "historicalPilotPaths": {
+    "en": "/posts/black-box-abstraction-thinking-in-boxes",
+    "es-co": "/es-co/posts/abstraccion-de-caja-negra-pensar-en-cajas"
+  }
+}
