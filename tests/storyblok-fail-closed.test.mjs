@@ -111,6 +111,7 @@ function homeHarness(failureSource, error) {
   return serverModule("../components/HomeV2/HomeV2.tsx", {
     "next/image": { default() {} }, "next/link": { default() {} }, "@storyblok/react/rsc": { storyblokEditable: () => ({}) },
     "../ContactForm": { default() {} }, "../../lib/storyblok-data": data,
+    "./MotionDetails": { default() {} },
     "../../lib/home-v2": { buildHomeV2Model() { throw new Error("FAILED_COLLECTION_WAS_RENDERED_AS_VALID_HOME"); }, HOME_V2_COPY: {}, homeEditorialDate() {} },
   }).default;
 }

@@ -5,6 +5,10 @@
    =========================== */
 
 :root {
+  --motion-fast: 160ms;
+  --motion-normal: 220ms;
+  --motion-slow: 280ms;
+  --motion-ease: cubic-bezier(.2, .7, .2, 1);
   --site-canvas: #f6f5f1;
   --site-surface: #ffffff;
   --site-ink: #172b30;
@@ -110,7 +114,7 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   scroll-behavior: smooth;
-  transition: background-color 0.25s ease, color 0.25s ease;
+  transition: background-color var(--motion-normal) var(--motion-ease), color var(--motion-normal) var(--motion-ease);
 }
 
 
@@ -118,8 +122,8 @@ body {
 *::before,
 *::after {
   border-color: var(--border);
-  transition: border-color 0.25s ease, background-color 0.25s ease,
-    color 0.25s ease;
+  transition: border-color var(--motion-fast) var(--motion-ease), background-color var(--motion-fast) var(--motion-ease),
+    color var(--motion-fast) var(--motion-ease);
 }
 
 /* The required reCAPTCHA disclosure is rendered beside each protected form. */
@@ -128,6 +132,7 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  :root { --motion-fast: 0ms; --motion-normal: 0ms; --motion-slow: 0ms; }
   html {
     scroll-behavior: auto;
   }
@@ -197,6 +202,84 @@ body {
   color: var(--muted-foreground);
   cursor: not-allowed;
   opacity: 0.4;
+}
+
+/* State changes remain immediate; only the visual layer finishes its exit.
+   Persistent, closed panels are inert/aria-hidden in the owning component. */
+.site-nav .motion-panel {
+  --panel-time: var(--motion-fast);
+  --panel-offset: 4px;
+  transition: opacity var(--panel-time) var(--motion-ease),
+    transform var(--panel-time) var(--motion-ease), visibility 0s linear;
+}
+.site-nav .motion-panel[data-state="open"] { opacity: 1; transform: translateY(0); visibility: visible; }
+.site-nav .motion-panel[data-state="closed"] {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--panel-offset)));
+  visibility: hidden;
+  pointer-events: none;
+  transition-delay: 0s, 0s, var(--panel-time);
+}
+.site-nav #mobile-navigation-panel {
+  --panel-time: var(--motion-normal);
+  --panel-offset: 6px;
+  position: absolute;
+  inset-inline: 0;
+  top: 100%;
+  max-block-size: calc(100dvh - var(--site-nav-height, 4.75rem));
+  overflow-y: auto;
+}
+.site-nav .motion-submenu {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--motion-normal) var(--motion-ease), opacity var(--motion-normal) var(--motion-ease);
+}
+.site-nav .motion-submenu[data-state="open"] { grid-template-rows: 1fr; opacity: 1; }
+.site-nav .motion-submenu-content { min-block-size: 0; overflow: hidden; }
+.motion-project-overlay { transition: opacity var(--motion-fast) var(--motion-ease); }
+.motion-project-overlay:focus-within { transition-duration: 0s; }
+.motion-indicator { display: inline-block; transition: transform var(--motion-fast) var(--motion-ease); }
+.site-nav .motion-indicator[data-state="open"] { transform: rotate(90deg); }
+.site-nav .motion-indicator[data-motion-kind="chevron"][data-state="open"] { transform: rotate(180deg); }
+.home-v2 .motion-details[open] > summary .motion-indicator { transform: rotate(45deg); }
+
+/* Without JS or intrinsic-size interpolation these remain ordinary native
+   details. With enhancement, inert closes the accessibility tree immediately
+   while the browser paints the short exit transition. */
+@supports (interpolate-size: allow-keywords) and selector(details::details-content) {
+  .home-v2 .motion-details[data-motion-ready] { interpolate-size: allow-keywords; }
+  .home-v2 .motion-details[data-motion-ready]::details-content {
+    block-size: 0;
+    opacity: 0;
+    overflow: clip;
+    transition: block-size var(--motion-slow) var(--motion-ease),
+      opacity var(--motion-normal) var(--motion-ease),
+      content-visibility var(--motion-slow) allow-discrete;
+  }
+  .home-v2 .motion-details[data-motion-ready][open]::details-content {
+    block-size: auto;
+    opacity: 1;
+    /* Only the exit needs delayed native hiding. On entry, expose content
+       immediately so the very next Tab can reach its first link. */
+    transition-property: block-size, opacity;
+  }
+  /* Focus must reveal its target immediately, even mid-expansion. The summary
+     stays outside this selector so ordinary disclosure motion is preserved. */
+  .home-v2 .motion-details[data-motion-ready][open]:has(> :not(summary):focus-within)::details-content {
+    transition: none;
+  }
+}
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .home-v2-work, .motion-project-card {
+    transition: transform var(--motion-fast) var(--motion-ease), border-color var(--motion-fast) var(--motion-ease);
+  }
+  .home-v2-work:hover, .motion-project-card:hover { transform: translateY(-2px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motion-panel, .motion-submenu,
+  .home-v2-work, .motion-project-card, .motion-project-list > * { transform: none !important; }
+  .home-v2 .motion-details::details-content { transition: none !important; }
 }
 
 /* Home keeps its editorial composition while sharing the site's palette. */
@@ -347,7 +430,7 @@ body {
 .home-v2-nav #mobile-navigation-panel { max-height: calc(100dvh - var(--home-v2-nav-height, 4.75rem)); overflow-y: auto; }
 .home-v2-nav #mobile-navigation-panel > ul > li { padding-inline: 20px; min-inline-size: 0; }
 .home-v2-nav #mobile-navigation-panel > ul > li:last-child > div { flex-wrap: wrap; justify-content: flex-start; }
-.home-v2-nav #mobile-navigation-panel [aria-label="Toggle theme"] + div {
+.site-nav #mobile-navigation-panel [aria-label="Toggle theme"] + div {
   left: 0;
   right: auto;
   bottom: calc(100% + 8px);

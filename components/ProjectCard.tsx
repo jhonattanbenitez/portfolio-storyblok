@@ -20,7 +20,7 @@ const ProjectCard = ({
   previewUrl,
 }: ProjectCardProps) => {
   return (
-    <div className="group mb-4 flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card text-card-foreground transition-colors duration-200 hover:border-primary/40 hover:shadow-sm">
+    <div className="motion-project-card group mb-4 flex h-full flex-col overflow-hidden rounded-sm border border-border bg-card text-card-foreground transition-colors duration-200 hover:border-primary/40 hover:shadow-sm">
       {/* Image + overlay */}
       <div className="relative h-52 overflow-hidden border-b border-border md:h-72">
         <Image
@@ -33,7 +33,7 @@ const ProjectCard = ({
 
         <div
           className="
-      absolute inset-0 flex items-center justify-center
+      motion-project-overlay absolute inset-0 flex items-center justify-center
       opacity-100 transition-opacity duration-200 md:opacity-0 md:group-hover:opacity-100 md:group-focus-within:opacity-100
       bg-transparent md:[background:var(--overlay,rgba(0,0,0,0.60))]
       text-foreground

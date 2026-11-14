@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import NavLink from "./NavLink";
 import ThemeToggle from "./ThemeToggle";
 import LanguageSwitcher from "./LanguageSwitcher";
@@ -17,19 +17,20 @@ interface LinkItem {
 
 interface MenuOverlayProps {
   links: LinkItem[];
+  isOpen: boolean;
+  openIndex: number | null;
+  onToggleSubmenu: (index: number) => void;
 }
 
-const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
-
-  const toggleSubmenu = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
-  };
-
+const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, isOpen, openIndex, onToggleSubmenu }) => {
   return (
     <div
       id="mobile-navigation-panel"
-      className="nav-panel w-full border-y border-[var(--border)] text-[var(--foreground)] shadow-sm md:hidden"
+      data-state={isOpen ? "open" : "closed"}
+      data-motion-kind="mobile"
+      inert={!isOpen}
+      aria-hidden={!isOpen}
+      className="motion-panel nav-panel w-full border-y border-[var(--border)] text-[var(--foreground)] shadow-sm md:hidden"
     >
       <ul
         className="
@@ -46,7 +47,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
               <div className="flex flex-col">
                 <button
                   type="button"
-                  onClick={() => toggleSubmenu(index)}
+                  onClick={() => onToggleSubmenu(index)}
                   aria-expanded={openIndex === index}
                   aria-controls={`mobile-submenu-${index}`}
                   className={`
@@ -60,9 +61,9 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                 >
                   <span>{link.title}</span>
                   <span
-                    className={`transition-transform duration-200 ${
-                      openIndex === index ? "rotate-90" : ""
-                    }`}
+                    className="motion-indicator"
+                    data-state={openIndex === index ? "open" : "closed"}
+                    aria-hidden="true"
                   >
                     ▶
                   </span>
@@ -71,14 +72,12 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                 {/* === SUBMENÚ === */}
                 <div
                   id={`mobile-submenu-${index}`}
+                  data-state={openIndex === index ? "open" : "closed"}
                   aria-hidden={openIndex !== index}
                   inert={openIndex !== index}
-                  className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
-                    openIndex === index
-                      ? "max-h-96 opacity-100"
-                      : "max-h-0 opacity-0"
-                  }`}
+                  className="motion-submenu"
                 >
+                  <div className="motion-submenu-content">
                   <ul
                     className="
                       flex flex-col items-center py-1
@@ -93,6 +92,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
                       </li>
                     ))}
                   </ul>
+                  </div>
                 </div>
               </div>
             ) : (
@@ -113,7 +113,8 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
         {/* === TOGGLES === */}
         <li className="px-6 py-3 border-t border-border mt-2" role="none">
           <div className="flex items-center justify-center gap-3">
-            <ThemeToggle />
+            {/* Closing the parent resets this transient popup without delaying its exit. */}
+            <ThemeToggle key={isOpen ? "open" : "closed"} />
             <LanguageSwitcher />
           </div>
         </li>
