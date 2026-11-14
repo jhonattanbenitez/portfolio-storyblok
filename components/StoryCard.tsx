@@ -11,6 +11,15 @@ interface StoryCardProps {
 }
 
 const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) => {
+  const projectedHref = story.editorial?.href;
+  // Metadata is supplied by the validated server catalog. Fail closed if a
+  // projected card is ever handed another locale or a malformed destination.
+  if (story.editorial) {
+    const prefix = language === "es-co" ? "/es-co/posts/" : "/posts/";
+    const leaf = projectedHref?.startsWith(prefix) ? projectedHref.slice(prefix.length) : "";
+    const matchedLeaf = /^[a-z0-9]+(?:-[a-z0-9]+)*$/.exec(leaf);
+    if (story.editorial.locale !== language || !matchedLeaf || matchedLeaf[0] !== leaf || leaf.length > 160) return null;
+  }
   const normalizedLang = (language || "en").toLowerCase();
   const isPreferredLang = (lang?: string) => {
     const l = (lang || "").toLowerCase();
@@ -50,7 +59,7 @@ const StoryCard: React.FC<StoryCardProps> = ({ story, index, language = "en" }) 
     || (isPreferredLang(storyLangNormalized) ? story.full_slug : undefined)
     || `${basePosts}/${story.slug}`;
 
-  const href = localizedPath.startsWith("/") ? localizedPath : `/${localizedPath}`;
+  const href = projectedHref ?? (localizedPath.startsWith("/") ? localizedPath : `/${localizedPath}`);
 
   return (
     <div

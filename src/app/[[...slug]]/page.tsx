@@ -48,6 +48,9 @@ async function localizedUrlsForPage(
   pathname: string,
   version: "draft" | "published",
 ) {
+  // A validated editorial projection owns the URLs for both field and legacy
+  // variants. Its Spanish representation can retain the English story identity.
+  if (story.editorial) return story.editorial.localizedUrls;
   const isPost = story.content.component === "post";
   const isDetail =
     (isPost && story.content.language === getPostContentLanguage(locale)) ||

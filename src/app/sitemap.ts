@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import {
   getAllStories,
+  getPublishedEditorialEntries,
   getStoriesByUuids,
   getStoryBySlug,
   resolveLocalizedStoryUrls,
@@ -14,7 +15,7 @@ import type { LocalizedUrl, Story, StoryblokBlock, SupportedLanguage } from "../
 const STATIC_PAIRS = ["/", "/posts", "/case-studies", "/categories", "/contact"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [allStories, caseStudiesHome] = await Promise.all([
+  const [allStories, caseStudiesHome, editorialPosts] = await Promise.all([
     getAllStories("published"),
     getStoryBySlug({
       slug: "case-studies/home",
@@ -22,6 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       locale: "en",
       resolveRelations: "case_studies_section.case_studies",
     }),
+    getPublishedEditorialEntries(),
   ]);
   const byId = new Map(allStories.map((story) => [story.id, story]));
   const byUuid = new Map(allStories.map((story) => [story.uuid, story]));
@@ -44,8 +46,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   pages.push({ url: { locale: "en", href: "/landing" } });
 
   const independentStories = allStories.filter((story) =>
-    story.content.component === "post" || story.content.component === "Category"
+    (story.content.component === "post" && editorialPosts === null) || story.content.component === "Category"
   );
+  if (editorialPosts !== null) pages.push(...editorialPosts);
   for (const story of independentStories) {
     const locale: SupportedLanguage = story.content.language === "spanish" ? "es-co" : "en";
     const urls = await resolveLocalizedStoryUrls({

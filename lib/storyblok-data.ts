@@ -5,6 +5,23 @@ import type {
   SupportedLanguage,
   LocalizedUrl,
 } from "../utils/types";
+import {
+  isEditorialModelEnabled, isEditorialUuid, isPublishedEditorialStory,
+  findEditorialEntry, getEditorialPosts, toEditorialSitemapEntries,
+  EditorialCatalogError, type EditorialCatalog,
+} from "./editorial-catalog.ts";
+import { STORYBLOK_LOCALES } from "./storyblok-locales.ts";
+
+async function publishedEditorialCatalog(): Promise<EditorialCatalog | null> {
+  if (!isEditorialModelEnabled()) return null;
+  const { getPublishedEditorialCatalog } = await import("./editorial-server.ts");
+  return getPublishedEditorialCatalog();
+}
+
+export async function getPublishedEditorialEntries() {
+  const catalog = await publishedEditorialCatalog();
+  return catalog ? toEditorialSitemapEntries(catalog) : null;
+}
 
 function normalizeStoryFullSlug(fullSlug: string): string {
   return fullSlug.replace(/^\/+/, "").replace(/^(?:en|es-co)\//, "");
@@ -199,20 +216,67 @@ export async function getStoryBySlug({
   locale?: SupportedLanguage;
   resolveRelations?: string;
 }): Promise<StoryblokApiResponse> {
-  return requestStoryblok<StoryblokApiResponse>(`stories/${slug}`, {
+  const response = await requestStoryblok<StoryblokApiResponse>(`stories/${slug}`, {
     version,
     params: { language: locale, resolve_relations: resolveRelations },
     tags: [`cms:${locale}`, `story:${slug}`],
   });
+  // This reserved property belongs to the application, never to a CDA response.
+  if (response.story) delete response.story.editorial;
+  return response;
 }
 
 export async function getStoryFromRoute(
   version: StoryblokVersion,
   slug?: string[],
   resolveRelations?: string,
-): Promise<StoryblokApiResponse> {
+): Promise<Pick<StoryblokApiResponse, "story">> {
   const { locale, storySlug } = parseSlugAndLocale(slug);
+  if (version === "published" && storySlug.startsWith("posts/")) {
+    const catalog = await publishedEditorialCatalog();
+    if (catalog) {
+      const href = `${locale === "es-co" ? "/es-co" : ""}/${storySlug}`;
+      const entry = findEditorialEntry(catalog, href);
+      if (entry) return { story: entry.story };
+      const opposite = findEditorialEntry(catalog, `${locale === "en" ? "/es-co" : ""}/${storySlug}`);
+      if (opposite) return { story: opposite.story };
+      // Do not query a guessed localized leaf after a validated catalog said no.
+      throw new StoryblokDataError("Published editorial route not found", "REQUEST_FAILED", 404);
+    }
+  }
   return getStoryBySlug({ slug: storySlug, version, locale, resolveRelations });
+}
+
+/** Separate CDA transport. EN omits language; CDA ES uses es-co, not the MAPI suffix. */
+export async function getStoryByUuid({ uuid, version, locale = "en", fetchImpl }: {
+  uuid: string; version: StoryblokVersion; locale?: SupportedLanguage; fetchImpl?: typeof fetch;
+}): Promise<StoryblokApiResponse> {
+  if (!isEditorialUuid(uuid)) throw new StoryblokDataError("Invalid editorial UUID", "INVALID_REQUEST", 400);
+  const result = await requestStoryblok<StoryblokApiResponse>(`stories/${uuid}`, {
+    version, fetchImpl,
+    params: { find_by: "uuid", language: STORYBLOK_LOCALES[locale].cdaLanguage },
+    tags: [`cms:${locale}`, `story:${uuid}`],
+  });
+  if (!result.story || result.story.uuid !== uuid || !Number.isSafeInteger(result.story.id) || result.story.id < 1 ||
+      (version === "published" && !isPublishedEditorialStory(result.story))) {
+    throw new StoryblokDataError("Invalid editorial representation", "INVALID_RESPONSE");
+  }
+  return result;
+}
+
+/** Paginate the unfiltered published response, never an already language-filtered batch. */
+export async function collectPublishedEditorialStories(fetchImpl?: typeof fetch): Promise<Story[]> {
+  const stories: Story[] = [];
+  for (let page = 1; page <= 100; page++) {
+    const result = await requestStoryblok<StoriesResponse>("stories", {
+      version: "published", fetchImpl,
+      params: { per_page: 100, page, sort_by: "id:asc" }, tags: ["cms:stories"],
+    });
+    if (!Array.isArray(result.stories)) throw new EditorialCatalogError("INVALID_PUBLISHED_PAGE");
+    stories.push(...result.stories);
+    if (result.stories.length < 100) return stories;
+  }
+  throw new EditorialCatalogError("PUBLISHED_PAGE_LIMIT_EXCEEDED");
 }
 
 export interface GetStoriesOptions {
@@ -263,11 +327,13 @@ export function buildStoriesSearchParams({
 
 export async function getStories(options: GetStoriesOptions): Promise<StoriesResponse> {
   const locale = options.locale ?? "en";
-  return requestStoryblok<StoriesResponse>("stories", {
+  const response = await requestStoryblok<StoriesResponse>("stories", {
     version: options.version,
     params: buildStoriesSearchParams(options),
     tags: [`cms:${locale}`, "cms:stories"],
   });
+  response.stories.forEach((story) => { delete story.editorial; });
+  return response;
 }
 
 export async function getAllStories(
@@ -303,6 +369,10 @@ export async function getPostsPage({
   if (!Number.isInteger(page) || page < 1 || !Number.isInteger(perPage) || perPage < 1 || perPage > 100) {
     throw new RangeError("Post pagination requires page >= 1 and perPage between 1 and 100");
   }
+  if (version === "published") {
+    const catalog = await publishedEditorialCatalog();
+    if (catalog) return getEditorialPosts(catalog, locale, categorySlug).slice((page - 1) * perPage, page * perPage);
+  }
   const response = await getStories({
     version,
     locale,
@@ -318,6 +388,10 @@ export async function getPostsPage({
 }
 
 export async function getPosts(options: PostCollectionOptions): Promise<Story[]> {
+  if (options.version === "published") {
+    const catalog = await publishedEditorialCatalog();
+    if (catalog) return getEditorialPosts(catalog, options.locale, options.categorySlug);
+  }
   const stories: Story[] = [];
   for (let page = 1; ; page++) {
     const batch = await getPostsPage({ ...options, page });
@@ -419,6 +493,15 @@ export async function resolveStoryRouteRedirect({
   fetchAlternate?: Parameters<typeof resolveAlternateStory>[0]["fetchAlternate"];
   onWarning?: (message: string) => void;
 }): Promise<string | null> {
+  if (version === "published" && isEditorialModelEnabled() && story.editorial) {
+    if (story.editorial.locale === locale) return null;
+    const href = story.editorial.localizedUrls.find((url) => url.locale === locale)?.href || story.editorial.href;
+    const query = new URLSearchParams();
+    for (const [key, value] of Object.entries(searchParams)) {
+      for (const item of Array.isArray(value) ? value : value === undefined ? [] : [value]) query.append(key, item);
+    }
+    return query.size ? `${href}?${query}` : href;
+  }
   if (!["post", "Category"].includes(story.content.component)) return null;
   const language = story.content.language;
   if (language !== "english" && language !== "spanish") return null;
@@ -455,6 +538,7 @@ export async function resolveLocalizedStoryUrls({
   ) => Promise<Story | null>;
   onWarning?: (message: string) => void;
 }): Promise<LocalizedUrl[]> {
+  if (version === "published" && isEditorialModelEnabled() && story.editorial) return structuredClone(story.editorial.localizedUrls);
   const currentUrl = {
     locale: currentLocale,
     href: buildLocalizedStoryHref(story.full_slug, currentLocale),
@@ -560,10 +644,18 @@ export async function getAllStoryParams(
   version: StoryblokVersion = "published",
 ): Promise<{ slug: string[] }[]> {
   const links = await getStoryLinks(version);
-  return links.flatMap((link) => {
+  const legacy = links.flatMap((link) => {
     if (link.is_folder && link.slug !== "/") return [];
     if (link.slug === "home") return [{ slug: [] }];
     const slug = link.slug.split("/").filter(Boolean);
     return slug.length ? [{ slug }] : [];
   });
+  // Draft routes remain on the existing authenticated, uncached circuit.
+  if (version !== "published") return legacy;
+  if (!isEditorialModelEnabled()) return legacy;
+  const { getEditorialStaticCatalog } = await import("./editorial-server.ts");
+  const catalog = await getEditorialStaticCatalog();
+  if (!catalog) return legacy;
+  const others = legacy.filter(({ slug }) => (slug[0] === "es-co" ? slug[1] : slug[0]) !== "posts");
+  return [...others, ...catalog.entries.map((entry) => ({ slug: entry.href.slice(1).split("/") }))];
 }

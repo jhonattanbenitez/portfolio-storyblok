@@ -42,12 +42,27 @@ export type StoryContent = {
   content: string;
   component: string;
   language?: "english" | "spanish";
+  slug_es?: string;
+  es_translation_approved?: boolean;
+  es_approved_hash?: string;
+  title__i18n__es_co?: string;
+  intro__i18n__es_co?: string;
+  content__i18n__es_co?: string;
   name?: string;
   category_ref?: CategoryRef;
   body?: StoryblokBlock[];
 };
 
 export type Story = {
+  /** Application projection only; never an assertion supplied by the CMS. */
+  editorial?: {
+    href: string;
+    localizedUrls: LocalizedUrl[];
+    locale: SupportedLanguage;
+    model: "legacy" | "field";
+  };
+  published?: boolean;
+  unpublished_changes?: boolean;
   name: string;
   created_at: string;
   published_at: string;
