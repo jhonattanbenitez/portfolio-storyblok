@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import test from "node:test";
-import { resolveStoryRouteRedirect, resolveLocalizedStoryUrls, getPosts, getPostsPage } from "../lib/storyblok-data.ts";
+import { resolveStoryRouteRedirect, resolveLocalizedStoryUrls, getPosts, getPostsPage, StoryblokDataError } from "../lib/storyblok-data.ts";
 import { generateMetadataFromStory, generateStructuredData, generateRedirectMetadata, getSiteUrl } from "../utils/seo.ts";
 import { markdownToPlainText } from "../utils/markdown.ts";
 
@@ -29,8 +29,8 @@ for (const component of ["post", "Category"]) {
     assert.equal(parsed.searchParams.has("absent"), false);
     assert.equal(await resolveStoryRouteRedirect({ story: es, locale: "en", version: "published", fetchAlternate: async () => en }), `/${en.full_slug}`);
   });
-  test(`${component}: an unavailable or invalid alternate redirects to the record's own valid URL`, async () => {
-    for (const scenario of ["missing", "unpublished", "group", "non-mutual", "wrong-id", "wrong-language", "wrong-component", "request-failed"]) {
+  test(`${component}: a missing or invalid alternate redirects to the record's own valid URL`, async () => {
+    for (const scenario of ["missing", "unpublished", "group", "non-mutual", "wrong-id", "wrong-language", "wrong-component", "not-found"]) {
       const { en, es } = pair(component);
       if (scenario === "missing") en.alternates = [];
       if (scenario === "unpublished") en.alternates[0].published = false;
@@ -39,8 +39,19 @@ for (const component of ["post", "Category"]) {
       if (scenario === "wrong-id") es.id = 999;
       if (scenario === "wrong-language") es.content.language = "english";
       if (scenario === "wrong-component") es.content.component = "page";
-      const target = await resolveStoryRouteRedirect({ story: en, locale: "es-co", version: "published", fetchAlternate: async () => { if (scenario === "request-failed") throw new Error("Fixture request failed"); return es; }, onWarning() {} });
+      const target = await resolveStoryRouteRedirect({ story: en, locale: "es-co", version: "published", fetchAlternate: async () => { if (scenario === "not-found") throw new StoryblokDataError("Missing alternate", "REQUEST_FAILED", 404); return es; }, onWarning() {} });
       assert.equal(target, `/${en.full_slug}`, scenario);
+    }
+  });
+}
+
+for (const component of ["post", "Category"]) {
+  test(`${component}: transient alternate failures propagate rather than choosing an incorrect fallback`, async () => {
+    const { en } = pair(component);
+    for (const error of [new StoryblokDataError("Rate limited", "REQUEST_FAILED", 429), new StoryblokDataError("Unavailable", "REQUEST_FAILED", 503), new Error("Network failure")]) {
+      const options = { story: en, locale: "es-co", version: "published", fetchAlternate: async () => { throw error; }, onWarning() {} };
+      await assert.rejects(resolveStoryRouteRedirect(options), candidate => candidate === error);
+      await assert.rejects(resolveLocalizedStoryUrls({ ...options, currentLocale: "en" }), candidate => candidate === error);
     }
   });
 }

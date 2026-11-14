@@ -11,6 +11,8 @@ import {
   EditorialCatalogError, type EditorialCatalog,
 } from "./editorial-catalog.ts";
 import { STORYBLOK_LOCALES } from "./storyblok-locales.ts";
+import { StoryblokDataError, storyblokTransport } from "./storyblok-transport.ts";
+export { StoryblokDataError } from "./storyblok-transport.ts";
 
 async function publishedEditorialCatalog(): Promise<EditorialCatalog | null> {
   if (!isEditorialModelEnabled()) return null;
@@ -40,24 +42,6 @@ export type PostContentLanguage = "english" | "spanish";
 
 const API_URL = "https://api-us.storyblok.com/v2/cdn";
 const PUBLISHED_REVALIDATE_SECONDS = 3600;
-const MAX_ATTEMPTS = 5;
-const BASE_RETRY_DELAY_MS = 1000;
-
-export class StoryblokDataError extends Error {
-  readonly code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE" | "INVALID_REQUEST";
-  readonly status?: number;
-
-  constructor(
-    message: string,
-    code: "MISSING_TOKEN" | "REQUEST_FAILED" | "INVALID_RESPONSE" | "INVALID_REQUEST",
-    status?: number,
-  ) {
-    super(message);
-    this.name = "StoryblokDataError";
-    this.code = code;
-    this.status = status;
-  }
-}
 
 /** Validate decoded route data without allowing it to become URL syntax. */
 function encodeStoryblokSegment(segment: string): string {
@@ -140,8 +124,8 @@ export async function requestStoryblok<T>(
     params = {},
     tags = [],
     fetchImpl = fetch,
-    sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds)),
-    random = Math.random,
+    sleep,
+    random,
   }: RequestOptions,
 ): Promise<T> {
   const url = new URL(API_URL);
@@ -152,45 +136,10 @@ export async function requestStoryblok<T>(
   // Authentication and version cannot be replaced by path data or query options.
   url.searchParams.set("token", getStoryblokToken(version));
   url.searchParams.set("version", version);
-  const requestUrl = url.toString();
-  let lastError: unknown;
-
-  for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-    try {
-      const response = await fetchImpl(requestUrl, getStoryblokFetchOptions(version, tags));
-      if (response.ok) return (await response.json()) as T;
-
-      if (response.status !== 429 && response.status < 500) {
-        throw new StoryblokDataError(
-          `Storyblok request failed: ${response.status} ${response.statusText}`,
-          "REQUEST_FAILED",
-          response.status,
-        );
-      }
-
-      lastError = new StoryblokDataError(
-        `Storyblok request failed: ${response.status} ${response.statusText}`,
-        "REQUEST_FAILED",
-        response.status,
-      );
-    } catch (error) {
-      if (error instanceof StoryblokDataError && error.status && error.status < 500 && error.status !== 429) {
-        throw error;
-      }
-      lastError = error;
-    }
-
-    if (attempt < MAX_ATTEMPTS - 1) {
-      const jitter = Math.round(random() * BASE_RETRY_DELAY_MS);
-      await sleep(BASE_RETRY_DELAY_MS * 2 ** attempt + jitter);
-    }
-  }
-
-  if (lastError instanceof StoryblokDataError) throw lastError;
-  throw new StoryblokDataError(
-    `Storyblok request failed after ${MAX_ATTEMPTS} attempts`,
-    "REQUEST_FAILED",
-  );
+  url.searchParams.sort();
+  return storyblokTransport.request<T>(url.toString(), {
+    version, fetchOptions: getStoryblokFetchOptions(version, tags), fetchImpl, sleep, random,
+  });
 }
 
 export function parseSlugAndLocale(slug?: string[]): {
@@ -470,10 +419,13 @@ export async function resolveAlternateStory({
     }
     return alternate;
   } catch (error) {
-    onWarning(
-      `Cannot localize story ${story.uuid}: ${error instanceof Error ? error.message : "alternate fetch failed"}.`,
-    );
-    return null;
+    if (isStoryblokNotFound(error)) {
+      onWarning(`Cannot localize story ${story.uuid}: alternate was not found.`);
+      return null;
+    }
+    // Transport failure is not evidence that a translation is absent. Preserve
+    // framework control-flow exceptions and fail prerender/metadata closed.
+    throw error;
   }
 }
 
