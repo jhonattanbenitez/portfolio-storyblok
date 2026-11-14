@@ -17,10 +17,9 @@ interface LinkItem {
 
 interface MenuOverlayProps {
   links: LinkItem[];
-  navBackground: string;
 }
 
-const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, navBackground }) => {
+const MenuOverlay: React.FC<MenuOverlayProps> = ({ links }) => {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
 
   const toggleSubmenu = (index: number) => {
@@ -30,8 +29,7 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, navBackground }) => {
   return (
     <div
       id="mobile-navigation-panel"
-      className="w-full border-y border-[var(--border)] text-[var(--foreground)] shadow-sm md:hidden"
-      style={{ backgroundColor: navBackground }}
+      className="nav-panel w-full border-y border-[var(--border)] text-[var(--foreground)] shadow-sm md:hidden"
     >
       <ul
         className="
@@ -47,11 +45,12 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, navBackground }) => {
             {link.subLinks ? (
               <div className="flex flex-col">
                 <button
+                  type="button"
                   onClick={() => toggleSubmenu(index)}
                   aria-expanded={openIndex === index}
                   aria-controls={`mobile-submenu-${index}`}
                   className={`
-                    w-full h-12 flex items-center justify-center gap-2
+                    nav-disclosure w-full h-12 flex items-center justify-center gap-2
                     rounded-md border border-transparent
                     px-3 transition-colors duration-200
                     hover:bg-secondary/60 hover:text-foreground
@@ -72,6 +71,8 @@ const MenuOverlay: React.FC<MenuOverlayProps> = ({ links, navBackground }) => {
                 {/* === SUBMENÚ === */}
                 <div
                   id={`mobile-submenu-${index}`}
+                  aria-hidden={openIndex !== index}
+                  inert={openIndex !== index}
                   className={`overflow-hidden transition-[max-height,opacity] duration-300 ease-in-out ${
                     openIndex === index
                       ? "max-h-96 opacity-100"

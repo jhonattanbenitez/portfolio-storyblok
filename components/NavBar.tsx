@@ -8,7 +8,6 @@ import LanguageSwitcher from "./LanguageSwitcher";
 import ThemeToggle from "./ThemeToggle";
 import { useTranslation } from "../hooks/useTranslation";
 import { usePathname } from "next/navigation";
-import { useTheme } from "../contexts/ThemeContext";
 
 export interface NavLinkType {
   title: string;
@@ -22,14 +21,9 @@ const NavBar: FC = () => {
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const suppressDesktopSubmenuFocusRef = useRef(false);
   const { t } = useTranslation();
-  const { resolvedTheme } = useTheme();
   const pathname = usePathname();
   const isHomeV2 = pathname === "/" || pathname === "/es-co";
   const homeNavRef = useRef<HTMLElement>(null);
-  const navBackground = isHomeV2
-    ? (resolvedTheme === "dark" ? "#0c171a" : "#f6f5f1")
-    : (resolvedTheme === "dark" ? "#172033" : "#ffffff");
-  const submenuBackground = resolvedTheme === "dark" ? "#0f172a" : "#ffffff";
 
   // 🔹 Detectar idioma según la URL actual
   const urlLang = (() => {
@@ -90,7 +84,8 @@ const NavBar: FC = () => {
     if (!navbarOpen) return;
 
     const closeMobileMenuOnEscape = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
+      // Inner disclosures consume Escape before this document-level listener.
+      if (event.key !== "Escape" || event.defaultPrevented) return;
       setNavbarOpen(false);
       mobileTriggerRef.current?.focus();
     };
@@ -108,14 +103,13 @@ const NavBar: FC = () => {
         if (navbarOpen && event.target instanceof Element && event.target.closest("a[href]")) setNavbarOpen(false);
       } : undefined}
       className={`
-        fixed inset-x-0 top-0 isolate
+        site-nav fixed inset-x-0 top-0 isolate
         border-b border-[var(--border)]
         text-[var(--foreground)]
         ${isHomeV2 ? "home-v2-nav" : ""}
       `}
       style={{
         zIndex: 100,
-        backgroundColor: navBackground,
       }}
       aria-label="Primary"
     >
@@ -136,7 +130,7 @@ const NavBar: FC = () => {
             type="button"
             onClick={toggleNavbar}
             className="
-              flex items-center rounded border border-border
+              nav-control flex items-center rounded border border-border
               text-foreground
               hover:bg-secondary/60
               focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
@@ -209,9 +203,8 @@ const NavBar: FC = () => {
                 {link.subLinks && hoveredIndex === index && (
                   <ul
                     id={`desktop-submenu-${index}`}
-                    style={{ backgroundColor: submenuBackground }}
                     className="
-                      absolute left-0 top-full mt-2 w-48
+                      nav-panel absolute left-0 top-full mt-2 w-48
                       border border-border rounded-md text-popover-foreground shadow-lg
                       flex flex-col
                       animate-in fade-in slide-in-from-top-2
@@ -223,7 +216,7 @@ const NavBar: FC = () => {
                         <Link
                           href={sub.href}
                           className="
-                            block px-4 py-2 text-sm
+                            nav-option block px-4 py-2 text-sm
                             hover:bg-muted hover:text-foreground
                             rounded-md transition-colors duration-200
                             focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
@@ -255,7 +248,7 @@ const NavBar: FC = () => {
 
       {/* === MOBILE OVERLAY === */}
       {navbarOpen && (
-        <MenuOverlay links={navLinks} navBackground={navBackground} />
+        <MenuOverlay links={navLinks} />
       )}
     </nav>
     </>

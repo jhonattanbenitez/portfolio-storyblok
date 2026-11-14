@@ -5,34 +5,43 @@
    =========================== */
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-  --nav-background: #f8fafc;
+  --site-canvas: #f6f5f1;
+  --site-surface: #ffffff;
+  --site-ink: #172b30;
+  --site-secondary: #526267;
+  --site-accent: #1f626b;
+  --site-on-accent: #ffffff;
+  --site-rule: #cdd5d2;
+  --site-control: #70898b;
 
-  --card: #ffffff;
-  --card-foreground: #171717;
+  --background: var(--site-canvas);
+  --foreground: var(--site-ink);
+  --nav-background: var(--site-canvas);
 
-  --popover: #ffffff;
-  --popover-foreground: #171717;
+  --card: var(--site-surface);
+  --card-foreground: var(--site-ink);
 
-  --primary: #2563eb;
-  --primary-foreground: #ffffff;
+  --popover: var(--site-surface);
+  --popover-foreground: var(--site-ink);
 
-  --secondary: #f1f5f9;
-  --secondary-foreground: #0f172a;
+  --primary: var(--site-accent);
+  --primary-foreground: var(--site-on-accent);
 
-  --muted: #f8fafc;
-  --muted-foreground: #64748b;
+  --secondary: var(--site-surface);
+  --secondary-foreground: var(--site-ink);
 
-  --accent: #e0e7ff;
-  --accent-foreground: #1e3a8a;
+  --muted: var(--site-canvas);
+  --muted-foreground: var(--site-secondary);
+
+  --accent: var(--site-canvas);
+  --accent-foreground: var(--site-accent);
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
 
-  --border: #e2e8f0;
-  --input: #e2e8f0;
-  --ring: #2563eb;
+  --border: var(--site-rule);
+  --input: var(--site-control);
+  --ring: var(--site-accent);
 
   --radius: 0.5rem;
 
@@ -60,34 +69,17 @@
 
 
 .dark {
-  --background: #0f172a;
-  --foreground: #f8fafc;
-  --nav-background: #172033;
-
-  --card: #0f172a;
-  --card-foreground: #f8fafc;
-
-  --popover: #0f172a;
-  --popover-foreground: #f8fafc;
-
-  --primary: #3b82f6;
-  --primary-foreground: #ffffff;
-
-  --secondary: #1e293b;
-  --secondary-foreground: #f1f5f9;
-
-  --muted: #172033;
-  --muted-foreground: #94a3b8;
-
-  --accent: #1e3a5f;
-  --accent-foreground: #dbeafe;
+  --site-canvas: #0c171a;
+  --site-surface: #122226;
+  --site-ink: #e8efed;
+  --site-secondary: #a4b6b6;
+  --site-accent: #80c2c8;
+  --site-on-accent: #0c171a;
+  --site-rule: #334d50;
+  --site-control: #738e90;
 
   --destructive: #ef4444;
   --destructive-foreground: #ffffff;
-
-  --border: #334155;
-  --input: #334155;
-  --ring: #3b82f6;
 
   --overlay: rgba(0, 0, 0, 0.4);
   --overlay-press: rgba(0, 0, 0, 0.5);
@@ -151,18 +143,73 @@ body {
   }
 }
 
-/* Home V2: a deliberately local visual system. Blog, case-study and landing
-   pages retain the existing theme and component contracts. */
+/* Navigation shares the Home palette on every route. These explicit classes
+   avoid enabling unrelated Tailwind semantic utilities across article content. */
+.site-nav {
+  background-color: var(--nav-background);
+  color: var(--foreground);
+}
+.site-nav .nav-panel {
+  background-color: var(--popover);
+  color: var(--popover-foreground);
+  border-color: var(--border);
+}
+.site-nav :is(.nav-link, .nav-option, .nav-disclosure) {
+  color: var(--muted-foreground);
+}
+.site-nav .nav-link { border-radius: var(--radius); }
+.site-nav :is(.nav-control, .nav-language-switcher) {
+  background-color: var(--secondary);
+  color: var(--secondary-foreground);
+  border-color: var(--input);
+}
+.site-nav .nav-language-switcher { height: auto; }
+.site-nav .nav-language-switcher button { color: var(--muted-foreground); }
+.site-nav .nav-link:hover,
+.site-nav .nav-link[aria-expanded="true"] {
+  background-color: var(--card);
+  color: var(--primary);
+}
+.site-nav .nav-panel .nav-link:hover,
+.site-nav .nav-control:not(:disabled):hover,
+.site-nav .nav-option:not([aria-pressed="true"]):not(:disabled):hover,
+.site-nav .nav-language-switcher button:not([aria-pressed="true"]):not(:disabled):hover,
+.site-nav .nav-disclosure:hover {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+}
+.site-nav .nav-link[aria-current="page"] { color: var(--primary); }
+.site-nav .nav-disclosure[aria-expanded="true"] {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  border-color: var(--input);
+}
+.site-nav .nav-option[aria-pressed="true"],
+.site-nav .nav-language-switcher button[aria-pressed="true"] {
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+}
+.site-nav :is(a, button):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+.site-nav button:disabled {
+  color: var(--muted-foreground);
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+/* Home keeps its editorial composition while sharing the site's palette. */
 .home-v2,
 .home-v2-nav,
 .home-v2-skip {
-  --home-canvas: #f6f5f1;
-  --home-surface: #ffffff;
-  --home-ink: #172b30;
-  --home-secondary: #526267;
-  --home-accent: #1f626b;
-  --home-rule: #cdd5d2;
-  --home-control: #70898b;
+  --home-canvas: var(--site-canvas);
+  --home-surface: var(--site-surface);
+  --home-ink: var(--site-ink);
+  --home-secondary: var(--site-secondary);
+  --home-accent: var(--site-accent);
+  --home-rule: var(--site-rule);
+  --home-control: var(--site-control);
   --background: var(--home-canvas);
   --foreground: var(--home-ink);
   --card: var(--home-surface);
@@ -170,7 +217,7 @@ body {
   --muted: var(--home-canvas);
   --muted-foreground: var(--home-secondary);
   --primary: var(--home-accent);
-  --primary-foreground: #ffffff;
+  --primary-foreground: var(--site-on-accent);
   --border: var(--home-rule);
   --input: var(--home-control);
   --ring: var(--home-accent);
@@ -180,14 +227,6 @@ body {
 .dark .home-v2,
 .dark .home-v2-nav,
 .dark .home-v2-skip {
-  --home-canvas: #0c171a;
-  --home-surface: #122226;
-  --home-ink: #e8efed;
-  --home-secondary: #a4b6b6;
-  --home-accent: #80c2c8;
-  --home-rule: #334d50;
-  --home-control: #738e90;
-  --primary-foreground: #0c171a;
   --destructive: #ffb4ab;
 }
 

@@ -34,7 +34,7 @@ export default function NavLink({
       onFocus={onFocus}
       onKeyDown={onKeyDown}
       className={clsx(
-        "inline-flex items-center h-10 px-2 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        "nav-link inline-flex items-center h-10 px-2 hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
         responsiveCompact && "md:h-8 md:px-1 md:text-sm lg:h-10 lg:px-2 lg:text-base",
         "text-muted-foreground hover:text-foreground capitalize",
         active && "text-primary"

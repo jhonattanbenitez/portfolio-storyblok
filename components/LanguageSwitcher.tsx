@@ -39,9 +39,10 @@ export default function LanguageSwitcher({ localizedUrls, responsiveCompact = fa
 
   return (
     <div
-      className={`flex items-center gap-1 rounded-md border border-border bg-secondary p-1 text-secondary-foreground ${responsiveCompact ? "h-8 lg:h-10" : "h-10"}`}
+      className={`nav-language-switcher flex items-center gap-1 rounded-md border border-border bg-secondary p-1 text-secondary-foreground ${responsiveCompact ? "h-8 lg:h-10" : "h-10"}`}
     >
       <button
+        type="button"
         onClick={() => go("en")}
         disabled={!isAvailable("en")}
         className={`${responsiveCompact ? "h-6 px-2 text-xs lg:h-8 lg:px-3 lg:text-sm" : "h-8 px-3 text-sm"} rounded-md font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -50,10 +51,12 @@ export default function LanguageSwitcher({ localizedUrls, responsiveCompact = fa
             : "text-muted-foreground hover:bg-background hover:text-foreground"
         }`}
         aria-label="Switch to English"
+        aria-pressed={current === "en"}
       >
         EN
       </button>
       <button
+        type="button"
         onClick={() => go("es-co")}
         disabled={!isAvailable("es-co")}
         className={`${responsiveCompact ? "h-6 px-2 text-xs lg:h-8 lg:px-3 lg:text-sm" : "h-8 px-3 text-sm"} rounded-md font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-40 ${
@@ -62,6 +65,7 @@ export default function LanguageSwitcher({ localizedUrls, responsiveCompact = fa
             : "text-muted-foreground hover:bg-background hover:text-foreground"
         }`}
         aria-label="Switch to Spanish"
+        aria-pressed={current === "es-co"}
       >
         ES
       </button>
