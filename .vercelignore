@@ -15,5 +15,6 @@ certificates/
 .next/
 node_modules/
 coverage/
+artifacts/home-v2/
 docs/
 tests/

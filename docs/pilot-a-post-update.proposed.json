@@ -1,0 +1,88 @@
+{
+  "component": {
+    "schema": {
+      "title": {
+        "type": "text",
+        "pos": 0,
+        "id": "V91dfH2HSIml-zk_eAYF2A",
+        "required": true,
+        "translatable": true
+      },
+      "intro": {
+        "type": "markdown",
+        "pos": 1,
+        "id": "ngkyngdxSM2ZIPWjS1CGsQ",
+        "translatable": true
+      },
+      "content": {
+        "type": "markdown",
+        "pos": 3,
+        "id": "tZtxr5QNSZyAnmalaktWaw",
+        "translatable": true
+      },
+      "image": {
+        "type": "multiasset",
+        "pos": 4,
+        "id": "lYSB4ZNOQ-mR5Agw92ySnQ",
+        "required": false,
+        "filetypes": [
+          "images"
+        ]
+      },
+      "date": {
+        "type": "datetime",
+        "pos": 5,
+        "id": "UKHYoA9BQc2c98Nm-mCTZg"
+      },
+      "category_ref": {
+        "type": "multilink",
+        "pos": 6,
+        "link_scope": "categories",
+        "id": "VttxhU6cTzmeGNUKkhhlyw"
+      },
+      "language": {
+        "type": "option",
+        "pos": 7,
+        "use_uuid": true,
+        "tooltip": false,
+        "options": [
+          {
+            "_uid": "f5f83e16-b1e7-485d-8a7c-bb2de3dc8c06",
+            "name": "english",
+            "value": "english"
+          },
+          {
+            "_uid": "7ba6882e-aa93-4642-9222-194b7d93a457",
+            "value": "spanish",
+            "name": "spanish"
+          }
+        ],
+        "exclude_empty_option": true,
+        "id": "4LCg2MkuQCq9Y1hJ7KReFw",
+        "required": true
+      },
+      "slug_es": {
+        "type": "text",
+        "pos": 8,
+        "required": false,
+        "translatable": false,
+        "max_length": 160,
+        "regex": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+      },
+      "es_translation_approved": {
+        "type": "boolean",
+        "pos": 9,
+        "required": false,
+        "translatable": false
+      },
+      "es_approved_hash": {
+        "type": "text",
+        "pos": 10,
+        "required": false,
+        "translatable": false,
+        "max_length": 64,
+        "regex": "^[a-f0-9]{64}$"
+      }
+    }
+  }
+}

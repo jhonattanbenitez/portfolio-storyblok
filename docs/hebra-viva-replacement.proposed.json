@@ -1,0 +1,107 @@
+{
+  "schema": 1,
+  "kind": "editorial-change-plan-not-executable-api-body",
+  "status": "PREPARED_PENDING_MAPI_PREFLIGHT_AND_APPROVED_IMAGE_BINDING",
+  "executionAuthorized": false,
+  "target": {
+    "space": 1023389,
+    "region": "us",
+    "storyId": 23893963,
+    "storyUuid": "8ec2e219-99d3-4dd4-884c-17e721aafe0a",
+    "sectionUid": "1a081b28-a33c-4aa3-b7cd-ed605bc630ce",
+    "projectUid": "4f6a2c22-67d5-4639-a520-d4cada19a218",
+    "originalArrayIndex": 5
+  },
+  "proposedSharedFields": {
+    "title": "Hebra Viva",
+    "previewUrl": {
+      "id": "",
+      "url": "https://hebraviva.co/",
+      "linktype": "url",
+      "fieldtype": "multilink",
+      "cached_url": "https://hebraviva.co/"
+    },
+    "gitUrl": {
+      "id": "",
+      "url": "",
+      "linktype": "url",
+      "fieldtype": "multilink",
+      "cached_url": ""
+    },
+    "tag": [
+      "all",
+      "web",
+      "ecommerce"
+    ]
+  },
+  "localizedDescriptionProposal": {
+    "en": "An e-commerce platform that helps people choose products for curly and Afro-textured hair. My technical work spans the shopping experience, catalog, cart, logistics, SEO and analytics, using WordPress, WooCommerce, Docker, Caddy and MariaDB.",
+    "es-co": "Un e-commerce que facilita elegir productos para cabello rizado y afro. Mi trabajo técnico abarca la experiencia de compra, catálogo, carrito, logística, SEO y analítica, con WordPress, WooCommerce, Docker, Caddy y MariaDB."
+  },
+  "image": {
+    "localSource": "artifacts/home-v2/hebra-viva/hebra-viva-catalog.png",
+    "sourceWebsite": "https://hebraviva.co/",
+    "capture": "Own Chromium screenshot of the actual public catalog, no synthetic image or retouching",
+    "width": 1280,
+    "height": 800,
+    "sha256": "74a6bebc2c632124e9520fb49caa383c35bfb529e21b2bdda1d30129c2cc3a20",
+    "binding": "New Storyblok asset upload requires specific authorization. Only use returned asset ID/filename after verifying upload. No asset identifiers have been allocated.",
+    "altByLocale": {
+      "en": "Hebra Viva online store catalog for curly and Afro-textured hair care",
+      "es-co": "Catálogo de Hebra Viva de productos para cabello rizado y afro"
+    },
+    "doNotReuseOldAssetId": 1405312
+  },
+  "publishedPreimageSha256": {
+    "en": "d6bf961a52ee875b8deabe64ffdd57d7f291c620b67296c33473fd6dd4e4e9f6",
+    "es-co": "f2b5bb11e13c24772a250c62a9665d1a20eaee79c49922f24d1ccc93a0c6a40a"
+  },
+  "preserve": [
+    "story ID, UUID, slug and publication state",
+    "section _uid and project _uid",
+    "original project array position",
+    "all other project fields and five project identities unless explicitly listed",
+    "all other Home blocks and metadata",
+    "all existing article/case/category content"
+  ],
+  "rawManagementLocalizationKeys": "Must be read from current authorized MAPI draft, not inferred from localized CDA projections. Both languages share one story.",
+  "futureOperation": {
+    "name": "updateStory",
+    "count": 1,
+    "publish": false,
+    "force_update": false,
+    "strict_mode": "1",
+    "body": "Merge complete current story.content in memory; replace only matched project fields and verified localized properties of every changed field. Never submit this plan directly.",
+    "requiresSeparateAuthorization": true
+  },
+  "requiredPreflight": [
+    "Reconnect official Storyblok MCP session until one read succeeds; no automatic authentication loops",
+    "Read exact Home draft identity, updated_at, current_version_id and base_version_id; inspect unpublished changes",
+    "Verify source block/project UID and localized field schema. Compare published project preimages against source-review.json; preserve unrelated draft edits",
+    "Confirm the approved real image URL/id and localized alt text",
+    "Re-read concurrency immediately before the single authorized write and stop on unexpected differences",
+    "Inspect locale overrides for ALL changed fields, not just description: title, links, image, alt and tags must resolve to the approved values in both locales. Do not invent raw MAPI localization keys."
+  ],
+  "publicVisibility": "No CMS change, save, asset upload or publication performed. A future draft save alone must not publish Home. Publication requires separate explicit authorization.",
+  "remoteMutations": 0,
+  "projectType": "E-commerce / Product Engineering; editorial classification, not a new schema field",
+  "sharedFieldsMeaning": "Intended effective values in BOTH locales. Equal CDA values do not prove schema translatability. Inspect every changed field and any localized overrides in the current MAPI draft before writing; no native key names are inferred.",
+  "provenance": {
+    "publiclyObserved": [
+      "HTTPS 200 homepage",
+      "Hair care products for curly and Afro-textured hair",
+      "Catalog organized by need and hair type",
+      "Product listings and cart navigation"
+    ],
+    "ownerProvided": [
+      "Technical contribution",
+      "WordPress, WooCommerce, Docker, Caddy, MariaDB",
+      "Logistics, SEO, analytics and infrastructure work"
+    ],
+    "notTested": [
+      "Order placement, payments or sales",
+      "Logistics integration end-to-end",
+      "Server administration, analytics correctness or metrics"
+    ]
+  }
+}

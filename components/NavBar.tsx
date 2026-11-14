@@ -24,7 +24,11 @@ const NavBar: FC = () => {
   const { t } = useTranslation();
   const { resolvedTheme } = useTheme();
   const pathname = usePathname();
-  const navBackground = resolvedTheme === "dark" ? "#172033" : "#ffffff";
+  const isHomeV2 = pathname === "/" || pathname === "/es-co";
+  const homeNavRef = useRef<HTMLElement>(null);
+  const navBackground = isHomeV2
+    ? (resolvedTheme === "dark" ? "#0c171a" : "#f6f5f1")
+    : (resolvedTheme === "dark" ? "#172033" : "#ffffff");
   const submenuBackground = resolvedTheme === "dark" ? "#0f172a" : "#ffffff";
 
   // 🔹 Detectar idioma según la URL actual
@@ -55,6 +59,23 @@ const NavBar: FC = () => {
 
   const toggleNavbar = () => setNavbarOpen((v) => !v);
 
+  // The editorial hero follows the actual fixed navigation height, including
+  // user text scaling. Other routes retain their existing layout contract.
+  useEffect(() => {
+    const nav = homeNavRef.current;
+    if (!isHomeV2 || !nav) return;
+    const headerRow = nav.firstElementChild;
+    if (!headerRow) return;
+    const measure = () => document.documentElement.style.setProperty("--home-v2-nav-height", headerRow.getBoundingClientRect().height + "px");
+    measure();
+    const observer = new ResizeObserver(measure);
+    observer.observe(headerRow);
+    return () => {
+      observer.disconnect();
+      document.documentElement.style.removeProperty("--home-v2-nav-height");
+    };
+  }, [isHomeV2]);
+
   useEffect(() => {
     const desktopMedia = window.matchMedia("(min-width: 768px)");
     const closeMobileMenuOnDesktop = (event: MediaQueryListEvent) => {
@@ -79,11 +100,18 @@ const NavBar: FC = () => {
   }, [navbarOpen]);
 
   return (
+    <>
+      {isHomeV2 && <a href="#home-v2-main" className="home-v2-skip">{urlLang === "es-co" ? "Saltar al contenido" : "Skip to content"}</a>}
     <nav
+      ref={homeNavRef}
+      onClick={isHomeV2 ? event => {
+        if (navbarOpen && event.target instanceof Element && event.target.closest("a[href]")) setNavbarOpen(false);
+      } : undefined}
       className={`
         fixed inset-x-0 top-0 isolate
         border-b border-[var(--border)]
         text-[var(--foreground)]
+        ${isHomeV2 ? "home-v2-nav" : ""}
       `}
       style={{
         zIndex: 100,
@@ -230,6 +258,7 @@ const NavBar: FC = () => {
         <MenuOverlay links={navLinks} navBackground={navBackground} />
       )}
     </nav>
+    </>
   );
 };
 

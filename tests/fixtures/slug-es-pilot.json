@@ -1,0 +1,111 @@
+{
+  "fixtureMetadata": {
+    "synthetic": true,
+    "purpose": "Offline comparison of application-owned slug_es, same-slug redirects and existing legacy resolution.",
+    "notAnEditorialBackup": true,
+    "notEvidenceOfRealCmsSchemaOrPublication": true,
+    "fieldNote": "slug_es, es_translation_approved and es_approved_hash are hypothetical native fields. Test code computes the fictional approval hash.",
+    "localizedFieldSuffix": "fixture_es"
+  },
+  "historicalPaths": {
+    "en": "/posts/black-box-abstraction-thinking-in-boxes",
+    "es-co": "/es-co/posts/abstraccion-de-caja-negra-pensar-en-cajas"
+  },
+  "legacyEn": {
+    "id": 930001,
+    "uuid": "synthetic-black-box-en",
+    "name": "Synthetic Black Box",
+    "slug": "black-box-abstraction-thinking-in-boxes",
+    "full_slug": "posts/black-box-abstraction-thinking-in-boxes",
+    "group_id": "synthetic-black-box-pair",
+    "published": true,
+    "unpublished_changes": false,
+    "alternates": [
+      {
+        "id": 930002,
+        "uuid": "synthetic-black-box-es",
+        "full_slug": "posts/abstraccion-de-caja-negra-pensar-en-cajas",
+        "published": true
+      }
+    ],
+    "content": {
+      "component": "post",
+      "language": "english",
+      "title": "An invented black box article",
+      "intro": "A fictional English introduction.",
+      "content": "An invented English article body.",
+      "category_ref": { "id": "synthetic-category-en", "cached_url": "categories/synthetic-en" }
+    }
+  },
+  "legacyEs": {
+    "id": 930002,
+    "uuid": "synthetic-black-box-es",
+    "name": "Caja negra sintética",
+    "slug": "abstraccion-de-caja-negra-pensar-en-cajas",
+    "full_slug": "posts/abstraccion-de-caja-negra-pensar-en-cajas",
+    "group_id": "synthetic-black-box-pair",
+    "published": true,
+    "unpublished_changes": false,
+    "alternates": [
+      {
+        "id": 930001,
+        "uuid": "synthetic-black-box-en",
+        "full_slug": "posts/black-box-abstraction-thinking-in-boxes",
+        "published": true
+      }
+    ],
+    "content": {
+      "component": "post",
+      "language": "spanish",
+      "title": "Un artículo de caja negra inventado",
+      "intro": "Una introducción española ficticia.",
+      "content": "Un cuerpo de artículo español inventado.",
+      "category_ref": { "id": "synthetic-category-es", "cached_url": "categories/sintetica-es" }
+    }
+  },
+  "fieldInput": {
+    "baseStory": {
+      "id": 930001,
+      "uuid": "synthetic-black-box-en",
+      "name": "Synthetic Black Box",
+      "slug": "black-box-abstraction-thinking-in-boxes",
+      "full_slug": "posts/black-box-abstraction-thinking-in-boxes",
+      "group_id": "synthetic-black-box-pair",
+      "published": true,
+      "unpublished_changes": false,
+      "alternates": [
+        {
+          "id": 930002,
+          "uuid": "synthetic-black-box-es",
+          "full_slug": "posts/abstraccion-de-caja-negra-pensar-en-cajas",
+          "published": true
+        }
+      ],
+      "content": {
+        "component": "post",
+        "language": "english",
+        "title": "An invented black box article",
+        "intro": "A fictional English introduction.",
+        "content": "An invented English article body.",
+        "title__i18n__fixture_es": "Un artículo de caja negra inventado",
+        "intro__i18n__fixture_es": "Una introducción española ficticia.",
+        "content__i18n__fixture_es": "Un cuerpo de artículo español inventado.",
+        "category_ref": { "id": "synthetic-category-en", "cached_url": "categories/synthetic-en" },
+        "slug_es": "abstraccion-de-caja-negra-pensar-en-cajas",
+        "es_translation_approved": true,
+        "es_approved_hash": null
+      }
+    },
+    "localizedFields": {
+      "title": "title__i18n__fixture_es",
+      "intro": "intro__i18n__fixture_es",
+      "content": "content__i18n__fixture_es"
+    },
+    "publication": {
+      "mode": "joint",
+      "publishedSnapshotConfirmed": true,
+      "snapshotStoryId": 930001,
+      "localePublished": null
+    }
+  }
+}

@@ -1,0 +1,29 @@
+{
+  "story": {
+    "name": "I18N Pilot A — Black Box — DRAFT ONLY",
+    "slug": "i18n-pilot-black-box-20261113",
+    "parent_id": 23972036,
+    "is_folder": false,
+    "is_startpage": false,
+    "tag_list": ["i18n-pilot-a"],
+    "content": {
+      "component": "post",
+      "title": "Black Box — isolated translation rehearsal",
+      "intro": "Synthetic English introduction for the unpublished rehearsal.",
+      "content": "## Black box\n\nSynthetic English content. This is an unpublished rehearsal.",
+      "image": [],
+      "date": "2026-11-13T00:00:00.000Z",
+      "category_ref": {
+        "id": "",
+        "url": "",
+        "linktype": "story",
+        "fieldtype": "multilink",
+        "cached_url": ""
+      },
+      "language": "english",
+      "slug_es": "i18n-piloto-caja-negra-20261113",
+      "es_translation_approved": false,
+      "es_approved_hash": ""
+    }
+  }
+}

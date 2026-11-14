@@ -29,6 +29,8 @@ import { Metadata } from "next";
 import { getAuthorizedDraftMode } from "../../../lib/draft-session";
 import { getStoryblokApi } from "../../../lib/storyblok";
 import { AlternateLinksPublisher } from "../../../contexts/AlternateLinksContext";
+import HomeV2 from "../../../components/HomeV2/HomeV2";
+import { isHomeV2Path } from "../../../lib/home-v2";
 
 export async function generateStaticParams() {
   const paths = await getAllStoryParams();
@@ -115,6 +117,8 @@ export default async function Home({
     localizedUrls: Awaited<ReturnType<typeof localizedUrlsForPage>>;
     isEnabled: boolean;
     structuredData: string;
+    locale: SupportedLanguage;
+    pathname: string;
   };
   try {
     const { slug } = await params;
@@ -142,7 +146,9 @@ export default async function Home({
     if (redirectHref) permanentRedirect(redirectHref);
     const localizedUrls = await localizedUrlsForPage(pageData.story, locale, pathname, version);
 
-    if (pageData?.story?.content?.body) {
+    // Home V2 resolves its original published case references once, at its own
+    // server boundary. The legacy renderer still needs the mutation below.
+    if ((!isHomeV2Path(pathname) || isEnabled) && pageData?.story?.content?.body) {
       const section = pageData.story.content.body.find(
         (b: StoryblokBlock) => b.component === "case_studies_section",
       );
@@ -181,7 +187,7 @@ export default async function Home({
     }
 
     prepared = {
-      pageData, localizedUrls, isEnabled,
+      pageData, localizedUrls, isEnabled, locale, pathname,
       structuredData: serializeJsonLd(generateStructuredData(pageData.story, locale, pathname)),
     };
   } catch (error) {
@@ -190,12 +196,14 @@ export default async function Home({
     console.error("Error in page component:", error);
     throw error;
   }
-  const { pageData, localizedUrls, isEnabled, structuredData } = prepared;
+  const { pageData, localizedUrls, isEnabled, structuredData, locale, pathname } = prepared;
   return (
     <>
       <AlternateLinksPublisher urls={localizedUrls} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: structuredData }} />
-      {isEnabled
+      {!isEnabled && isHomeV2Path(pathname)
+        ? <HomeV2 story={pageData.story} locale={locale} />
+        : isEnabled
         ? <StoryblokStory story={pageData.story} />
         : <StoryblokServerComponent blok={pageData.story.content} />}
     </>
