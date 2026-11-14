@@ -26,6 +26,9 @@ export async function GET(request: NextRequest) {
 
     if (tag) {
       revalidateTag(tag, "default");
+      // The published editorial projection depends on individual story tags.
+      // An explicitly requested tag must also invalidate that derived catalog.
+      if (tag !== "cms") revalidateTag("cms", "default");
       return NextResponse.json({ revalidated: true, tag }, { headers: SENSITIVE_RESPONSE_HEADERS });
     }
 

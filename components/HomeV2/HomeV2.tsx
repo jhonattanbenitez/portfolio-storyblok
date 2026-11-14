@@ -62,17 +62,18 @@ function WorkCard({ work, index, copy, compact = false }: { work: HomeWork; inde
 
 export default async function HomeV2({ story, locale }: { story: Story; locale: SupportedLanguage }) {
   const body = story.content.body || [];
-  // Home data is secondary to the profile: a CMS collection failure must not
-  // remove contact details or display fabricated work/writing placeholders.
-  const [postsResult, casesResult, categoriesResult] = await Promise.allSettled([
-    getPostsPage({ version: "published", locale, perPage: 3 }),
+  // Resolve the editorial boundary first: when the model requires connection(),
+  // prerendering must stop before starting optional-looking secondary requests.
+  // A provider failure is not an empty, successfully published collection.
+  const posts = await getPostsPage({ version: "published", locale, perPage: 3 });
+  const [caseStudies, categories] = await Promise.all([
     publishedCases(body, locale),
     getStories({ version: "published", startsWith: "categories/", contentType: "Category", perPage: 100 }),
   ]);
   const model = buildHomeV2Model({ body, locale,
-    posts: postsResult.status === "fulfilled" ? postsResult.value : [],
-    caseStudies: casesResult.status === "fulfilled" ? casesResult.value : [],
-    categories: categoriesResult.status === "fulfilled" ? categoriesResult.value.stories : [],
+    posts,
+    caseStudies,
+    categories: categories.stories,
   });
   const copy = HOME_V2_COPY[locale];
   const postsHref = locale === "es-co" ? "/es-co/posts" : "/posts";

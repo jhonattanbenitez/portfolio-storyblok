@@ -82,6 +82,16 @@ test("non-retryable Storyblok API errors are exposed", async () => withToken(asy
   );
 }));
 
+test("published query parameter order does not create duplicate in-flight CDA requests", async () => withToken(async () => {
+  let calls = 0;
+  const fetchImpl = async () => { calls++; await new Promise(resolve => setImmediate(resolve)); return Response.json({ stories: [] }); };
+  const [a, b] = await Promise.all([
+    requestStoryblok("stories", { version: "published", params: { language: "en", per_page: 3 }, fetchImpl }),
+    requestStoryblok("stories", { version: "published", params: { per_page: 3, language: "en" }, fetchImpl }),
+  ]);
+  assert.equal(calls, 1); assert.deepEqual(a, b); assert.notEqual(a, b);
+}));
+
 test("Storyblok links retrieval paginates beyond 100 records", async () => withToken(async () => {
   const previousFetch = globalThis.fetch;
   const requestedPages = [];

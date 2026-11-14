@@ -15,7 +15,10 @@ import type { LocalizedUrl, Story, StoryblokBlock, SupportedLanguage } from "../
 const STATIC_PAIRS = ["/", "/posts", "/case-studies", "/categories", "/contact"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const [allStories, caseStudiesHome, editorialPosts] = await Promise.all([
+  // connection() in the enabled editorial facade must finish before any other
+  // work starts; prerender bail-out otherwise abandons live CDA requests.
+  const editorialPosts = await getPublishedEditorialEntries();
+  const [allStories, caseStudiesHome] = await Promise.all([
     getAllStories("published"),
     getStoryBySlug({
       slug: "case-studies/home",
@@ -23,7 +26,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       locale: "en",
       resolveRelations: "case_studies_section.case_studies",
     }),
-    getPublishedEditorialEntries(),
   ]);
   const byId = new Map(allStories.map((story) => [story.id, story]));
   const byUuid = new Map(allStories.map((story) => [story.uuid, story]));

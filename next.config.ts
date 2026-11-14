@@ -1,9 +1,16 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // A provider error must reach the response status before metadata is flushed.
+  // Pair this with no global loading.tsx boundary around required CDA reads.
+  htmlLimitedBots: /.*/,
   // Enable experimental features for better performance
   experimental: {
     optimizePackageImports: ["@storyblok/react", "framer-motion"],
+    // CDA collection reads have a smaller origin quota than single stories.
+    // Keep build workers bounded; the transport also paces requests per process.
+    cpus: 1,
+    staticGenerationMaxConcurrency: 2,
   },
   turbopack: {},
 

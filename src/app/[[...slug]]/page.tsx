@@ -1,4 +1,5 @@
 import { StoryblokStory, StoryblokServerComponent } from "@storyblok/react/rsc";
+import { cache } from "react";
 import {
   getAllStoryParams,
   getStoriesByUuids,
@@ -11,6 +12,7 @@ import {
   resolveCaseStudyStoriesForLocale,
   resolveLocalizedStoryUrls,
   resolveStoryRouteRedirect,
+  StoryblokDataError,
 } from "../../../lib/storyblok-data";
 import {
   deterministicLocalizedUrls,
@@ -43,6 +45,20 @@ export async function generateStaticParams() {
 }
 
 getStoryblokApi();
+
+// Primitive keys share the same published projection between metadata and page.
+// Do not memoize authorized draft reads or keep a process-level content snapshot.
+const publishedPageStory = cache((slugKey: string) => {
+  const segments: string[] = JSON.parse(slugKey);
+  const home = segments.length === 0 || (segments.length === 1 && segments[0] === "es-co");
+  return getStoryFromRoute("published", segments, home ? undefined : "case_studies_section.case_studies");
+});
+
+function pageStory(version: "draft" | "published", slug?: string[]) {
+  return version === "published"
+    ? publishedPageStory(JSON.stringify(slug || []))
+    : getStoryFromRoute("draft", slug, "case_studies_section.case_studies");
+}
 
 async function localizedUrlsForPage(
   story: NonNullable<Awaited<ReturnType<typeof getStoryFromRoute>>["story"]>,
@@ -86,22 +102,18 @@ export async function generateMetadata({
       fetchSlug = [...(slug || []), "home"];
     }
 
-    const pageData = await getStoryFromRoute(version, fetchSlug);
-    const story = pageData?.story || null;
-    const redirectHref = story && await resolveStoryRouteRedirect({ story, locale: language, version });
+    const pageData = await pageStory(version, fetchSlug);
+    const story = pageData?.story;
+    if (!story) throw new StoryblokDataError("Invalid Storyblok story response", "INVALID_RESPONSE");
+    const redirectHref = await resolveStoryRouteRedirect({ story, locale: language, version });
     if (redirectHref) return generateRedirectMetadata(redirectHref);
 
-    const localizedUrls = story
-      ? await localizedUrlsForPage(story, language, pathname, version)
-      : [{ locale: language, href: pathname }];
+    const localizedUrls = await localizedUrlsForPage(story, language, pathname, version);
     return generateMetadataFromStory(story, language, pathname, localizedUrls, isEnabled);
   } catch (error) {
     unstable_rethrow(error);
-    if (isStoryblokInvalidRequest(error)) notFound();
-    console.error("Error generating metadata:", error);
-
-    // Return default metadata on error
-    return generateMetadataFromStory(null, language, pathname, undefined, isEnabled);
+    if (isStoryblokNotFound(error) || isStoryblokInvalidRequest(error)) notFound();
+    throw error;
   }
 }
 
@@ -132,11 +144,8 @@ export default async function Home({
       fetchSlug = [...(slug || []), "home"];
     }
 
-    const pageData = await getStoryFromRoute(
-      version,
-      fetchSlug,
-      "case_studies_section.case_studies",
-    );
+    const pageData = structuredClone(await pageStory(version, fetchSlug));
+    if (!pageData?.story) throw new StoryblokDataError("Invalid Storyblok story response", "INVALID_RESPONSE");
 
     const locale: SupportedLanguage = slug?.[0] === "es-co" ? "es-co" : "en";
     const pathname = slug ? `/${slug.join("/")}` : "/";
@@ -182,10 +191,6 @@ export default async function Home({
       }
     }
 
-    if (!pageData?.story) {
-      notFound();
-    }
-
     prepared = {
       pageData, localizedUrls, isEnabled, locale, pathname,
       structuredData: serializeJsonLd(generateStructuredData(pageData.story, locale, pathname)),
@@ -193,7 +198,6 @@ export default async function Home({
   } catch (error) {
     unstable_rethrow(error);
     if (isStoryblokNotFound(error) || isStoryblokInvalidRequest(error)) notFound();
-    console.error("Error in page component:", error);
     throw error;
   }
   const { pageData, localizedUrls, isEnabled, structuredData, locale, pathname } = prepared;

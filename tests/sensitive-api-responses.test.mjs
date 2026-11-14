@@ -124,3 +124,30 @@ test("revalidation scope branches retain private success and error responses", a
     }
   }
 });
+
+test("specific authorized tag invalidates both its source and the derived published catalog", async () => {
+  const { GET, effects } = handler("revalidate");
+  const response = await GET(new NextRequest("https://fixture.invalid/api/revalidate?tag=story%3Apublished-fixture", {
+    headers: { Authorization: `Bearer ${environment.STORYBLOK_REVALIDATION_SECRET}` },
+  }));
+  assert.equal(response.status, 200); privateResponse(response);
+  assert.deepEqual(effects, ["story:published-fixture", "cms"]);
+});
+
+test("authorized cms invalidation does not duplicate the same tag", async () => {
+  const { GET, effects } = handler("revalidate");
+  const response = await GET(new NextRequest("https://fixture.invalid/api/revalidate?tag=cms", {
+    headers: { Authorization: `Bearer ${environment.STORYBLOK_REVALIDATION_SECRET}` },
+  }));
+  assert.equal(response.status, 200); privateResponse(response);
+  assert.deepEqual(effects, ["cms"]);
+});
+
+test("unauthorized per-story tag invalidation has no source or catalog side effects", async () => {
+  const { GET, effects } = handler("revalidate");
+  const response = await GET(new NextRequest("https://fixture.invalid/api/revalidate?tag=story%3Apublished-fixture", {
+    headers: { Authorization: "Bearer invalid" },
+  }));
+  assert.equal(response.status, 401); privateResponse(response);
+  assert.deepEqual(effects, []);
+});
