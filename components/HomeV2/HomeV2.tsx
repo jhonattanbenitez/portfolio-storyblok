@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { storyblokEditable, type SbBlokData } from "@storyblok/react/rsc";
 import ContactForm from "../ContactForm";
+import MotionDetails from "./MotionDetails";
 import { getPostsPage, getStories, getStoriesByUuids, getStoryBySlug, resolveCaseStudyStoriesForLocale } from "../../lib/storyblok-data";
 import { buildHomeV2Model, homeEditorialDate, HOME_V2_COPY, type HomeWork } from "../../lib/home-v2";
 import type { Story, StoryblokBlock, SupportedLanguage } from "../../utils/types";
@@ -114,9 +115,9 @@ export default async function HomeV2({ story, locale }: { story: Story; locale: 
         <div className="home-v2-work-grid">
           {model.selectedWork.map((work, index) => <WorkCard key={work.id} work={work} index={index} copy={copy} compact={index > 0} />)}
         </div>
-        {model.moreWork.length > 0 && <details className="home-v2-more-work"><summary>{copy.moreWork}<span aria-hidden="true">({model.moreWork.length}) +</span></summary>
+        {model.moreWork.length > 0 && <MotionDetails className="home-v2-more-work"><summary>{copy.moreWork}<span aria-hidden="true">({model.moreWork.length}) <span className="motion-indicator">+</span></span></summary>
           <div className="home-v2-more-grid">{model.moreWork.map((work, index) => <WorkCard key={work.id} work={work} index={index + model.selectedWork.length} copy={copy} compact />)}</div>
-        </details>}
+        </MotionDetails>}
       </section>
 
       <section id="expertise" className="home-v2-section" aria-labelledby="home-v2-expertise-title">
@@ -145,11 +146,11 @@ export default async function HomeV2({ story, locale }: { story: Story; locale: 
         <SectionHeading index="04" title={copy.about} description={copy.aboutTitle} id="home-v2-about-title" />
         <div className="home-v2-about-content"><p className="home-v2-about-lead">{copy.aboutLead}</p>
           <div className="home-v2-credentials">
-            {model.biography && <details className="home-v2-background"><summary>{copy.aboutDetails}<span aria-hidden="true">+</span></summary><p className="home-v2-biography">{model.biography}</p></details>}
-            {model.details.map(group => <details key={group.id}>
-            <summary>{copy[group.id]}<span aria-hidden="true">+</span></summary>
+            {model.biography && <MotionDetails className="home-v2-background"><summary>{copy.aboutDetails}<span className="motion-indicator" aria-hidden="true">+</span></summary><p className="home-v2-biography">{model.biography}</p></MotionDetails>}
+            {model.details.map(group => <MotionDetails key={group.id}>
+            <summary>{copy[group.id]}<span className="motion-indicator" aria-hidden="true">+</span></summary>
             <ul>{group.items.map((item, index) => <li key={index}>{item}</li>)}</ul>
-          </details>)}</div>
+          </MotionDetails>)}</div>
         </div>
       </section>
 

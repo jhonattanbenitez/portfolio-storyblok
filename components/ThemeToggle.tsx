@@ -18,15 +18,17 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
   const panelId = useId();
 
   useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
+    if (!isOpen) return;
+
+    const handleClickOutside = (event: PointerEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+    document.addEventListener('pointerdown', handleClickOutside);
+    return () => document.removeEventListener('pointerdown', handleClickOutside);
+  }, [isOpen]);
 
   const themes = [
     { value: 'light' as const, label: 'Light', icon: SunIcon },
@@ -64,7 +66,7 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
       <button
         ref={triggerRef}
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => setIsOpen((current) => !current)}
         className={`nav-control flex items-center rounded-md border border-border bg-secondary text-sm font-medium text-secondary-foreground transition-colors duration-200 hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring ${
           responsiveCompact ? 'h-8 gap-1 px-2 lg:h-10 lg:gap-2 lg:px-3' : 'h-10 gap-2 px-3'
         }`}
@@ -74,13 +76,21 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
       >
         <CurrentIcon className="w-4 h-4" />
         <span className={responsiveCompact ? "hidden lg:inline" : "hidden sm:inline"}>{currentTheme?.label}</span>
-        <ChevronDownIcon className="w-4 h-4" />
+        <ChevronDownIcon
+          className="motion-indicator w-4 h-4"
+          data-state={isOpen ? 'open' : 'closed'}
+          data-motion-kind="chevron"
+          aria-hidden="true"
+        />
       </button>
 
-      {isOpen && (
         <div
           id={panelId}
-          className="nav-panel absolute right-0 z-50 mt-2 w-48 rounded-md border border-border text-popover-foreground shadow-lg"
+          data-state={isOpen ? 'open' : 'closed'}
+          data-motion-kind="dropdown"
+          inert={!isOpen}
+          aria-hidden={!isOpen}
+          className="motion-panel nav-panel absolute right-0 z-50 mt-2 w-48 rounded-md border border-border text-popover-foreground shadow-lg"
         >
           {themes.map((themeOption) => {
             const Icon = themeOption.icon;
@@ -109,7 +119,6 @@ export default function ThemeToggle({ responsiveCompact = false }: ThemeTogglePr
             );
           })}
         </div>
-      )}
     </div>
   );
 }

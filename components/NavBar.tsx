@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useEffect, useRef, useState, FC, Suspense } from "react";
+import React, { useCallback, useEffect, useRef, useState, FC, Suspense } from "react";
 import NavLink from "./NavLink";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/solid";
 import MenuOverlay from "./MenuOverlay";
@@ -17,6 +17,7 @@ export interface NavLinkType {
 
 const NavBar: FC = () => {
   const [navbarOpen, setNavbarOpen] = useState(false);
+  const [mobileSubmenuIndex, setMobileSubmenuIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const mobileTriggerRef = useRef<HTMLButtonElement>(null);
   const suppressDesktopSubmenuFocusRef = useRef(false);
@@ -51,34 +52,70 @@ const NavBar: FC = () => {
     { title: t("nav.contact"), href: `${prefix}/#contact` },
   ];
 
-  const toggleNavbar = () => setNavbarOpen((v) => !v);
+  const closeMobileMenu = useCallback(() => {
+    setNavbarOpen(false);
+    setMobileSubmenuIndex(null);
+  }, []);
 
-  // The editorial hero follows the actual fixed navigation height, including
-  // user text scaling. Other routes retain their existing layout contract.
+  const toggleNavbar = () => {
+    setNavbarOpen((current) => !current);
+    setMobileSubmenuIndex(null);
+  };
+
+  // Overlay bounds follow the actual header height on every route. Home also
+  // uses this measurement for its existing fixed-header/anchor offset.
   useEffect(() => {
     const nav = homeNavRef.current;
-    if (!isHomeV2 || !nav) return;
+    if (!nav) return;
     const headerRow = nav.firstElementChild;
     if (!headerRow) return;
-    const measure = () => document.documentElement.style.setProperty("--home-v2-nav-height", headerRow.getBoundingClientRect().height + "px");
+    const measure = () => {
+      const height = headerRow.getBoundingClientRect().height + "px";
+      nav.style.setProperty("--site-nav-height", height);
+      if (isHomeV2) document.documentElement.style.setProperty("--home-v2-nav-height", height);
+    };
     measure();
     const observer = new ResizeObserver(measure);
     observer.observe(headerRow);
     return () => {
       observer.disconnect();
-      document.documentElement.style.removeProperty("--home-v2-nav-height");
+      nav.style.removeProperty("--site-nav-height");
+      if (isHomeV2) document.documentElement.style.removeProperty("--home-v2-nav-height");
     };
   }, [isHomeV2]);
 
   useEffect(() => {
     const desktopMedia = window.matchMedia("(min-width: 768px)");
-    const closeMobileMenuOnDesktop = (event: MediaQueryListEvent) => {
-      if (event.matches) setNavbarOpen(false);
+    const closeMenusOnBreakpoint = (event: MediaQueryListEvent) => {
+      setHoveredIndex(null);
+      if (!event.matches) {
+        if (homeNavRef.current?.querySelector("#desktop-navigation")?.contains(document.activeElement)) {
+          mobileTriggerRef.current?.focus();
+        }
+        return;
+      }
+      const focusWasInPanel = homeNavRef.current?.querySelector("#mobile-navigation-panel")?.contains(document.activeElement);
+      closeMobileMenu();
+      if (focusWasInPanel) homeNavRef.current?.querySelector<HTMLAnchorElement>("#desktop-navigation a")?.focus();
     };
 
-    desktopMedia.addEventListener("change", closeMobileMenuOnDesktop);
-    return () => desktopMedia.removeEventListener("change", closeMobileMenuOnDesktop);
-  }, []);
+    desktopMedia.addEventListener("change", closeMenusOnBreakpoint);
+    return () => desktopMedia.removeEventListener("change", closeMenusOnBreakpoint);
+  }, [closeMobileMenu]);
+
+  useEffect(() => {
+    if (!navbarOpen && hoveredIndex === null) return;
+
+    const closeOnOutsidePointer = (event: PointerEvent) => {
+      if (event.target instanceof Node && !homeNavRef.current?.contains(event.target)) {
+        closeMobileMenu();
+        setHoveredIndex(null);
+      }
+    };
+
+    document.addEventListener("pointerdown", closeOnOutsidePointer);
+    return () => document.removeEventListener("pointerdown", closeOnOutsidePointer);
+  }, [navbarOpen, hoveredIndex, closeMobileMenu]);
 
   useEffect(() => {
     if (!navbarOpen) return;
@@ -86,13 +123,13 @@ const NavBar: FC = () => {
     const closeMobileMenuOnEscape = (event: KeyboardEvent) => {
       // Inner disclosures consume Escape before this document-level listener.
       if (event.key !== "Escape" || event.defaultPrevented) return;
-      setNavbarOpen(false);
+      closeMobileMenu();
       mobileTriggerRef.current?.focus();
     };
 
     document.addEventListener("keydown", closeMobileMenuOnEscape);
     return () => document.removeEventListener("keydown", closeMobileMenuOnEscape);
-  }, [navbarOpen]);
+  }, [navbarOpen, closeMobileMenu]);
 
   return (
     <>
@@ -100,7 +137,7 @@ const NavBar: FC = () => {
     <nav
       ref={homeNavRef}
       onClick={isHomeV2 ? event => {
-        if (navbarOpen && event.target instanceof Element && event.target.closest("a[href]")) setNavbarOpen(false);
+        if (navbarOpen && event.target instanceof Element && event.target.closest("a[href]")) closeMobileMenu();
       } : undefined}
       className={`
         site-nav fixed inset-x-0 top-0 isolate
@@ -163,7 +200,7 @@ const NavBar: FC = () => {
               <li
                 key={link.href}
                 className="relative group"
-                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseEnter={() => setHoveredIndex(link.subLinks ? index : null)}
                 onMouseLeave={(event) => {
                   if (!event.currentTarget.contains(document.activeElement)) {
                     setHoveredIndex(null);
@@ -177,9 +214,10 @@ const NavBar: FC = () => {
                 onKeyDown={(event) => {
                   if (event.key !== "Escape" || hoveredIndex !== index) return;
                   event.preventDefault();
-                  suppressDesktopSubmenuFocusRef.current = true;
+                  const trigger = event.currentTarget.querySelector("a");
+                  suppressDesktopSubmenuFocusRef.current = !!trigger && document.activeElement !== trigger;
                   setHoveredIndex(null);
-                  event.currentTarget.querySelector("a")?.focus();
+                  trigger?.focus();
                 }}
               >
                 {/* === LINK PRINCIPAL === */}
@@ -200,14 +238,17 @@ const NavBar: FC = () => {
                 />
 
                 {/* === SUBMENÚ === */}
-                {link.subLinks && hoveredIndex === index && (
+                {link.subLinks && (
                   <ul
                     id={`desktop-submenu-${index}`}
+                    data-state={hoveredIndex === index ? "open" : "closed"}
+                    data-motion-kind="dropdown"
+                    inert={hoveredIndex !== index}
+                    aria-hidden={hoveredIndex !== index}
                     className="
-                      nav-panel absolute left-0 top-full mt-2 w-48
+                      motion-panel nav-panel absolute left-0 top-full mt-2 w-48
                       border border-border rounded-md text-popover-foreground shadow-lg
                       flex flex-col
-                      animate-in fade-in slide-in-from-top-2
                       before:absolute before:-top-2 before:left-0 before:w-full before:h-2 before:content-['']
                     "
                   >
@@ -247,9 +288,12 @@ const NavBar: FC = () => {
       </div>
 
       {/* === MOBILE OVERLAY === */}
-      {navbarOpen && (
-        <MenuOverlay links={navLinks} />
-      )}
+      <MenuOverlay
+        links={navLinks}
+        isOpen={navbarOpen}
+        openIndex={mobileSubmenuIndex}
+        onToggleSubmenu={(index) => setMobileSubmenuIndex((current) => current === index ? null : index)}
+      />
     </nav>
     </>
   );

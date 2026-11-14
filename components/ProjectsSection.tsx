@@ -1,10 +1,11 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import ProjectCard from "./ProjectCard";
 import ProjectTag from "./ProjectTag";
-import { motion, useInView, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { SbBlokData, storyblokEditable } from "@storyblok/react";
 import { useTranslation } from "../hooks/useTranslation";
+import { readMotionTransition } from "../lib/motion";
 
 interface ImageType {
   id: string;
@@ -49,11 +50,12 @@ interface ProjectsSectionProps {
 const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
   const { t } = useTranslation();
   const [selectedTag, setSelectedTag] = useState("all");
-  const handleTagClick = (tag: string) => setSelectedTag(tag);
-
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true });
   const shouldReduceMotion = useReducedMotion();
+  const [filterTransition, setFilterTransition] = useState({ duration: 0, ease: [0, 0, 1, 1] as [number, number, number, number] });
+  const handleTagClick = (tag: string) => {
+    setFilterTransition(readMotionTransition(getComputedStyle(document.documentElement)));
+    setSelectedTag(tag);
+  };
 
   const projectsData = blok.project.map((project) => ({
     id: project._uid,
@@ -68,11 +70,6 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
   const filteredProjects = projectsData.filter((p) =>
     selectedTag === "all" ? true : p.tag.includes(selectedTag)
   );
-
-  const cardVariants = {
-    initial: { y: 50, opacity: 0 },
-    animate: { y: 0, opacity: 1 },
-  };
 
   return (
     <section
@@ -111,14 +108,13 @@ const ProjectsSection: React.FC<ProjectsSectionProps> = ({ blok }) => {
         </div>
 
         {/* Cards */}
-        <ul ref={ref} className="grid md:grid-cols-2 gap-8 md:gap-12">
+        <ul className="motion-project-list grid md:grid-cols-2 gap-8 md:gap-12">
           {filteredProjects.map((project, index) => (
             <motion.li
               key={project.id}
-              variants={cardVariants}
-              initial={shouldReduceMotion ? false : "initial"}
-              animate={shouldReduceMotion || isInView ? "animate" : "initial"}
-              transition={shouldReduceMotion ? { duration: 0 } : { duration: 0.3, delay: index * 0.1 }}
+              initial={false}
+              layout={!shouldReduceMotion && index < 4 ? "position" : false}
+              transition={shouldReduceMotion ? { duration: 0 } : filterTransition}
             >
               <ProjectCard
                 title={project.title}
